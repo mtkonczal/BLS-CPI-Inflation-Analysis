@@ -4,6 +4,7 @@
 # Mike Konczal
 # Last updated 2/18/22
 # This was uploaded to Github let's see if it happens.
+# I want to see if it works backwards from online to desktop.
 
 library(janitor)
 library(tidyverse)
@@ -107,6 +108,7 @@ cpi_analysis <- cpi %>%
 
 i_all <- inflation_data(cpi_analysis, 'All items')
 i_all <- inflation_data(cpi_analysis, 'Meats')
+i_all <- inflation_data(cpi_analysis, 'All items')
 
 
 item_basket <- c('All items', 'All items less food, shelter, energy, and used cars and trucks')
