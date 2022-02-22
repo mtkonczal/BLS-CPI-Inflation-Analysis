@@ -3,6 +3,7 @@
 # Requires inflation_weights.csv file as weights aren't stored on download site.
 # Mike Konczal
 # Last updated 2/18/22
+# This was uploaded to Github let's see if it happens.
 
 library(janitor)
 library(tidyverse)
@@ -105,6 +106,7 @@ cpi_analysis <- cpi %>%
   filter(seasonal == "S")
 
 i_all <- inflation_data(cpi_analysis, 'All items')
+i_all <- inflation_data(cpi_analysis, 'Meats')
 
 
 item_basket <- c('All items', 'All items less food, shelter, energy, and used cars and trucks')
