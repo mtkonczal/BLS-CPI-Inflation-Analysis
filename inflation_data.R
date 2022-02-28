@@ -3,8 +3,6 @@
 # Requires inflation_weights.csv file as weights aren't stored on download site.
 # Mike Konczal
 # Last updated 2/18/22
-# This was uploaded to Github let's see if it happens.
-# I want to see if it works backwards from online to desktop.
 
 library(janitor)
 library(tidyverse)
@@ -30,8 +28,6 @@ series <- inner_join(series, items, by = c("item_code"))
 
 cpi <- inner_join(cpi, series, by = c("series_id"))
 
-colnames(cpi)
-
 # Remove columns we don't need - note may want in the future.
 cpi <- select(cpi, -c("footnote_codes.x", "footnote_codes.y", "begin_year", "begin_period", "end_year", "end_period", "selectable", "sort_sequence", "base_code"))
 
@@ -43,85 +39,84 @@ cpi <- inner_join(cpi, cpi_weights, by = c("item_name"))
 
 ################# SECTION 2: CREATE HELPER FUNCTIONS FOR THE ANALYSIS ####################
 
-# Not sure best way to analyze data. Here are some functions to try and find best practices.
+# Here are some functions to help analyze the data.
 
 # Returns monthly percent change and percent change of basket for item y in the cpi file x.
-inflation_data <- function(x, y){
-  inf_d <- filter(x, item_name == y)
+inflation_data <- function(x, item){
+  inf_d <- filter(x, item_name == item)
   inf_d <- arrange(inf_d, date)
   inf_d$pct_change <- (inf_d$value/lag(inf_d$value) - 1) * 100
   inf_d$basket_change <- inf_d$pct_change*inf_d$weight/100
   return(inf_d)
   }
 
-basket_data <- function(x, y){
-  inf_d <- filter(x, item_name == y)
-  inf_d$pct_change <- (inf_d$value/lag(inf_d$value) - 1) * 100
-  inf_d <- inf_d$pct_change*inf_d$weight/100
-  return(inf_d)
-  }
 
-# Takes in a vector of item names and returns their contributions for inflation.
-# Must have more than one variable. Code is messy but works.
-create_basket <- function(x, y){
-  x <- arrange(x, date)
-  for (i in seq_along(y)) {
-    if( i == 1){
-      tmp <- filter(x, item_name == y[i])
-      #Column bind in a for loop is bad practice, will fix TK
-      cb <- tmp$date
-      cb <- cbind(cb, basket_data(x, y[i]))
-    }
-    else
-      cb <- cbind(cb, basket_data(x, y[i]))
+# Takes in a vector of item names (items), cpi_file (x), starting date (YYYY-MM-DD format), with optional end date and seasonality
+# and returns each item's contribution to inflation for each month.
+create_basket <- function(x, items, startDate, endDate = "current", season = "S"){
+  x <- filter(x, period != "M13")
+  if(endDate == "current"){
+    endDate <- max(x$date)
   }
-  # Not sure how to keep date formatting, so this is a little rough coding-wise
-  cb <- as_tibble(cb)
-  tmp <- y[1]
-  y <- str_replace_all(y, c(' '), c('_'))
-  colnames(cb) <- c('date', y)
+  x <- x %>%
+    filter(seasonal == season) %>%
+    filter(date >= startDate) %>%
+    filter(date <= endDate)
+  x <- arrange(x, date)
+  tmp <- filter(x, item_name == items[1])
+  cb <- tibble(.rows = nrow(tmp))
+  cb[,1] <- tmp$date
+  for (i in seq_along(items)) {
+    inf_d <- filter(x, item_name == items[i])
+    inf_d$pct_change <- (inf_d$value/lag(inf_d$value) - 1) * 100
+    inf_d <- inf_d$pct_change*inf_d$weight/100
+    cb[,i+1] <- inf_d
+  }
+  items <- str_replace_all(items, c(' '), c('_'))
+  items <- str_replace_all(items, c(','), c(''))
+  colnames(cb) <- c('date', items)
   cb %>% clean_names()
-  tmp2 <- filter(x, item_name == tmp)
-  cb$date <- tmp2$date
   return(cb)
   }
 
 # Takes in a vector of item names and returns their weights.
-create_weights <- function(x,y){
-  for (i in seq_along(y)) {
-    tmp_wght <- filter(x, item_name == y[i])
+create_weights <- function(x, items){
+  for (i in seq_along(items)) {
+    tmp_wght <- filter(x, item_name == items[i])
     if( i == 1)
       wght <- mean(tmp_wght$weight)
     else
       wght <- cbind(wght, mean(tmp_wght$weight))
-    }
-  colnames(wght) <- y
+  }
+  if(length(items) == 1){
+    names(wght) <- items
+  }
+  else{
+    colnames(wght) <- items
+  }
   return(wght)
 }
 
 ################# SECTION 3: DATA ANALYSIS #####################
 
 # Pick starting year - should add up top! Also keep just with seasonal
-cpi_analysis <- cpi %>%
-  filter(year > 2019) %>%
-  filter(seasonal == "S")
+cpi_analysis <- cpi
 
 i_all <- inflation_data(cpi_analysis, 'All items')
-i_all <- inflation_data(cpi_analysis, 'Meats')
+i_meat <- inflation_data(cpi_analysis, 'Energy')
 i_all <- inflation_data(cpi_analysis, 'All items')
-
 
 item_basket <- c('All items', 'All items less food, shelter, energy, and used cars and trucks')
-a <- create_basket(cpi_analysis, item_basket)
+a <- create_basket(cpi_analysis, item_basket, "2019-01-01")
 b <- create_weights(cpi_analysis, item_basket)
 
-a$difference <- a$All_items - a$`All_items_less_food,_shelter,_energy,_and_used_cars_and_trucks`
+a$difference <- a$All_items - a$All_items_less_food_shelter_energy_and_used_cars_and_trucks
 
 # Plot
 ggplot()+
   geom_line(data=a,aes(y=All_items,x=date,colour="All items"),size=1 )+
   geom_line(data=a,aes(y=difference,x=date,colour="Food, shelter, energy, used cars"),size=1) +
-  geom_line(data=a,aes(y=`All_items_less_food,_shelter,_energy,_and_used_cars_and_trucks`,x=date,colour="All items minus food, shelter, energy, used cars"),size=1) +
+  geom_line(data=a,aes(y=All_items_less_food_shelter_energy_and_used_cars_and_trucks,x=date,colour="All items minus food, shelter, energy, used cars"),size=1) +
   scale_color_manual(name = "Inflation", values = c("All items" = "darkblue", "Food, shelter, energy, used cars" = "dark green", "All items minus food, shelter, energy, used cars" = "red")) +
   geom_hline(yintercept=0) +
   theme(legend.position = "bottom") +
@@ -129,9 +124,24 @@ ggplot()+
   labs(x ="", y = "monthly inflation, CPI")
 
 # Try another basket.
-item_basket <- c('All items', 'Energy', 'Food', 'Meats')
-create_basket(cpi_analysis, item_basket)
+item_basket <- c('All items', 'Energy', 'Used cars and trucks', 'New vehicles', 'Motor vehicle parts and equipment')
+a <- create_basket(cpi_analysis, item_basket, "2019-01-01")
 create_weights(cpi_analysis, item_basket)
+
+a <- filter(a, date > "2020-12-01")
+a <- filter(a, date < "2021-11-01")
+sum(a$Energy + a$Used_cars_and_trucks + a$New_vehicles + a$Motor_vehicle_parts_and_equipment) / sum(a$All_items)
+
+b <- create_basket(cpi_analysis, item_basket, "2020-12-01", "2021-10-01")
+b <- filter(b, !is.na(b[,2]))
+sum(a$Energy + a$Used_cars_and_trucks + a$New_vehicles + a$Motor_vehicle_parts_and_equipment) / sum(a$All_items)
+a
+b
+
+a <- filter(a, date > "2020-12-01")
+a <- filter(a, date < "2021-11-01")
+sum(a$Energy + a$Used_cars_and_trucks + a$New_vehicles + a$Motor_vehicle_parts_and_equipment) / sum(a$All_items)
+
 
 # Can summary by 'display levels' - so grab all the highest level.
 # Probably some tricks here in displaying that might be useful.
@@ -141,9 +151,5 @@ item_basket <- cpi_analysis %>%
 item_basket <- unique(item_basket)
 item_basket <- t(item_basket)
 item_basket
-create_basket(cpi_analysis, item_basket)
+create_basket(cpi_analysis, item_basket, "2019-12-01")
 create_weights(cpi_analysis, item_basket)
-
-
-
-
