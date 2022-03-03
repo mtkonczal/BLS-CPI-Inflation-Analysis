@@ -6,7 +6,7 @@
 setwd("/Users/mkonczal/Documents/GitHub/Inflation-Analysis/")
 library(janitor)
 library(tidyverse)
-
+library(ggtext)
 
 ############### SECTION 1: READ IN AND CLEAN UP DATA #####################
 
@@ -132,13 +132,13 @@ ggsave("inflation_graphic_1.png")
 
 ################# DATA FOR GRAPHIC 2-3 ###########################
 
-item_basket <- cpi %>%
+item_basket <- cpi_data %>%
   filter(display_level == 0) %>%
   select(item_name)
 item_basket <- unique(item_basket)
 item_basket <- t(item_basket)
 
-item_basket <- c("All items", "Used cars and trucks", "Housing", "Services less energy services", "Medical care services", "Shelter", "Food", "Energy")
+item_basket <- c("All items", "New and used motor vehicles", "Shelter", "Other services", "Medical care services", "Food", "Energy", "Commodities less food and energy commodities")
 
 cpi <- cpi_data %>%
   filter(period != "M13") %>%
@@ -187,14 +187,14 @@ ggsave("inflation_graphic_2.png")
 ggplot(cpi) +
   geom_segment( aes(x=g2_item_name, xend=g2_item_name, y=Wchange1a, yend=Wchange12), color="grey") +
   geom_segment( aes(x=g2_item_name, xend=g2_item_name, y=Wchange1a, yend=Wchange3a), color="grey") +  
-  geom_point( aes(x=g2_item_name, y=Wchange1a), color="dark red", size=3 ) +
-  geom_point( aes(x=g2_item_name, y=Wchange12), color="#228b22", size=3 ) +
-  geom_point( aes(x=g2_item_name, y=Wchange3a), color="blue", size=3 ) +
+  geom_point( aes(x=g2_item_name, y=Wchange1a), color="#8b0000", size=3 ) +
+  geom_point( aes(x=g2_item_name, y=Wchange3a), color="#ff735b", size=3 ) +
+  geom_point( aes(x=g2_item_name, y=Wchange12), color="#bc939c", size=3 ) +
   coord_flip()+
   theme_light() +
   theme(panel.grid.major.x = element_blank(),
         plot.title = element_markdown()) +
-  ggtitle("Contribution to CPI Inflation, <span style = 'color:#8b0000;'>Last Month</span>, <span style = 'color:blue;'>Three Months</span>, and <span style = 'color:#228b22;'>Twelve Months</span>, all Annualized") +
+  ggtitle("Contribution to CPI Inflation, <span style = 'color:#8b0000;'>Last Month</span>, <span style = 'color:#ff735b;'>Three Months</span>, and <span style = 'color:#bc939c;'>Twelve Months</span>, all Annualized") +
   theme(
     panel.grid.major.y = element_blank(),
     panel.border = element_blank(),
@@ -205,8 +205,6 @@ ggplot(cpi) +
   ylab("Percent") +
   geom_hline(yintercept=0, linetype="solid", color = "black", alpha=0.5)
 ggsave("inflation_graphic_3.png")
-
-
 
 
 
@@ -234,7 +232,7 @@ sum(a$Energy + a$Used_cars_and_trucks + a$New_vehicles + a$Motor_vehicle_parts_a
 
 # Can summary by 'display levels' - so grab all the highest level.
 # Probably some tricks here in displaying that might be useful.
-item_basket <- cpi %>%
+item_basket <- cpi_data %>%
   filter(display_level == 0) %>%
   select(item_name)
 item_basket <- unique(item_basket)
