@@ -1,2 +1,4 @@
 # Inflation Analysis
- R script for reading in and analyzing CPI inflation data
+ R scripts for reading in and analyzing CPI inflation data from the BLS's text website.
+ 
+Written: Mike Konczal
