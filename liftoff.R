@@ -1,8 +1,9 @@
 # This script makes three graphics tied to the arguments about the Fed raising rates ('liftoff')
 # as debated in March, 2022.
 # Written by: Mike Konczal
+# Last Updated: 3-12-2022
 
-setwd("/Users/mkonczal/Documents/GitHub/Inflation-Analysis/")
+setwd("/Users/mkonczal/Documents/GitHub/BLS-CPI-Inflation-Analysis/")
 library(janitor)
 library(tidyverse)
 library(ggtext)

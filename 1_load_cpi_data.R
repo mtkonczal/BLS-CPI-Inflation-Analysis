@@ -5,7 +5,7 @@
 # Mike Konczal
 # Last updated 3/12/22
 
-setwd("/Users/mkonczal/Documents/GitHub/Inflation-Analysis/")
+setwd("/Users/mkonczal/Documents/GitHub/BLS-CPI-Inflation-Analysis/")
 library(janitor)
 library(tidyverse)
 
