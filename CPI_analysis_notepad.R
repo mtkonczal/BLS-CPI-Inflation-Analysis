@@ -13,7 +13,7 @@ library(huxtable)
 #source(file = "1_load_cpi_data.R")
 source(file = "2_load_helper_functions.R")
 
-load("data/cpi.RData")
+load("data/cpi_data.RData")
 
 
 
@@ -44,7 +44,6 @@ cpi <- cpi_data %>%
   ungroup()
 
 tester <- cpi %>% filter(item_name == "Energy")
-write_csv(tester, "tester2.csv")
 item_basket <- item_basket_watch_categories
 
 item_basket <- c("Food", "Energy", "All items less food and energy", "Goods", "Services", "Gasoline", "Housing", "Used cars and trucks", "New vehicles", "All items")
@@ -72,6 +71,7 @@ MaxMonth <- format(gcpi$date[1], "%b")
 MaxYear <- format(gcpi$date[1], "%Y")
 Sub_Title <- paste("Contributions to Overall Inflation, <span style = 'color:#6d0000;'>Last Three Months</span> and <span style = 'color:#b87e5e;'>Twelve Months</span> from ", MaxMonth, ", ", MaxYear, ", Annualized", sep="")
 Full_Title <- "Inflation in Core Services Increases Across Most Categories"
+font <- "Helvetica"
 
 ggplot(gcpi) +
   geom_segment( aes(x=g2_item_name, xend=g2_item_name, y=Wchange3a, yend=Wchange12), color="grey") +
@@ -80,7 +80,7 @@ ggplot(gcpi) +
   coord_flip()+
   theme_minimal() +
   theme(panel.grid.major.x = element_blank(),
-        plot.title = element_textbox(color = "#1002a4", face = "italic",  size = 28.5,  hjust = 0.5, padding = margin(18, 14, 18, 14)),
+        plot.title = element_textbox(color = "#1002a4", face = "italic",  family=font, size = 28.5,  hjust = 0.5, padding = margin(18, 14, 18, 14)),
         plot.subtitle =  element_markdown(size = 19, hjust = 0.5)) +
   ggtitle(Full_Title) +
   theme(
@@ -99,7 +99,6 @@ ggplot(gcpi) +
   geom_text(aes(x=g2_item_name, y=Wchange12, label=(round(Wchange12aL*Wchange12, 2))), nudge_x =.2, color = "#b87e5e", size=5) +
   geom_text(aes(x=g2_item_name, y=Wchange3a, label=Name3Label), color = "#6d0000", nudge_x=-0.3, size=4) +
   geom_text(aes(x=g2_item_name, y=Wchange12, label=Name12Label), color = "#b87e5e", nudge_x=-0.3, size=4)          
-ggsave("core.pdf")
 
 #####
 
@@ -122,33 +121,37 @@ ggplot(LM2, aes(date, v)) + geom_line(color="darkred") + theme_minimal() +
        x="", y="")
 
 
-
-item_basket_AFU <- c("All items less food and energy", "Transportation commodities less motor fuel")
-AFU <- cpi %>% filter(item_name %in% item_basket_AFU) %>%
-  filter(date >= "2020-10-01") %>% mutate(Wchange1a = Wchange1a*100)
-
-ggplot(AFU, aes(date,Wchange1a,color=item_name)) + geom_line(size=2) + theme_minimal() + theme(legend.position='none') +
-  scale_color_manual(values=c("steelblue","darkred")) +
-  labs(title="Core Inflation Remains High Even As Contribution From Autos Falls to Zero",
-       x="", y="", caption = "Values are percent, annualized. Data is BLS, CPI, seasonally adjusted. Author's calculation. 2021 weights throughout. @rortybomb\n
-       Core Goods is 'All items less food and energy,' New/Used Cars, Motor Parts is 'Transportation commodities iess motor fuel.'") +
-  theme(panel.grid.major.x = element_blank(),
-        plot.title = element_textbox(color = "#1002a4", face = "italic",  size = 26,  hjust = 0.5, padding = margin(18, 14, 18, 14)),
-        plot.subtitle =  element_markdown(size = 19, hjust = 0.5)) +
-  theme(panel.grid.major.x = element_blank(), panel.grid.minor.x = element_blank(), panel.grid.minor.y = element_blank(),
-        plot.title.position = "plot",
-        axis.text.x = element_text(size = 12),
-        axis.text.y = element_text(size = 14, hjust = 0.5, color="#1002a4"),
-        plot.caption = element_text(size = 12, lineheight = 0.7)) +
-  geom_hline(yintercept=0, linetype="solid", color = "black", alpha=.8) +
-  geom_hline(yintercept=2.5, linetype="dashed", color = "grey45", alpha=.8) +
-  annotate(geom="text", x=as.Date("2021-12-01"), y=6.2, label="Core Inflation", size=8, color="steelblue") +
-  annotate(geom="text", x=as.Date("2021-12-01"), y=3.1, label="New/Used Cars,\nMotor Parts", size=8, color="darkred") +
-  annotate(geom="text", x=as.Date("2020-11-01"), y=2.8, label="CPI Inflation Target", size=4, color="grey45")
-
-
+item_basket_core_goods
 
 item_basket_AFU2 <- c("Commodities less food and energy commodities", "Transportation commodities less motor fuel")
 AFU2 <- cpi %>% filter(item_name %in% item_basket_AFU2) %>%
   filter(date >= "2020-10-01") %>% mutate(Wchange1a = Wchange1a*100)
 ggplot(AFU2, aes(date,Wchange1a,color=item_name)) + geom_line(size=2) + theme_minimal() + theme(legend.position='none') 
+
+
+
+
+###### GRAPHIC 4 - HANDOFF TO SERVICES #####
+
+item_basket_AFU <- c("Services less energy services", "Shelter")
+AFU <- cpi %>% filter(item_name %in% item_basket_AFU) %>%
+  filter(date >= "2011-01-01")
+AFU <- create_basket(cpi, item_basket_AFU, startDate = "2011-01-01", annualize = TRUE) %>% mutate(values = Services_less_energy_services - Shelter)
+
+
+AFU %>% filter(date <= "2019-12-01") %>% summarize(mean(values, na.rm = TRUE), sd(values, na.rm=TRUE))
+AFU %>% filter(date >= "2021-01-01") %>% summarize(mean(values), sd(values))
+
+ggplot(AFU, aes(x=date, y=values)) +
+  geom_line(size=1.25, color="darkred") + bbc_style() +
+  labs(title="Since 2021, Core Services Minus Shelter Has Double the Level, Volatilty, of Previous Trend",
+       x="", y="", caption = "Values are percent, annualized. Data is BLS, CPI, seasonally adjusted. Author's calculation. 2021 weights throughout. @rortybomb\n
+       Line is weighted services less energy services minus weighted shelter.") +
+  geom_hline(yintercept=0, linetype="solid", color = "black", alpha=.8) +
+  theme(plot.title = element_textbox(size=22))+
+  scale_y_continuous(labels = scales::percent)
+#  geom_hline(yintercept=2.5, linetype="dashed", color = "grey45", alpha=.8) +
+#  annotate(geom="text", x=as.Date("2016-12-01"), y=-1, label="Core Goods", size=8, color="steelblue") +
+#  annotate(geom="text", x=as.Date("2016-12-01"), y=2.8, label="Core Services", size=8, color="darkred") +
+#  annotate(geom="text", x=as.Date("2018-11-01"), y=2.8, label="CPI Inflation Target", size=4, color="grey45")
+ggsave("graphics/liftoff4.pdf")

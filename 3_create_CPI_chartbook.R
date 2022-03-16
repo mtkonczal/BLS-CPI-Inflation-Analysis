@@ -113,6 +113,6 @@ ggplot(long_plot, aes(x=date)) +
     plot.subtitle = element_text(size = 18, colour = "darkred", face = "italic"),
     plot.caption = element_text(size = 12, lineheight = 1.2)) +
   expand_limits(y = 175)
-ggsave("long_plot.png")
+ggsave("graphic/long_plot.png")
 
 dev.off()
