@@ -136,7 +136,7 @@ ggplot(AFU2, aes(date,Wchange1a,color=item_name)) + geom_line(size=2) + theme_mi
 item_basket_AFU <- c("Services less energy services", "Shelter")
 AFU <- cpi %>% filter(item_name %in% item_basket_AFU) %>%
   filter(date >= "2011-01-01")
-AFU <- create_basket(cpi, item_basket_AFU, startDate = "2011-01-01", annualize = TRUE) %>% mutate(values = Services_less_energy_services - Shelter)
+AFU <- create_basket(cpi, item_basket_AFU, startDate = "2011-01-01", lagM = 1, annualize = TRUE) %>% mutate(values = Services_less_energy_services - Shelter)
 
 
 AFU %>% filter(date <= "2019-12-01") %>% summarize(mean(values, na.rm = TRUE), sd(values, na.rm=TRUE))
@@ -144,13 +144,14 @@ AFU %>% filter(date >= "2021-01-01") %>% summarize(mean(values), sd(values))
 
 ggplot(AFU, aes(x=date, y=values)) +
   geom_line(size=1.25, color="darkred") + bbc_style() +
-  labs(title="Since 2021, Core Services Minus Shelter Has Double the Level, Volatilty, of Previous Trend",
+  labs(subtitle = "Since 2021, Core Services Minus Shelter, Previous Trend: 0.6 percent, since 2021, 0.9 percent",
        x="", y="", caption = "Values are percent, annualized. Data is BLS, CPI, seasonally adjusted. Author's calculation. 2021 weights throughout. @rortybomb\n
        Line is weighted services less energy services minus weighted shelter.") +
   geom_hline(yintercept=0, linetype="solid", color = "black", alpha=.8) +
   theme(plot.title = element_textbox(size=22))+
-  scale_y_continuous(labels = scales::percent)
-#  geom_hline(yintercept=2.5, linetype="dashed", color = "grey45", alpha=.8) +
+  scale_y_continuous(labels = scales::percent) +
+  geom_hline(yintercept=0.00576, linetype="dashed", color = "darkred", alpha=.8) +
+  geom_hline(yintercept=0.00903, linetype="dashed", color = "darkred", alpha=.8)
 #  annotate(geom="text", x=as.Date("2016-12-01"), y=-1, label="Core Goods", size=8, color="steelblue") +
 #  annotate(geom="text", x=as.Date("2016-12-01"), y=2.8, label="Core Services", size=8, color="darkred") +
 #  annotate(geom="text", x=as.Date("2018-11-01"), y=2.8, label="CPI Inflation Target", size=4, color="grey45")

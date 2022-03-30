@@ -1,4 +1,4 @@
-# This script makes three graphics tied to the arguments about the Fed raising rates ('liftoff')
+# This script makes four graphics tied to the arguments about the Fed raising rates ('liftoff')
 # as debated in March, 2022. Used in the following twitter thread:
 # https://twitter.com/rortybomb/status/1504103317127016461
 # Written by: Mike Konczal
