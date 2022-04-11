@@ -138,7 +138,6 @@ AFU <- cpi %>% filter(item_name %in% item_basket_AFU) %>%
   filter(date >= "2011-01-01")
 AFU <- create_basket(cpi, item_basket_AFU, startDate = "2011-01-01", lagM = 1, annualize = TRUE) %>% mutate(values = Services_less_energy_services - Shelter)
 
-
 AFU %>% filter(date <= "2019-12-01") %>% summarize(mean(values, na.rm = TRUE), sd(values, na.rm=TRUE))
 AFU %>% filter(date >= "2021-01-01") %>% summarize(mean(values), sd(values))
 
@@ -155,4 +154,12 @@ ggplot(AFU, aes(x=date, y=values)) +
 #  annotate(geom="text", x=as.Date("2016-12-01"), y=-1, label="Core Goods", size=8, color="steelblue") +
 #  annotate(geom="text", x=as.Date("2016-12-01"), y=2.8, label="Core Services", size=8, color="darkred") +
 #  annotate(geom="text", x=as.Date("2018-11-01"), y=2.8, label="CPI Inflation Target", size=4, color="grey45")
-ggsave("graphics/liftoff4.pdf")
+#ggsave("graphics/liftoff4.pdf")
+
+
+basket_broadening <- c("All items less food, shelter, energy, and used cars and trucks")
+broadening <- cpi %>% filter(item_name %in% basket_broadening) %>%
+  filter(date >= "2015-01-01")
+
+ggplot(broadening, aes(x=date, y=Wchange1a)) + geom_line() + theme_classic()  +
+  labs(title="All Items Less Food, Shelter, Energy, and Used Cars and Trucks")

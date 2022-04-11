@@ -12,7 +12,7 @@ library(huxtable)
 #source(file = "1_load_cpi_data.R")
 source(file = "2_load_helper_functions.R")
 
-load("data/cpi.RData")
+load("data/cpi_data.RData")
 
 
 

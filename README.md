@@ -7,4 +7,6 @@
   
  File 2_load_helper_functions gives some functions, themes, and inflation analysis baskets, I use. Not necessary, but helpful.
  
-Written: Mike Konczal
+ File 3 and 4 are beta versions of code that summarize monthly data releases as soon as they happen, to give a snapshot of what is occuring.
+ 
+Written by: Mike Konczal

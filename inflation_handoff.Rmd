@@ -1,0 +1,58 @@
+---
+title: "Inflation Handoff Analysis for March, 2022"
+author: "Mike Konczal"
+date: "`r format(Sys.time(), '%d %B %Y')`"
+output: pdf_document
+header-includes:
+    - \usepackage{caption}
+---
+\captionsetup[table]{labelformat=empty}                 
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+library(tidyverse)
+library(huxtable)
+```
+With everyone watching the energy inflation numbers this month, we should also keep our eyes on core inflation. Especially as higher energy prices will pull core inflation in several different directions, and the net effect is unknown. But if anything would help accelerate the Handoff Theory it would be this. The Handoff Theory of how inflation will lower in 2021-2022 is premised on **four** arguments. Let's track them in real time. (All weights are 2022 weights. Numbers presented are seasonally adjusted, always annualized, author's calculations. This code was locked down the night before the numbers were available.)
+
+## Goods
+
+The **first** is that inflation in core goods should return to longer-term trends of near zero as both supply chains unlock and consumers get their fill of stuff and seek out services. Let's look at core goods excluding autos. The quicker that goods return to zero, the better. How was last month's progress in getting to zero?
+```{r goods, echo=FALSE}
+# This source call gives us all our data for the report
+source("4_cpi_handoff_analysis.R")
+maxDate = max(cpi$date)
+
+handoff_2 <- handoff_chart %>% filter(item_name=="Core Goods Minus Autos") %>% select(-item_name)
+handoff_2 %>%
+  as_huxtable() %>%
+  set_caption("Inflation in Core Goods Minus Autos, Annualized") %>%
+  set_number_format(row=2, col=everywhere, value = fmt_percent(2))
+```
+
+The **second** is that some goods that have had major price increases actually experience some deflation, as their prices go down as the air is let out of the goods sector. There are several candidates, but new and used cars plus motor parts, seen below, is the best example. Did we get negative?
+```{r autos, echo=FALSE}
+handoff_1 <- handoff_chart %>% filter(item_name=="Transportation commodities less motor fuel") %>% select(-item_name)
+handoff_1 %>%
+  as_huxtable() %>%
+  set_caption("Inflation in Autos, Annualized") %>%
+  set_number_format(row=2, col=everywhere, value = fmt_percent(2))
+```
+
+## Services
+The **third** is that as services reopen and expand back to trend, inflation will not pick up significantly. Let's look at core services minus housing. If core services remains stable and doesn't increase too much, that will help with reducing inflation. Did it stay steady?
+```{r services, echo=FALSE}
+handoff_4 <- handoff_chart %>% filter(item_name=="Core Services Minus Shelter") %>% select(-item_name)
+handoff_4 %>%
+  as_huxtable() %>%
+  set_caption("Core Services Minus Shelter") %>%
+  set_number_format(row=2, col=everywhere, value = fmt_percent(2))
+```
+
+The **fourth** is that housing, counted as a service, doesn't increase too much. We expect housing to increase as a result of many pandemic and other medium-term factors, but how much did it end up increasing?
+```{r shelter, echo=FALSE}
+handoff_3 <- handoff_chart %>% filter(item_name=="Shelter") %>% select(-item_name)
+handoff_3 %>%
+  as_huxtable() %>%
+  set_caption("Inflation in Shelter, Annualized") %>%
+  set_number_format(row=2, col=everywhere, value = fmt_percent(2))
+```

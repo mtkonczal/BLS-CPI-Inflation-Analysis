@@ -1,6 +1,6 @@
 ###############################################################
-# Code to read in inflation data from CPS website and begin analysis.
-# This file reads in and store the CPS data.
+# Code to read in inflation data from BLS website and begin analysis.
+# This file reads in and store the CPI data.
 # Requires inflation_weights.csv file as weights aren't stored on download site.
 # Mike Konczal
 # Last updated 3/12/22
