@@ -7,15 +7,14 @@ setwd("/Users/mkonczal/Documents/GitHub/BLS-CPI-Inflation-Analysis/")
 library(janitor)
 library(tidyverse)
 library(ggtext)
+library(ggrepel)
 library(huxtable)
-
+library(scales)
 ##### SET UP SOME THINGS #####
 #source(file = "1_load_cpi_data.R")
 source(file = "2_load_helper_functions.R")
 
 load("data/cpi_data.RData")
-
-
 
 ##### REPLICATION CODE ### STARTING HERE #### SPECIAL GRAPHIC
 
@@ -136,30 +135,116 @@ ggplot(AFU2, aes(date,Wchange1a,color=item_name)) + geom_line(size=2) + theme_mi
 item_basket_AFU <- c("Services less energy services", "Shelter")
 AFU <- cpi %>% filter(item_name %in% item_basket_AFU) %>%
   filter(date >= "2011-01-01")
-AFU <- create_basket(cpi, item_basket_AFU, startDate = "2011-01-01", lagM = 1, annualize = TRUE) %>% mutate(values = Services_less_energy_services - Shelter)
+AFU <- create_basket(cpi, item_basket_AFU, startDate = "2014-01-01", lagM = 1, annualize = TRUE) %>% mutate(values = Services_less_energy_services - Shelter)
 
 AFU %>% filter(date <= "2019-12-01") %>% summarize(mean(values, na.rm = TRUE), sd(values, na.rm=TRUE))
 AFU %>% filter(date >= "2021-01-01") %>% summarize(mean(values), sd(values))
 
 ggplot(AFU, aes(x=date, y=values)) +
   geom_line(size=1.25, color="darkred") + bbc_style() +
-  labs(subtitle = "Since 2021, Core Services Minus Shelter, Previous Trend: 0.6 percent, since 2021, 0.9 percent",
-       x="", y="", caption = "Values are percent, annualized. Data is BLS, CPI, seasonally adjusted. Author's calculation. 2021 weights throughout. @rortybomb\n
-       Line is weighted services less energy services minus weighted shelter.") +
+  labs(subtitle = "Inflation Rate for Core Services Minus Shelter",
+       x="", y="", caption = "Values are percent, annualized. Data is BLS, CPI, seasonally adjusted. Author's calculation. @rortybomb\n
+       2022 weights throughout. Line is weighted services less energy services minus weighted shelter.") +
   geom_hline(yintercept=0, linetype="solid", color = "black", alpha=.8) +
-  theme(plot.title = element_textbox(size=22))+
-  scale_y_continuous(labels = scales::percent) +
-  geom_hline(yintercept=0.00576, linetype="dashed", color = "darkred", alpha=.8) +
-  geom_hline(yintercept=0.00903, linetype="dashed", color = "darkred", alpha=.8)
+  theme(plot.title = element_textbox(size=22), plot.title.position = "plot") +
+  scale_y_continuous(labels = scales::percent)
+#  geom_hline(yintercept=0.00576, linetype="dashed", color = "darkred", alpha=.8) +
+#  geom_hline(yintercept=0.00903, linetype="dashed", color = "darkred", alpha=.8)
 #  annotate(geom="text", x=as.Date("2016-12-01"), y=-1, label="Core Goods", size=8, color="steelblue") +
 #  annotate(geom="text", x=as.Date("2016-12-01"), y=2.8, label="Core Services", size=8, color="darkred") +
 #  annotate(geom="text", x=as.Date("2018-11-01"), y=2.8, label="CPI Inflation Target", size=4, color="grey45")
 #ggsave("graphics/liftoff4.pdf")
 
+AFU_chart <- AFU %>% select(date, values)
+
+tail(A)
+most_recent_AFU <- AFU_chart %>% filter(date == max(date)) %>%
+  select(date, "This Month's Change" = values)
+
+two_months_prior <- AFU_chart %>% mutate(Wtwo_monthsA = ) %>% filter(date == max(date)) %>%
+  select(item_name, "Prior Two Months" = Wtwo_monthsA)
+
+values_2021 <- cpi_with_minus %>% filter(item_name %in% item_basket) %>%
+  filter(date == "2021-12-01") %>% select(item_name, "2021 Values" = Wchange12)
+
+average_month_pre_pandemic <- cpi_with_minus %>% filter(item_name %in% item_basket) %>%
+  group_by(item_name) %>% filter(date >= "2014-01-01", date <= "2019-12-01") %>%
+  summarize("Average Monthly 2014-2019" = mean(Wchange1a))
+
+handoff_chart <- average_month_pre_pandemic %>% left_join(values_2021, by="item_name") %>%
+  left_join(two_months_prior, by="item_name") %>% left_join(most_recent, by="item_name") %>%
+  select(-date)
+
+
+#######
 
 basket_broadening <- c("All items less food, shelter, energy, and used cars and trucks")
 broadening <- cpi %>% filter(item_name %in% basket_broadening) %>%
-  filter(date >= "2015-01-01")
+  filter(date >= "2015-01-01") %>% mutate(lastValue = Wchange1a*(date==max(date)))
+broadening$lastValue <- na_if(broadening$lastValue, 0)
 
-ggplot(broadening, aes(x=date, y=Wchange1a)) + geom_line() + theme_classic()  +
-  labs(title="All Items Less Food, Shelter, Energy, and Used Cars and Trucks")
+ggplot(broadening, aes(x=date, y=Wchange1a)) + geom_line() + theme_classic()  + 
+  labs(title="Inflation Rate, All Items Less Food, Shelter, Energy, and Used Cars and Trucks",
+       caption="Values are percent, annualized. Data is BLS, CPI, seasonally adjusted. 2022 weights used throughout. Author's calculation. @rortybomb") +
+  geom_point(aes(x=max(date), y=lastValue), size=3) +
+  geom_label_repel(data=broadening, aes(x=max(date), y=lastValue, label=paste(100*round(lastValue,2),"%", sep="")), size=5, box.padding = unit(0.2,"in")) +
+  scale_y_continuous(labels = scales::percent) + scale_x_date(date_labels = "%Y", date_breaks = "1 year")
+
+##### BECOMING A BOXPLOT GUY
+boxplot_cpi <- cpi %>% filter(date==max(date) | date=="2022-02-01" | date=="2021-06-01") %>% filter(display_level > 1) %>%
+  select(series_id, item_name, Wchange1a, Pchange1, display_level, date)
+boxplot_cpi$is_date <- format(boxplot_cpi$date, "%B %Y")
+boxplot_cpi$is_date2 <- factor(boxplot_cpi$is_date , levels=c("March 2022","February 2022","June 2021"))
+ggplot(boxplot_cpi, aes(x=is_date2, y=Pchange1)) + geom_boxplot(fill="skyblue") + theme_classic() + coord_flip() +
+  scale_y_continuous(labels = scales::percent) +
+  theme(plot.title.position = "plot", axis.text.y = element_text(size=15), plot.title = element_text(size=28), plot.subtitle = element_text(size=15), plot.caption = element_text(size=10)) +
+  labs(x="", y="", subtitle="Though Price Increases Have Broadened Since Last Year, March's Increase Did Not, It Was Instead Driven by a Few Big Outliers",
+       title="Boxplot of 233 CPI Price Increases", caption="CPI, Not annualized, not inflation weight-adjusted, seasonally adjusted. Prices with display level of 2 or greater, so much overlap in categories. @rortybomb")
+#ggsave("boxplot1.png", dpi="retina")
+
+source("../BLS-CPS-Jobs-Numbers/1_b_load_bls_ces_jobs_data.R")
+ces_bp <- ces_data %>% filter(series_id == "CES0000000001") %>% mutate(job_growth = 1000*(value - lag(value,1))) %>%
+  #mutate(Great_Recession = date > "2009-12-01" & date < "2016-01-01") %>% mutate(covid_recovery = date >= "2021-01-01") %>%
+  filter(date > "2009-12-01", date < "2015-01-01" | date >="2021-01-01") %>% mutate(is_pandemic = (date > "2020-12-01"))
+
+ces_bp$is_pandemicT <- as.character(ces_bp$is_pandemic)
+ces_bp$is_pandemicT <- str_replace(ces_bp$is_pandemicT, "FALSE", "Great Recession,\n2010-2014")
+ces_bp$is_pandemicT <- str_replace(ces_bp$is_pandemicT, "TRUE", "COVID Recovery,\nJan 2021-Now")
+ces_bp$is_pandemicT <- factor(ces_bp$is_pandemicT, levels=c("Great Recession,\n2010-2014","COVID Recovery,\nJan 2021-Now"))
+
+ggplot(ces_bp, aes(x=is_pandemicT, job_growth)) + geom_boxplot(fill="skyblue") + theme_classic() +
+  theme(plot.title.position = "plot", axis.text.y = element_text(size=15), axis.text.x = element_text(size=15), plot.title = element_text(size=28),
+        plot.subtitle = element_text(size=15), plot.caption = element_text(size=10)) +
+  labs(x="", y="", subtitle="The Largest Jobs Number Outlier During the Great Recession's Recovery is Lower Than the Median Job Number Since Jan 2021",
+       title="Boxplot of Monthly CES Job Number Increases", caption="CPS, CES, seasonally adjusted. @rortybomb") +
+  scale_y_continuous(labels = comma)
+
+  #  scale_y_continuous(labels = scales::comma()) +
+ces_bp %>% filter(is_pandemic) %>% summarize(median(job_growth))
+ces_bp %>% filter(!is_pandemic) %>% summarize(max(job_growth))
+
+tail(ces_bp$job_growth)
+
+##### ARIZONA ICE TEA POST ####
+
+
+tester <- cpi_data %>% filter(item_name == "Other beverage materials including tea") %>%
+  mutate(item_name = "Nonalcoholic Beverages and Beverage Materials, Other Beverage Materials Including Tea, Excluding Juices and Coffee") %>%
+  filter(period != "M13", seasonal == "S") %>%
+  mutate(value = 100*value/113.500) %>%
+  select(date, item_name, value)
+
+tester2 <- tester %>% mutate(value=100, item_name="AriZona Iced Tea")
+
+tester3 <- rbind(tester, tester2)
+
+ggplot(tester3, aes(x=date, y=value, color=item_name)) + geom_line(size=2) + theme_classic() +
+  theme(legend.position = "bottom", legend.text = element_text(size=13), axis.text = element_text(size=15), legend.title = element_blank(), plot.subtitle = element_text(size=30), plot.title.position = "plot") +
+  labs(x="", y="", subtitle="Inflation for AriZona Iced Tea versus Competitors, 2003=100", caption="BLS, CPI, seasonally adjusted, @rortybomb") +
+  scale_y_continuous(limits = c(80,130))
+
+
+#####
+
+
+tester <- cpi %>% filter(item_name == "Transportation commodities less motor fuel")

@@ -9,7 +9,7 @@ library(ggtext)
 library(huxtable)
 
 ##### SET UP SOME THINGS #####
-#source(file = "1_load_cpi_data.R")
+source(file = "1_load_cpi_data.R")
 source(file = "2_load_helper_functions.R")
 
 load("data/cpi_data.RData")
@@ -66,11 +66,11 @@ Two_past_plot(cpi, item_basket_watch_categories)
 
 Three_past_plot(cpi, item_basket_core_goods, "Core Goods")
 
-Two_past_plot(cpi, item_basket_core_goods, "Core Goods")
+Two_past_plot(cpi, item_basket_core_goods, "Core Goods", "Transportation Commodities are New/Used Cars, Motor Parts; they drive down core inflation this month")
 
 Three_past_plot(cpi, item_basket_core_services, "Core Services")
 
-Two_past_plot(cpi, item_basket_core_services, "Core Services")
+Two_past_plot(cpi, item_basket_core_services, "Core Services", "Services are starting to pick up, a question if this is consistent or volatile month-to-month")
 
 Three_past_plot(cpi, item_basket_transportation, "Transportation")
 
