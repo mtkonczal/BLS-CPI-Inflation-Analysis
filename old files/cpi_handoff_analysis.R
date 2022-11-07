@@ -9,8 +9,8 @@ library(tidyverse)
 ##### SET UP SOME THINGS #####
 
 #Either run Script 1 to download data fresh, or used locally stored data.
-#source(file = "1_load_cpi_data.R")
-load("data/cpi_data.RData")
+source(file = "1_load_cpi_data.R")
+#load("data/cpi_data.RData")
 
 #######
 #SET UP DATA:

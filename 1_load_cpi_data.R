@@ -38,6 +38,6 @@ cpi_weights <- read_csv(file = "weights/inflation_weights.csv")
 cpi_data <- inner_join(cpi_data, cpi_weights, by = c("item_name"))
 rm(series, items, cpi_weights)
 
-save(cpi_data, file = "data/cpi_data.RData")
+#save(cpi_data, file = "data/cpi_data.RData")
 
 ########
