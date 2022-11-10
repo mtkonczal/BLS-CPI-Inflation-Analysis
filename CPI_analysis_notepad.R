@@ -15,7 +15,6 @@ library(tidytext)
 library(lubridate)
 ##### SET UP SOME THINGS #####
 source(file = "1_load_cpi_data.R")
-source(file = "2_load_helper_functions.R")
 
 #load("data/cpi_data.RData")
 
@@ -568,3 +567,27 @@ GDP %>% filter(LineDescription == "Personal consumption expenditures", date >= "
   theme(legend.position = "none")
 
 ggsave("C_vs_inflation2.png", dpi="retina", width = 9, height=4.5, units = "in")
+
+
+cpi_data %>% filter(item_name == "Medical care", area_code == "0000", seasonal == "S") %>%
+  mutate(diff = value/lag(value,1)-1) %>%
+  ggplot(aes(date,diff)) + geom_line() + theme_classic()
+
+
+a <- cpi_data %>% filter(item_name %in% c("Health insurance")) %>%
+  filter(period != "M13", begin_period != "S01") %>% filter(area_code == "0000")
+
+a <- a %>%
+  group_by(item_name) %>%
+  arrange(date) %>%
+  mutate(Pchange1 = (value/lag(value)-1)) %>%
+  mutate(Pchange12 = (value/lag(value,12)-1)) %>%
+  mutate(Wchange1 = (Pchange1*weight)/100) %>%
+  mutate(Wchange1a = (1 + Wchange1)^12 - 1) %>%
+  ungroup()
+
+a %>% ggplot(aes(date, Wchange1a)) + geom_bar(stat="identity") + theme_lass
+
+a %>% ggplot(aes(date, Wchange1, color=item_name)) + geom_line() + theme_classic()
+
+View(a %>% select(date, Wchange1a))
