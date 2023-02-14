@@ -860,3 +860,32 @@ cpi %>% filter(date > "2021-12-01", item_name == "All items less food and energy
   scale_x_date(date_labels = "%b\n%Y", breaks = MI_dates_three)
 
 ggsave("graphics/g3_goods_just.png", dpi="retina", width = 12, height=6.75, units = "in")
+
+
+#####
+item_basket_core_services <- c("Services less energy services",
+                               "Shelter",
+                               "Medical care services",
+                               "Transportation services",
+                               "Recreation services",
+                               "Education and communication services",
+                               "Other personal services")
+
+item_basket_core_goods <- c("Commodities less food and energy commodities",
+                            "Household furnishings and supplies",
+                            "Apparel",
+                            "Transportation commodities less motor fuel",
+                            "Medical care commodities",
+                            "Recreation commodities",
+                            "Education and communication commodities",
+                            "Alcoholic beverages",
+                            "Other goods")
+
+
+
+cpi %>% filter(item_name %in% item_basket_core_goods) %>%
+  group_by(item_name) %>%
+  mutate(trend = value[date=="2020-01-01"]/value[date=="2018-01-01"], trend = trend^(0.5)-1) %>%
+  filter(year(date) > 2016) %>%
+  ggplot(aes(date,Pchange1a)) + geom_line() + theme_classic() + facet_wrap(~item_name, scales = "free_y") +
+  geom_line(aes(date,trend),color="red")

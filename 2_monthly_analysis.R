@@ -73,13 +73,13 @@ title_longer_graphic <- "This is 3 and 6 month value"
 title_energy_food <- "Food Energy Graphic"
 
 #CHANGE THESE
-title0 <- "The Soft Landing: Core Inflation Is Returning to Trend"
+title0 <- "Core Inflation Stays in a New, Lower, Range"
 title1 <- "Core inflation drops for two months in a row, the first time since 2021"
 title2 <- "Core services outside housing flat again for two months in a row"
-title3 <- "All Positive News: Goods Deflating, Housing Leveled, Services Slowing"
+title3 <- "Housing Leveled, Services Slowing, But Goods Back on the Rise"
 title4 <- "Goods continue into deflation, with autos leading the way"
 title5 <- "3-month inflation finally breaks lower"
-title_longer_graphic <- "Inflation is Returning to Prepandemic Levels"
+title_longer_graphic <- "Inflation is Moving Sideways Recently"
 title_energy_food <- "Food Inflation is Slowing While Energy Falls"
 
 #### QUICK CHECK ###
@@ -125,11 +125,11 @@ cpi %>% filter(date > "2017-12-01", item_name == "All items less food and energy
        x = NULL,
        title = title0,
        subtitle = "Monthly percent increase in core goods and services, annualized. Dotted line is 2018-2019 value.",
-       caption ="BLS, CPI, 2022 weights, seasonally adjusted. Author's calculation. Mike Konczal, Roosevelt Institute") +
+       caption ="BLS, CPI, 2022 weights prior to 2023, seasonally adjusted. Author's calculation. Mike Konczal, Roosevelt Institute") +
   theme(panel.grid.major.y = element_line(size=0.5)) +
   theme(plot.title.position = "plot") +
   scale_y_continuous(labels = percent) +
-  geom_text(aes(x=date, y=Pchange1a, label=num_label2), nudge_y = 0.003, size=3.5, color="#E2E47E") +
+  geom_text(aes(x=date, y=Pchange1a, label=num_label2), nudge_y = 0.003, size=3, color="#E2E47E") +
   scale_x_date(date_labels = "%b\n%Y", breaks = MI_dates_three)
 
 ggsave("graphics/g1_core_newer.png", dpi="retina", width = 12, height=6.75, units = "in")
@@ -163,7 +163,7 @@ MI_Graphic2a %>% ggplot(aes(x = date, y = Wchange1a, fill = item_name)) +
        x = NULL,
        title = title1,
        subtitle ="",
-       caption ="BLS, CPI, 2022 weights, seasonally adjusted. Author's calculation. Mike Konczal, Roosevelt Institute") +
+       caption ="BLS, CPI, 2022 weights prior to 2023, seasonally adjusted. Author's calculation. Mike Konczal, Roosevelt Institute") +
   scale_fill_brewer(palette="Paired") +
   scale_y_continuous(labels = percent) +
   scale_x_date(date_labels = "%b\n%Y", breaks=MI_dates) +
@@ -188,7 +188,7 @@ cpi %>% filter(item_name %in% c("Food", "Energy")) %>%
        x = NULL,
        title = title_energy_food,
        subtitle = "Monthly Contribution to Inflation, Annualized.",
-       caption ="BLS, CPI, 2022 weights, seasonally adjusted. Author's calculation. Mike Konczal, Roosevelt Institute") +
+       caption ="BLS, CPI, 2022 weights prior to 2023, seasonally adjusted. Author's calculation. Mike Konczal, Roosevelt Institute") +
   scale_fill_brewer(palette="RdYlGn") +
   scale_y_continuous(labels = percent) +
   scale_x_date(date_labels = "%b\n%Y", breaks=food_energy_dates) +
@@ -216,7 +216,7 @@ cpi %>% filter(date > "2020-12-01", item_name %in% c("Services less energy servi
        x = NULL,
        title = title2,
        subtitle = "Monthly core services contribution to inflation, annualized.",
-       caption ="BLS, CPI, 2022 weights, seasonally adjusted. Author's calculation. Mike Konczal, Roosevelt Institute") +
+       caption ="BLS, CPI, 2022 weights prior to 2023, seasonally adjusted. Author's calculation. Mike Konczal, Roosevelt Institute") +
   theme_lass +
   geom_text(size = 4, position = position_stack(vjust = 0.5), color="black") +
   scale_fill_brewer(palette="RdPu") +
@@ -255,7 +255,7 @@ cpi %>% filter(date > "2017-12-01", item_name %in% c("Services less energy servi
        x = NULL,
        title = title3,
        subtitle = "Monthly contribution to inflation, annualized.",
-       caption ="BLS, CPI, 2022 weights, seasonally adjusted. Author's calculation. Mike Konczal, Roosevelt Institute") +
+       caption ="BLS, CPI, 2022 weights prior to 2023, seasonally adjusted. Author's calculation. Mike Konczal, Roosevelt Institute") +
   theme_lass +
   scale_fill_brewer(palette="RdPu", name = "item_name") +
   scale_y_continuous(labels = percent) +
@@ -283,7 +283,7 @@ cpi %>% filter(date > "2020-12-01", item_name %in% c("Services less energy servi
        x = NULL,
        title = "Services Inflation Down Across Categories",
        subtitle = "Monthly core services contribution to Inflation, Annualized.",
-       caption ="BLS, CPI, 2022 weights, seasonally adjusted. Author's calculation. Mike Konczal, Roosevelt Institute") +
+       caption ="BLS, CPI, 2022 weights prior to 2023, seasonally adjusted. Author's calculation. Mike Konczal, Roosevelt Institute") +
   theme_lass +
   geom_text(size = 4, position = position_stack(vjust = 0.5), color="black") +
   scale_fill_brewer(palette="RdPu") +
@@ -312,7 +312,7 @@ cpi %>% filter(date > "2020-12-01", item_name %in% c("Commodities less food and 
        x = NULL,
        title = title4,
        subtitle = "Monthly core goods contribution to inflation, annualized.",
-       caption ="Autos is New and Used Cars and Motor Parts. BLS, CPI, 2022 weights, seasonally adjusted. Author's calculation. Mike Konczal, Roosevelt Institute") +
+       caption ="Autos is New and Used Cars and Motor Parts. BLS, CPI, 2022 weights prior to 2023, seasonally adjusted. Author's calculation. Mike Konczal, Roosevelt Institute") +
   theme_lass +
   geom_text(size = 4, position = position_stack(vjust = 0.5), color="black") +
   scale_fill_brewer(palette="Greens") +
@@ -349,7 +349,7 @@ cpi_data %>% filter(item_name %in% c("Health insurance")) %>%
        x = NULL,
        title = "Health Insurance Goes Sharply Negative, Likely to Continue",
        subtitle = "Monthly contribution to inflation, annualized. Values tend to reset Sep/Oct.",
-       caption ="BLS, CPI, 2022 Weights, Seasonally Unadjusted. Author's Calculation. Mike Konczal, Roosevelt Institute") +
+       caption ="BLS, CPI, 2022 weights prior to 2023, Seasonally Unadjusted. Author's Calculation. Mike Konczal, Roosevelt Institute") +
   theme_lass +
   scale_fill_brewer(palette="Paired") +
   scale_y_continuous(labels = percent) +
@@ -509,13 +509,13 @@ pre_supercore <- cpi %>% filter(item_name == "Services less rent of shelter" | i
 supercore %>% filter(date > "2014-12-01") %>%
   left_join(pre_supercore, by=c("type")) %>%
   mutate(type = str_replace_all(type, "Services less rent of shelter", "Non-housing services")) %>%
-  mutate(type = str_replace_all(type, "All items less food, shelter, energy, and used cars and trucks", "All items less food, shelter, energy, and used autos")) %>%
+  mutate(type = str_replace_all(type, "All items less food, shelter, energy, and used cars and trucks", "Supercore: All items less food, shelter, energy, and used autos")) %>%
   ggplot(aes(date, change, color=time_length, label=label_percent(accuracy=0.1)(last_value))) + geom_line(size=1.2) + facet_wrap(~type) +
-  geom_line(aes(date,pre_values), linetype="dashed", color="#2D779C") +
+  geom_line(aes(date,pre_values), linetype="dashed", color="#FFD3B5") +
   labs(x="", y="",
-       title=title_longer_graphic,
-       subtitle = "All items less food, shelter, energy, and used cars and trucks, monthly percentage change, annualized.",
-       caption = "Supercore: All items less food and energy, monthly percent change, BLS, Author's calculations. Mike Konczal, Roosevelt Institute.") +
+       title="Even Supercore Inflations Are Moving Sideways Right Now",
+       subtitle = "Monthly percent change, annualized.",
+       caption = "BLS, CPI, 2022 weights prior to 2023, seasonally adjusted. Author's calculations. Mike Konczal, Roosevelt Institute.") +
   theme_lass +
   scale_fill_brewer(palette="Paired") +
   theme(panel.grid.major.y = element_line(size=0.5)) +
@@ -523,8 +523,8 @@ supercore %>% filter(date > "2014-12-01") %>%
   scale_y_continuous(labels = percent) +
   scale_x_date(date_labels = "%b\n%Y", breaks=MI_dates) +
   theme(legend.position = c(0.90,0.15), legend.text = element_text(size=15)) +
-  scale_color_manual(values=c("#2D779C", "#A4CCCC")) +
-  geom_text_repel(show.legend=FALSE)
+  scale_color_manual(values=c("#FFD3B5", "#F67280")) +
+  geom_text(show.legend=FALSE, nudge_x = 155)
 
 ggsave("graphics/three_six_supercores.png", dpi="retina", width = 12, height=6.75, units = "in")
 
@@ -579,9 +579,9 @@ cpi %>% filter(date >= "2019-06-01", item_name %in% c("Commodities less food and
   geom_bar(stat = 'identity', size=0) +
   labs(y = NULL,
        x = NULL,
-       title = "Recent Deflation in Goods is Driven by Used Cars",
+       title = "Recent Deflation in Used Cars Couldn't Offset Overall Goods Inflation",
        subtitle = "Monthly contribution to inflation, annualized.",
-       caption ="BLS, CPI, 2022 weights, seasonally adjusted. Author's calculation. Mike Konczal, Roosevelt Institute") +
+       caption ="BLS, CPI, 2022 weights prior to 2023, seasonally adjusted. Author's calculation. Mike Konczal, Roosevelt Institute") +
   theme_lass +
   geom_text(size = 2, position = position_stack(vjust = 0.5), color="black") +
   scale_fill_brewer(palette="Greens") +
@@ -612,7 +612,7 @@ cpi %>% filter(item_name == "Food at home", date == max(date)) %>% summarize( n 
 #food_dates <- cpi %>% filter(item_name %in% food_index) %>% filter(date == max(date) | date == max(date) %m-% months(7) | date == max(date) %m-% months(4)) %>%
 food_dates <- cpi %>% filter(item_name %in% food_index) %>% filter(date == max(date) | date == "2022-08-01" | date == "2022-04-01") %>%
   mutate(date = paste(as.character(month(date, label = TRUE, abbr = FALSE)), ", ", as.character(year(date)), sep = "")) %>%
-  mutate(date = factor(date,levels=c("December, 2022","August, 2022","April, 2022")), name = reorder_within(item_name, Pchange3, date))
+  mutate(date = factor(date,levels=c("January, 2023","August, 2022","April, 2022")), name = reorder_within(item_name, Pchange3, date))
 
 ggplot(food_dates, aes(name, Pchange3, fill = date)) +
   geom_col(show.legend = FALSE, size=0) +
