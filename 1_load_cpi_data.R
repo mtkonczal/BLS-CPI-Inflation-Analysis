@@ -5,7 +5,6 @@
 # Mike Konczal
 # Last updated 3/12/22
 
-setwd("/Users/mkonczal/Documents/GitHub/BLS-CPI-Inflation-Analysis/")
 library(janitor)
 library(tidyverse)
 
@@ -34,8 +33,13 @@ cpi_data <- inner_join(cpi_data, series, by = c("series_id"))
 
 # Add weight data from seperate csv file, as it's not on the download website.
 # NOTE: 2021 weights are added to all years. Future TK to do year by year weighting.
-cpi_weights <- read_csv(file = "weights/inflation_weights.csv")
+cpi_weights <- read_csv(file = "weights/inflation_weights.csv") %>% select(-year_weight)
+
 cpi_data <- inner_join(cpi_data, cpi_weights, by = c("item_name"))
+cpi_weights <- read_csv(file = "weights/inflation_weights_2023.csv") %>% select(item_name, weight_2023 = weight, year = year_weight)
+cpi_data <- left_join(cpi_data, cpi_weights, by = c("item_name", "year"))
+
+cpi_data$weight <- ifelse(!is.na(cpi_data$weight_2023),cpi_data$weight_2023,cpi_data$weight)
 rm(series, items, cpi_weights)
 
 #save(cpi_data, file = "data/cpi_data.RData")

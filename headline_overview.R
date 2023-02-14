@@ -13,7 +13,7 @@ source(file = "1_load_cpi_data.R")
 
 item_basket_topline <- c("All items", "All items less food and energy", "Energy", "Food", "Commodities less food and energy commodities",
                          "Services less energy services", "Airline fares",
-                         "Shelter", "Transportation commodities less motor fuel", "New and used motor vehicles", "Used cars and trucks")
+                         "Shelter", "Transportation commodities less motor fuel", "New vehicles", "Used cars and trucks")
 
 item_basket_watch_categories <- c("All items", "New and used motor vehicles", "Shelter", "Other services",
                                   "Medical care services", "Food", "Energy", "Commodities less food and energy commodities")

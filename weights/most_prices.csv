@@ -1,0 +1,383 @@
+﻿item_name,weight,lowest,category
+All items,100,,Meta
+Food,13.744,,Food
+Food at home,8.52,,Food
+Cereals and bakery products,1.107,,Food
+Cereals and cereal products,0.356,,Food
+Flour and prepared flour mixes,0.06,1,Food
+Breakfast cereal,0.149,1,Food
+"Rice, pasta, cornmeal",0.147,1,Food
+Rice,,,Food
+Bakery products,0.752,,Food
+Bread,0.211,1,Food
+White bread,,,Food
+Bread other than white,,,Food
+"Fresh biscuits, rolls, muffins",0.113,1,Food
+"Cakes, cupcakes, and cookies",0.184,1,Food
+Cookies,,,Food
+Fresh cakes and cupcakes,,,Food
+Other bakery products,0.244,1,Food
+"Fresh sweetrolls, coffeecakes, doughnuts",,,Food
+"Crackers, bread, and cracker products",,,Food
+"Frozen and refrigerated bakery products, pies, tarts, turnovers",,,Food
+"Meats, poultry, fish, and eggs",1.907,,Food
+"Meats, poultry, and fish",1.764,,Food
+Meats,1.111,,Food
+Beef and veal,0.501,,Food
+Uncooked ground beef,0.184,1,Food
+Uncooked beef roasts,0.074,1,Food
+Uncooked beef steaks,0.194,1,Food
+Uncooked other beef and veal,0.049,1,Food
+Pork,0.36,,Food
+"Bacon, breakfast sausage, and related products",0.161,1,Food
+Bacon and related products,,,Food
+Breakfast sausage and related products,,,Food
+Ham,0.067,1,Food
+"Ham, excluding canned",,,Food
+Pork chops,0.051,1,Food
+"Other pork including roasts, steaks, and ribs",0.082,1,Food
+Other meats,0.25,1,Food
+Frankfurters,,,Food
+Lunchmeats,,,Food
+Poultry,0.366,,Food
+Chicken,0.296,1,Food
+Fresh whole chicken,,,Food
+Fresh and frozen chicken parts,,,Food
+Other uncooked poultry including turkey,0.07,1,Food
+Fish and seafood,0.286,,Food
+Fresh fish and seafood,0.146,1,Food
+Processed fish and seafood,0.14,1,Food
+Shelf stable fish and seafood,,,Food
+Frozen fish and seafood,,,Food
+Eggs,0.143,1,Food
+Dairy and related products,0.805,,Food
+Milk,0.202,1,Food
+Fresh whole milk,,,Food
+Fresh milk other than whole,,,Food
+Cheese and related products,0.261,1,Food
+Ice cream and related products,0.12,1,Food
+Other dairy and related products,0.221,1,Food
+Fruits and vegetables,1.424,,Food
+Fresh fruits and vegetables,1.076,,Food
+Fresh fruits,0.569,,Food
+Apples,0.075,1,Food
+Bananas,0.077,1,Food
+Citrus fruits,0.163,1,Food
+"Oranges, including tangerines",,,Food
+Other fresh fruits,0.254,1,Food
+Fresh vegetables,0.507,,Food
+Potatoes,0.085,1,Food
+Lettuce,0.064,1,Food
+Tomatoes,0.078,1,Food
+Other fresh vegetables,0.281,1,Food
+Processed fruits and vegetables,0.348,,Food
+Canned fruits and vegetables,0.181,1,Food
+Canned fruits,,,Food
+Canned vegetables,,,Food
+Frozen fruits and vegetables,0.102,1,Food
+Frozen vegetables,,,Food
+Other processed fruits and vegetables including dried,0.065,1,Food
+"Dried beans, peas, and lentils",,,Food
+Nonalcoholic beverages and beverage materials,0.983,,Food
+Juices and nonalcoholic drinks,0.695,,Food
+Carbonated drinks,0.294,1,Food
+Frozen noncarbonated juices and drinks,0.007,1,Food
+Nonfrozen noncarbonated juices and drinks,0.394,1,Food
+Beverage materials including coffee and tea,0.287,,Food
+Coffee,0.187,1,Food
+Roasted coffee,,,Food
+Instant coffee,,,Food
+Other beverage materials including tea,0.101,1,Food
+Other food at home,2.294,,Food
+Sugar and sweets,0.291,,Food
+Sugar and sugar substitutes,0.043,1,Food
+Candy and chewing gum,0.184,1,Food
+Other sweets,0.064,1,Food
+Fats and oils,0.265,,Food
+Butter and margarine,0.085,1,Food
+Butter,,,Food
+Margarine,,,Food
+Salad dressing,0.061,1,Food
+Other fats and oils including peanut butter,0.119,1,Food
+Peanut butter,,,Food
+Other foods,1.738,,Food
+Soups,0.104,1,Food
+Frozen and freeze dried prepared foods,0.282,1,Food
+Snacks,0.376,1,Food
+"Spices, seasonings, condiments, sauces",0.332,1,Food
+Salt and other seasonings and spices,,,Food
+"Olives, pickles, relishes",,,Food
+Sauces and gravies,,,Food
+Other condiments,,,Food
+Baby food,0.045,1,Food
+Other miscellaneous foods,0.599,1,Food
+Prepared salads,,,Food
+Food away from home,5.225,,Food
+Full service meals and snacks,2.425,1,Food
+Limited service meals and snacks,2.515,1,Food
+Food at employee sites and schools,0.076,1,Food
+Food at elementary and secondary schools,,,Food
+Food from vending machines and mobile vendors,0.038,1,Food
+Other food away from home,0.171,1,Food
+Energy,8.059,,Energy
+Energy commodities,4.448,,Energy
+Fuel oil and other fuels,0.254,,Energy
+Fuel oil,0.18,1,Energy
+"Propane, kerosene, and firewood",0.073,1,Energy
+Motor fuel,4.195,,Energy
+Gasoline (all types),4.096,1,Energy
+"Gasoline, unleaded regular",,,Energy
+"Gasoline, unleaded midgrade",,,Energy
+"Gasoline, unleaded premium",,,Energy
+Other motor fuels,0.098,1,Energy
+Energy services,3.611,,Energy
+Electricity,2.64,1,Energy
+Utility (piped) gas service,0.971,1,Energy
+All items less food and energy,78.197,,Meta
+Commodities less food and energy commodities,21.026,,Goods
+Household furnishings and supplies,3.953,,Goods
+Window and floor coverings and other linens,0.297,,Goods
+Floor coverings,0.069,1,Goods
+Window coverings,0.057,1,Goods
+Other linens,0.172,1,Goods
+Furniture and bedding,0.959,,Goods
+Bedroom furniture,0.306,1,Goods
+"Living room, kitchen, and dining room furniture",0.472,1,Goods
+Other furniture,0.171,1,Goods
+Appliances,0.241,,Goods
+Major appliances,0.077,1,Goods
+Laundry equipment,,,Goods
+Other appliances,0.161,1,Goods
+Other household equipment and furnishings,0.556,,Goods
+"Clocks, lamps, and decorator items",0.335,1,Goods
+Indoor plants and flowers,0.099,1,Goods
+Dishes and flatware,0.05,1,Goods
+Nonelectric cookware and tableware,0.072,1,Goods
+"Tools, hardware, outdoor equipment and supplies",0.947,,Goods
+"Tools, hardware and supplies",0.252,1,Goods
+Outdoor equipment and supplies,0.466,1,Goods
+Housekeeping supplies,0.954,,Goods
+Household cleaning products,0.344,1,Goods
+Household paper products,0.22,1,Goods
+Miscellaneous household products,0.389,1,Goods
+Apparel,2.458,,Goods
+Men's and boys' apparel,0.611,,Goods
+Men's apparel,0.471,,Goods
+"Men's suits, sport coats, and outerwear",0.076,1,Goods
+"Men's underwear, nightwear, swimwear, and accessories",0.158,1,Goods
+Men's shirts and sweaters,0.115,1,Goods
+Men's pants and shorts,0.116,1,Goods
+Boys' apparel,0.14,1,Goods
+Women's and girls' apparel,0.987,,Goods
+Women's apparel,0.828,,Goods
+Women's outerwear,0.06,1,Goods
+Women's dresses,0.089,1,Goods
+Women's suits and separates,0.4,1,Goods
+"Women's underwear, nightwear, swimwear, and accessories",0.27,1,Goods
+Girls' apparel,0.16,1,Goods
+Footwear,0.591,,Goods
+Men's footwear,0.198,1,Goods
+Boys' and girls' footwear,0.115,1,Goods
+Women's footwear,0.278,1,Goods
+Infants' and toddlers' apparel,0.112,1,Goods
+Jewelry and watches,0.157,,Goods
+Watches,0.029,1,Goods
+Jewelry,0.128,1,Goods
+Transportation commodities less motor fuel,8.303,,Goods
+New vehicles,4.06,1,Goods
+New cars,,,Goods
+New trucks,,,Goods
+Used cars and trucks,3.726,1,Goods
+Motor vehicle parts and equipment,,,Goods
+Tires,0.271,1,Goods
+Vehicle accessories other than tires,0.162,1,Goods
+Vehicle parts and equipment other than tires,,,Goods
+"Motor oil, coolant, and fluids",,,Goods
+Medical care commodities,1.468,,Goods
+Medicinal drugs,1.367,,Goods
+Prescription drugs,0.995,1,Goods
+Nonprescription drugs,0.372,1,Goods
+Medical equipment and supplies,0.101,1,Goods
+Recreation commodities,1.882,,Goods
+Video and audio products,0.276,,Goods
+Televisions,0.122,1,Goods
+Other video equipment,0.024,1,Goods
+Audio equipment,0.073,1,Goods
+Recorded music and music subscriptions,0.051,1,Goods
+Pets and pet products,0.572,1,Goods
+Pet food,,,Goods
+"Purchase of pets, pet supplies, accessories",,,Goods
+Sporting goods,0.548,,Goods
+Sports vehicles including bicycles,0.313,1,Goods
+Sports equipment,0.224,1,Goods
+Photographic equipment and supplies,0.021,1,Goods
+Photographic equipment,,,Goods
+Recreational reading materials,0.096,,Goods
+Newspapers and magazines,0.057,1,Goods
+Recreational books,0.039,1,Goods
+Other recreational goods,0.37,,Goods
+Toys,0.286,1,Goods
+"Toys, games, hobbies and playground equipment",,,Goods
+"Sewing machines, fabric and supplies",0.027,1,Goods
+Music instruments and accessories,0.041,1,Goods
+Education and communication commodities,0.737,,Goods
+Educational books and supplies,0.086,1,Goods
+College textbooks,,,Goods
+Information technology commodities,0.651,,Goods
+"Computers, peripherals, and smart home assistants",0.334,1,Goods
+Computer software and accessories,0.019,1,Goods
+"Telephone hardware, calculators, and other consumer information items",0.297,1,Goods
+Smartphones,,,Goods
+Alcoholic beverages,0.871,,Goods
+Alcoholic beverages at home,0.578,,Goods
+"Beer, ale, and other malt beverages at home",0.221,1,Goods
+Distilled spirits at home,0.104,1,Goods
+Whiskey at home,,,Goods
+"Distilled spirits, excluding whiskey, at home",,,Goods
+Wine at home,0.253,1,Goods
+Alcoholic beverages away from home,0.293,1,Goods
+"Beer, ale, and other malt beverages away from home",,,Goods
+Wine away from home,,,Goods
+Distilled spirits away from home,,,Goods
+Other goods,1.354,,Goods
+Tobacco and smoking products,0.516,,Goods
+Cigarettes,0.447,1,Goods
+Tobacco products other than cigarettes,0.065,1,Goods
+Personal care products,0.651,,Goods
+"Hair, dental, shaving, and miscellaneous personal care products",0.336,1,Goods
+"Cosmetics, perfume, bath, nail preparations and implements",0.305,1,Goods
+Miscellaneous personal goods,0.187,1,Goods
+"Stationery, stationery supplies, gift wrap",,,Goods
+Services less energy services,57.171,,Services
+Shelter,32.706,,Services
+Rent of shelter,32.346,,Services
+Rent of primary residence,7.378,1,Services
+Lodging away from home,0.925,,Services
+"Housing at school, excluding board",0.124,1,Services
+Other lodging away from home including hotels and motels,0.8,1,Services
+Owners' equivalent rent of residences,24.043,,Services
+Owners' equivalent rent of primary residence,22.795,1,Services
+Tenants' and household insurance,0.36,1,Services
+Water and sewer and trash collection services,1.085,,Services
+Water and sewerage maintenance,0.779,1,Services
+Garbage and trash collection,0.306,1,Services
+Household operations,,,Services
+Domestic services,0.242,1,Services
+Gardening and lawncare services,,,Services
+"Moving, storage, freight expense",0.101,,Services
+Repair of household items,,,Services
+Medical care services,6.832,,Services
+Professional services,3.453,,Services
+Physicians' services,1.805,1,Services
+Dental services,0.91,1,Services
+Eyeglasses and eye care,0.361,1,Services
+Services by other medical professionals,0.377,1,Services
+Hospital and related services,2.501,,Services
+Hospital services,2.134,1,Services
+Inpatient hospital services,,,Services
+Outpatient hospital services,,,Services
+Nursing homes and adult day services,0.205,1,Services
+Care of invalids and elderly at home,0.162,1,Services
+Health insurance,0.878,1,Services
+Transportation services,5.994,,Services
+Leased cars and trucks,0.865,1,Services
+Car and truck rental,0.141,1,Services
+Motor vehicle maintenance and repair,1.072,,Services
+Motor vehicle body work,0.053,1,Services
+Motor vehicle maintenance and servicing,0.583,1,Services
+Motor vehicle repair,0.391,1,Services
+Motor vehicle insurance,2.501,1,Services
+Motor vehicle fees,0.497,,Services
+State motor vehicle registration and license fees,0.288,1,Services
+Parking and other fees,0.194,1,Services
+Parking fees and tolls,,,Services
+Public transportation,0.918,,Services
+Airline fares,0.633,1,Services
+Other intercity transportation,0.092,1,Services
+Ship fare,,,Services
+Intracity transportation,0.19,1,Services
+Intracity mass transit,,,Services
+Recreation services,3.116,,Services
+Video and audio services,1.13,,Services
+Cable and satellite television service,1.036,1,Services
+"Video discs and other media, including rental of video",0.095,1,Services
+Video discs and other media,,,Services
+Rental of video discs and other media,,,Services
+Pet services including veterinary,0.521,1,Services
+Pet services,,,Services
+Veterinarian services,,,Services
+Photographers and photo processing,0.03,1,Services
+Other recreation services,1.434,,Services
+"Club membership for shopping clubs, fraternal, or other organizations, or participant sports fees",0.633,1,Services
+Admissions,0.442,1,Services
+"Admission to movies, theaters, and concerts",,,Services
+Admission to sporting events,,,Services
+Fees for lessons or instructions,0.172,1,Services
+Education and communication services,5.262,,Services
+"Tuition, other school fees, and childcare",2.496,,Services
+College tuition and fees,1.426,1,Services
+Elementary and high school tuition and fees,0.315,1,Services
+Day care and preschool,0.628,1,Services
+Technical and business school tuition and fees,0.038,1,Services
+Postage and delivery services,0.084,,Services
+Postage,0.075,1,Services
+Delivery services,0.009,1,Services
+Telephone services,1.768,,Services
+Wireless telephone services,1.465,1,Services
+Residential telephone services,0.303,1,Services
+Internet services and electronic information providers,0.905,1,Services
+Other personal services,1.353,,Services
+Personal care services,0.534,,Services
+Haircuts and other personal care services,0.534,1,Services
+Miscellaneous personal services,0.819,,Services
+Legal services,0.231,1,Services
+Funeral expenses,0.145,1,Services
+Laundry and dry cleaning services,0.152,1,Services
+Apparel services other than laundry and dry cleaning,0.018,1,Services
+Financial services,0.191,1,Services
+Checking account and other bank services,,,Services
+Tax return preparation and other accounting fees,,,Services
+All items less food,86.256,,Meta
+All items less shelter,67.294,,Meta
+All items less food and shelter,53.55,,Meta
+"All items less food, shelter, and energy",45.491,,Meta
+"All items less food, shelter, energy, and used cars and trucks",41.765,,Meta
+All items less medical care,91.7,,Meta
+All items less energy,91.941,,Meta
+Commodities,39.219,,Meta
+"Commodities less food, energy, and used cars and trucks",17.3,,Meta
+Commodities less food,25.474,,Meta
+Commodities less food and beverages,24.603,,Meta
+Services,60.781,,Meta
+Services less rent of shelter,28.435,,Meta
+Services less medical care services,53.949,,Meta
+Durables,12.425,,Meta
+Nondurables,26.794,,Meta
+Nondurables less food,13.05,,Meta
+Nondurables less food and beverages,12.179,,Meta
+"Nondurables less food, beverages, and apparel",9.721,,Meta
+Nondurables less food and apparel,10.592,,Meta
+Housing,42.432,,Meta
+Education and communication,5.999,,Meta
+Education,2.582,,Meta
+Communication,3.417,,Meta
+Information and information processing,3.333,,Meta
+"Information technology, hardware and services",1.565,,Meta
+Recreation,4.998,,Meta
+Video and audio,1.406,,Meta
+"Pets, pet products and services",1.092,,Meta
+Photography,0.051,,Meta
+Food and beverages,14.615,,Meta
+Domestically produced farm food,7.173,,Meta
+Other services,9.731,,Meta
+Apparel less footwear,1.867,,Meta
+Fuels and utilities,4.949,,Meta
+Household energy,3.864,,Meta
+Medical care,8.3,,Meta
+Transportation,18.492,,Meta
+Private transportation,17.574,,Meta
+New and used motor vehicles,8.877,,Meta
+Utilities and public transportation,8.417,,Meta
+Household furnishings and operations,4.777,,Meta
+Other goods and services,2.707,,Meta
+Personal care,2.191,,Meta

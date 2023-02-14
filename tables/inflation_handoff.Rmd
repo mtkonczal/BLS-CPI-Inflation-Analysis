@@ -36,11 +36,11 @@ The **fourth** is that shelter, counted as a service, didn't increase too much. 
 \newpage
 ```{r goods, echo=FALSE}
 # This source call gives us all our data for the report
-source("cpi_handoff_analysis.R")
+source("tables.R")
 
-handoff_chart %>%
+inflation_table %>%
   as_huxtable()  %>%
-  set_caption("How Did We Do? Contribution to Inflation, Annualized") %>%
-  set_number_format(row=c(2:5), col=everywhere, value = fmt_percent(2)) %>%
-  set_bold(1, 1:5, value = TRUE)
+  set_caption("Contribution to CPI Inflation, Annualized") %>%
+  set_number_format(row=c(2:4), col=everywhere, value = fmt_percent(2)) %>%
+  set_bold(1, 1:4, value = TRUE)
 ```

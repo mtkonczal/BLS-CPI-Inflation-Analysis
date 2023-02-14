@@ -13,6 +13,7 @@ library(huxtable)
 library(scales)
 library(tidytext)
 library(lubridate)
+library(x12)
 ##### SET UP SOME THINGS #####
 source(file = "1_load_cpi_data.R")
 
@@ -27,6 +28,7 @@ cpi <- cpi_data %>%
   group_by(item_name) %>%
   arrange(date) %>%
   mutate(Pchange1 = (value/lag(value)-1)) %>%
+  mutate(Pchange1a = (1 + Pchange1)^12 - 1) %>%
   mutate(Wchange1 = (Pchange1*weight)/100) %>%
   mutate(Wchange1a = (1 + Wchange1)^12 - 1) %>%
   mutate(AddedW3 = Wchange1 + lag(Wchange1,1) + lag(Wchange1,2)) %>%
@@ -34,6 +36,7 @@ cpi <- cpi_data %>%
   mutate(AddedW12 = AddedW12 + lag(Wchange1,6) + lag(Wchange1,7) + lag(Wchange1,8)) %>%
   mutate(AddedW12 = AddedW12 + lag(Wchange1,9) + lag(Wchange1,10) + lag(Wchange1,11)) %>%
   mutate(Pchange3 = (value/lag(value, 3)-1)) %>%
+  mutate(Pchange3a = (1 + Pchange3)^12 - 1) %>%
   mutate(Wchange3 = (Pchange3*weight)/100) %>%
   mutate(Wchange3a = (1 + Wchange3)^4 - 1) %>%
   mutate(Pchange6 = (value/lag(value, 6)-1)) %>%
@@ -43,6 +46,30 @@ cpi <- cpi_data %>%
   mutate(Wchange12 = (Pchange12*weight)/100) %>%
   mutate(Wchange1 = Wchange1*100) %>%
   ungroup()
+
+
+##### SET UP SOME THINGS #####
+theme_lass <-   theme_modern_rc(ticks = TRUE) + theme(legend.position = "none", legend.title = element_blank(),
+                                                      panel.grid.major.y = element_line(size=0.5),
+                                                      panel.grid.minor.y = element_blank(),
+                                                      plot.title.position = "plot",
+                                                      axis.title.x = element_blank(),
+                                                      axis.title.y = element_blank(),
+                                                      plot.title = element_text(size = 25, face="bold"),
+                                                      plot.subtitle = element_text(size=15, color="white"),
+                                                      plot.caption = element_text(size=10, face="italic"),
+                                                      legend.text = element_text(size=12),
+                                                      axis.text.y = element_text(size=12, face="bold"),
+                                                      axis.text.x = element_text(size=12, face="bold"),
+                                                      strip.text = element_text(face = "bold", color="white", hjust = 0.5, size = 10),
+                                                      panel.grid.major.x = element_blank(),
+                                                      panel.grid.minor.x = element_blank(),
+                                                      strip.background = element_blank()) +
+  theme(text = element_text(family = "Larsseit"),
+        plot.title = element_text(family = "Larsseit"),
+        plot.subtitle = element_text(family = "Larsseit"),
+        plot.caption = element_text(family="Larsseit"),
+        strip.text = element_text(family="Larsseit"))
 
 
 item_used <- c("Used cars and trucks")
@@ -331,7 +358,7 @@ cpi %>% filter(item_name %in% food_index) %>% filter(date == "2021-09-01") %>%
 
 
 # Comparison point
-cpi %>% filter(item_name %in% food_index) %>% filter(date == "2021-09-01" | date == "2022-01-01" | date == max(date)) %>%
+cpi %>% filter(item_name %in% food_index) %>% filter(date == max(date) | date == max(date) %m-% months(7) | date == max(date) %m-% months(4)) %>%
   mutate(date = paste(as.character(month(date, label = TRUE, abbr = FALSE)), ", ", as.character(year(date)), sep = "")) %>%
   mutate(date = as.factor(date), name = reorder_within(item_name, Pchange3, date))  %>%
   ggplot(aes(name, Pchange3, fill = date)) +
@@ -341,7 +368,7 @@ cpi %>% filter(item_name %in% food_index) %>% filter(date == "2021-09-01" | date
   scale_x_reordered() +
   theme_classic() +
   theme(panel.grid.major.x = element_line(size=0.5)) +
-  scale_y_continuous(labels = scales::percent, breaks = seq(0, 0.15, .03)) +
+  scale_y_continuous(labels = scales::percent) +
   theme(plot.title.position = "plot") +
   labs(y = "Price Increase Over Previous Three Months",
        x = NULL,
@@ -591,3 +618,245 @@ a %>% ggplot(aes(date, Wchange1a)) + geom_bar(stat="identity") + theme_lass
 a %>% ggplot(aes(date, Wchange1, color=item_name)) + geom_line() + theme_classic()
 
 View(a %>% select(date, Wchange1a))
+
+
+#### "full service meals and snacks" ####
+
+MI_dates <- unique(MI_Graphic2a$date)
+MI_dates <- sort(MI_dates, decreasing = TRUE)
+MI_dates = MI_dates[seq(1, length(MI_dates), 3)]
+
+ggsave("graphics/g2_services_goods.png", dpi="retina", width = 12, height=6.75, units = "in")
+
+cpi %>% filter(item_name == "Full service meals and snacks", year > 2019) %>%
+  
+  ggplot(aes(date,Pchange1a)) + geom_line() + theme_lass
+
+
+##### MATTHEW KLEIN'S GO TO MEASURE
+cpi %>% filter(date > "2020-12-01", item_name == "Full service meals and snacks") %>%
+  mutate(num_label = round(100*Pchange1a, 1)) %>% mutate(num_label = ifelse(abs(num_label) < 0.16, NA, num_label)) %>%
+  ggplot(aes(x = date, y = Pchange1a, fill = item_name, label = num_label)) +
+  geom_bar(stat = 'identity', size=0) +
+  theme(legend.position = "bottom", legend.title = element_blank()) + 
+  labs(y = NULL,
+       x = NULL,
+       title = "Full service meals and snacks, monthly percent change, annualized",
+       subtitle="Note: After the BLS seasonal adjustment for 2022.",
+       caption ="BLS, CPI, 2022 weights, seasonally adjusted. Author's calculation. Mike Konczal, Roosevelt Institute") +
+  theme_lass +
+  geom_text(size = 4, position = position_stack(vjust = 0.5), color="black") +
+  scale_fill_brewer(palette="RdPu") +
+  scale_y_continuous(labels = percent) +
+  scale_x_date(date_labels = "%b %y") +
+  theme(legend.text = element_text(size=18),
+        axis.text.x = element_text(size=14), axis.text.y = element_text(size=19))
+
+ggsave("graphics/full_meals.png", dpi="retina", width = 12, height=6.75, units = "in")
+
+
+###### Let's go wide and deep with maximum prices #####
+
+lowest <- read_csv("weights/most_prices.csv") %>% filter(category != "Meta", lowest == 1)
+
+MI_dates <- cpi %>% filter(date > "2011-01-01")
+MI_dates <- unique(MI_dates$date)
+MI_dates <- sort(MI_dates, decreasing = TRUE)
+MI_dates_three = MI_dates[seq(1, length(MI_dates), 6)]
+
+cpi %>% filter(item_name %in% lowest$item_name, !is.na(Pchange1), date > "2014-01-01") %>%
+  group_by(date) %>% summarize(n = n()) %>% ungroup() %>% summarize(min = min(n), max = max(n))
+
+
+a <- cpi %>% filter(item_name %in% lowest$item_name, !is.na(Pchange1)) %>%
+  group_by(date) %>% summarize(n = n()) %>% ungroup()
+
+
+cpi %>% filter(item_name %in% lowest$item_name, !is.na(Pchange1), date >="2012-01-01") %>% mutate(p3 = (Pchange1a > 0.03)) %>%
+  group_by(date) %>%
+  summarize(total_3 = sum(p3)/n()) %>% ungroup() %>% ungroup() %>%
+  ggplot(aes(date, total_3)) + geom_line(size=1) + theme_lass + scale_fill_brewer(palette="Paired") +
+  labs(y = NULL,
+       x = NULL,
+       title = "Percent of Items With 3% Price Growth Has Decreased From High Levels",
+       subtitle = "Percent of CPI items having at least 3 percent monthly price increases, annualized.",
+       caption ="BLS, CPI, 2022 weights, only seasonally adjusted items included. Author's calculation. Mike Konczal, Roosevelt Institute") +
+  theme(panel.grid.major.y = element_line(size=0.5)) +
+  theme(plot.title.position = "plot") +
+  scale_y_continuous(labels = percent) +
+  scale_x_date(date_labels = "%b\n%Y")
+
+#ggsave("graphics/three_percent_growth.png", dpi="retina", width = 12, height=6.75, units = "in")
+
+dates_3_percent <- 
+  cpi %>% filter(item_name %in% lowest$item_name, !is.na(Pchange1), date > "2011-01-01") %>% mutate(p3 = (Pchange1a > 0.03)) %>%
+  group_by(date) %>%
+  summarize(total_3 = sum(p3)/n()) %>% ungroup() %>% ungroup()
+
+cpi %>% filter(item_name %in% lowest$item_name, !is.na(Pchange1), date >= "2020-01-01") %>%
+  group_by(item_name) %>% mutate(nvalue = value/value[date=="2020-01-01"]) %>% ungroup() %>%
+  ggplot(aes(date,nvalue,color=item_name)) + geom_line() + theme_classic() + theme(legend.position = "none")
+  
+cpi %>% filter(item_name %in% lowest$item_name, !is.na(Pchange1), date >= "2020-01-01") %>%
+  group_by(item_name) %>% mutate(nvalue = value/value[date=="2020-01-01"]) %>% ungroup() %>%
+  filter(date == max(date)) %>% select(item_name, nvalue) %>% arrange(desc(nvalue))
+
+###### USED AUTOS ######
+
+
+cpi %>% filter(date > "2018-12-01", item_name %in% c("All items less food and energy", "Used cars and trucks")) %>%
+  select(date, item_name, Wchange1a) %>%
+  pivot_wider(names_from = item_name, values_from = Wchange1a) %>%
+  mutate(`Rest of core goods and services` = `All items less food and energy` - `Used cars and trucks`) %>%
+  select(-`All items less food and energy`) %>%
+  rename(`Used autos` = `Used cars and trucks`) %>%
+  pivot_longer(c(`Used autos`, `Rest of core goods and services`), names_to = "item_name", values_to = "Wchange1a") %>%
+  mutate(item_name = factor(item_name, levels = c("Used autos", "Rest of core goods and services"))) %>%
+  mutate(num_label = round(100*Wchange1a, 1)) %>% mutate(num_label = ifelse(abs(num_label) < 0.16, NA, num_label)) %>%
+  
+  ggplot(aes(x = date, y = Wchange1a, fill = item_name, label = num_label)) +
+  geom_bar(stat = 'identity', size=0) +
+  labs(y = NULL,
+       x = NULL,
+       title = "title4",
+       subtitle = "Monthly core goods contribution to inflation, annualized.",
+       caption ="Autos is New and Used Cars and Motor Parts. BLS, CPI, 2022 weights, seasonally adjusted. Author's calculation. Mike Konczal, Roosevelt Institute") +
+  theme_lass +
+  geom_text(size = 4, position = position_stack(vjust = 0.5), color="black") +
+  scale_fill_brewer(palette="Greens") +
+  scale_y_continuous(labels = percent) +
+  scale_x_date(date_labels = "%b\n%Y") +
+  theme(legend.position = c(0.60,0.90), legend.title = element_blank(), legend.text = element_text(size=16),
+        axis.text.x = element_text(size=14), axis.text.y = element_text(size=19))
+
+
+ggsave("graphics/g3_goods_used_autos.png", dpi="retina", width = 12, height=6.75, units = "in")
+
+
+###### THAT INDEX ########
+
+
+cpi %>% filter(date > "2018-12-01", item_name %in% c("All items less food and energy", "Used cars and trucks", "Shelter")) %>%
+  select(date, item_name, Wchange1a) %>%
+  pivot_wider(names_from = item_name, values_from = Wchange1a) %>%
+  mutate(`Rest of core goods and services` = `All items less food and energy` - `Used cars and trucks` - `Shelter`) %>%
+  select(-`All items less food and energy`) %>%
+  rename(`Used autos` = `Used cars and trucks`) %>%
+  pivot_longer(c(`Used autos`, `Rest of core goods and services`,`Shelter`), names_to = "item_name", values_to = "Wchange1a") %>%
+  mutate(item_name = factor(item_name, levels = c("Used autos", "Shelter", "Rest of core goods and services"))) %>%
+  mutate(num_label = round(100*Wchange1a, 1)) %>% mutate(num_label = ifelse(abs(num_label) < 0.16, NA, num_label)) %>%
+  
+  ggplot(aes(x = date, y = Wchange1a, fill = item_name, label = num_label)) +
+  geom_bar(stat = 'identity', size=0) +
+  labs(y = NULL,
+       x = NULL,
+       title = "title4",
+       subtitle = "Monthly core goods contribution to inflation, annualized.",
+       caption ="Autos is New and Used Cars and Motor Parts. BLS, CPI, 2022 weights, seasonally adjusted. Author's calculation. Mike Konczal, Roosevelt Institute") +
+  theme_lass +
+  geom_text(size = 4, position = position_stack(vjust = 0.5), color="black") +
+  scale_fill_brewer(palette="Greens") +
+  scale_y_continuous(labels = percent) +
+  scale_x_date(date_labels = "%b\n%Y") +
+  theme(legend.position = c(0.60,0.90), legend.title = element_blank(), legend.text = element_text(size=16),
+        axis.text.x = element_text(size=14), axis.text.y = element_text(size=19))
+
+
+ggsave("graphics/g3_goods_used_autos.png", dpi="retina", width = 12, height=6.75, units = "in")
+
+
+
+###### Used Cars - Short and Long ########
+HI_dates <- cpi %>% filter(date >= "2019-06-01")
+HI_dates <- unique(HI_dates$date)
+HI_dates <- sort(HI_dates, decreasing = TRUE)
+HI_dates = HI_dates[seq(1, length(HI_dates), 6)]
+
+cpi %>% filter(date >= "2019-06-01", item_name %in% c("Commodities less food and energy commodities", "Used cars and trucks")) %>%
+  select(date, item_name, Wchange1a) %>%
+  pivot_wider(names_from = item_name, values_from = Wchange1a) %>%
+  mutate(`Rest of core goods` = `Commodities less food and energy commodities` - `Used cars and trucks`) %>%
+  select(-`Commodities less food and energy commodities`) %>%
+  rename(`Used autos` = `Used cars and trucks`) %>%
+  pivot_longer(c(`Used autos`, `Rest of core goods`,), names_to = "item_name", values_to = "Wchange1a") %>%
+  mutate(item_name = factor(item_name, levels = c("Used autos", "Rest of core goods"))) %>%
+  mutate(num_label = round(100*Wchange1a, 1)) %>% mutate(num_label = ifelse(abs(num_label) < 0.16, NA, num_label)) %>%
+  
+  ggplot(aes(x = date, y = Wchange1a, fill = item_name, label = num_label)) +
+  geom_bar(stat = 'identity', size=0) +
+  labs(y = NULL,
+       x = NULL,
+       title = "Recent Deflation in Goods is Driven by Used Cars",
+       subtitle = "Monthly contribution to inflation, annualized.",
+       caption ="BLS, CPI, 2022 weights, seasonally adjusted. Author's calculation. Mike Konczal, Roosevelt Institute") +
+  theme_lass +
+  geom_text(size = 2, position = position_stack(vjust = 0.5), color="black") +
+  scale_fill_brewer(palette="Greens") +
+  scale_y_continuous(labels = percent) +
+  scale_x_date(date_labels = "%b\n%Y", breaks=HI_dates) +
+  theme(legend.position = c(0.30,0.75), legend.title = element_blank(), legend.text = element_text(size=16),
+        axis.text.x = element_text(size=14), axis.text.y = element_text(size=19))
+
+
+ggsave("graphics/g3_goods_just_used_autos.png", dpi="retina", width = 12, height=6.75, units = "in")
+
+HI_dates <- cpi %>% filter(date >= "2000-01-01")
+HI_dates <- unique(HI_dates$date)
+HI_dates <- sort(HI_dates, decreasing = TRUE)
+HI_dates = HI_dates[seq(1, length(HI_dates), 24)]
+
+cpi %>% filter(date >= "2000-01-01", item_name %in% c("Commodities less food and energy commodities")) %>%
+  mutate(item_name = "Core Goods") %>%
+  mutate(num_label = round(100*Wchange1a, 1)) %>% mutate(num_label = ifelse(abs(num_label) < 0.16, NA, num_label)) %>%
+  ggplot(aes(x = date, y = Wchange1a, fill = item_name, label = num_label)) +
+  geom_bar(stat = 'identity', size=0) +
+  labs(y = NULL,
+       x = NULL,
+       title = "Core Goods Inflation is Around Zero Percent Before the Pandemic",
+       subtitle = "Monthly contribution to inflation, annualized.",
+       caption ="BLS, CPI, 2022 weights, seasonally adjusted. Author's calculation. Mike Konczal, Roosevelt Institute") +
+  theme_lass +
+  geom_text(size = 2, position = position_stack(vjust = 0.5), color="black") +
+  scale_fill_brewer(palette="Greens") +
+  scale_y_continuous(labels = percent) +
+  scale_x_date(date_labels = "%b\n%Y", breaks=HI_dates) +
+  theme(legend.position = c(0.60,0.55), legend.title = element_blank(), legend.text = element_text(size=16),
+        axis.text.x = element_text(size=14), axis.text.y = element_text(size=19))
+
+ggsave("graphics/g3_goods_just.png", dpi="retina", width = 12, height=6.75, units = "in")
+
+
+aa <- cpi %>% filter(item_name == "All items less food and energy") %>% select(date, value, Pchange1a)
+tail(aa)
+
+
+#### REVISION ####
+
+old_data <- read_csv("data/core_cpi_previous.csv") %>% mutate(pre_change = CPILFESL/lag(CPILFESL,1), pre_change = (pre_change)^12-1) %>%
+  select(date = DATE, pre_change)
+
+  
+  
+  ##### Graphic1: Core Inflation ####
+MI_dates <- cpi %>% filter(date > "2021-12-01")
+MI_dates <- unique(MI_dates$date)
+MI_dates <- sort(MI_dates, decreasing = TRUE)
+MI_dates_three = MI_dates[seq(1, length(MI_dates), 6)]
+
+cpi %>% filter(date > "2021-12-01", item_name == "All items less food and energy") %>%
+  select(date, item_name, Pchange1a) %>%
+  left_join(old_data, by="date") %>%
+  ggplot(aes(x = date, y = Pchange1a)) + theme_lass +
+  geom_line() +
+  geom_line(aes(date,pre_change), color="red", linetype="dashed") +
+  labs(y = NULL,
+       x = NULL,
+       title = "New Revisions to CPI Seasonal Adjustment",
+       subtitle = "Monthly percent increase in core goods and services, annualized. Dotted red line is previous value.",
+       caption ="BLS, CPI, 2022 weights, seasonally adjusted. Author's calculation. Mike Konczal, Roosevelt Institute") +
+  theme(panel.grid.major.y = element_line(size=0.5)) +
+  theme(plot.title.position = "plot") +
+  scale_y_continuous(labels = percent) +
+  scale_x_date(date_labels = "%b\n%Y", breaks = MI_dates_three)
+
+ggsave("graphics/g3_goods_just.png", dpi="retina", width = 12, height=6.75, units = "in")

@@ -1,0 +1,323 @@
+﻿item_name,weight,year_weight
+All items,100,2023
+Food and beverages,14.376,2023
+Food,13.531,2023
+Food at home,8.728,2023
+Cereals and bakery products,1.164,2023
+Cereals and cereal products,0.365,2023
+Flour and prepared flour mixes,0.06,2023
+Breakfast cereal,0.146,2023
+"Rice, pasta, cornmeal",0.159,2023
+Bakery products,0.799,2023
+Bread,0.226,2023
+"Fresh biscuits, rolls, muffins",0.118,2023
+"Cakes, cupcakes, and cookies",0.207,2023
+Other bakery products,0.249,2023
+"Meats, poultry, fish, and eggs",1.847,2023
+"Meats, poultry, and fish",1.681,2023
+Meats,1.038,2023
+Beef and veal,0.437,2023
+Uncooked ground beef,0.158,2023
+Uncooked beef roasts,0.057,2023
+Uncooked beef steaks,0.179,2023
+Uncooked other beef and veal,0.044,2023
+Pork,0.338,2023
+"Bacon, breakfast sausage, and related products",0.146,2023
+Ham,0.065,2023
+Pork chops,0.046,2023
+"Other pork including roasts, steaks, and ribs",0.081,2023
+Other meats,0.262,2023
+Poultry,0.352,2023
+Chicken,0.283,2023
+Other uncooked poultry including turkey,0.069,2023
+Fish and seafood,0.291,2023
+Fresh fish and seafood,0.141,2023
+Processed fish and seafood,0.15,2023
+Eggs,0.167,2023
+Dairy and related products,0.818,2023
+Milk,0.204,2023
+Cheese and related products,0.253,2023
+Ice cream and related products,0.123,2023
+Other dairy and related products,0.238,2023
+Fruits and vegetables,1.512,2023
+Fresh fruits and vegetables,1.133,2023
+Fresh fruits,0.589,2023
+Apples,0.083,2023
+Bananas,0.091,2023
+Citrus fruits,0.169,2023
+Other fresh fruits,0.247,2023
+Fresh vegetables,0.543,2023
+Potatoes,0.086,2023
+Lettuce,0.085,2023
+Tomatoes,0.092,2023
+Other fresh vegetables,0.28,2023
+Processed fruits and vegetables,0.38,2023
+Canned fruits and vegetables,0.196,2023
+Frozen fruits and vegetables,0.108,2023
+Other processed fruits and vegetables including dried,0.076,2023
+Nonalcoholic beverages and beverage materials,1.039,2023
+Juices and nonalcoholic drinks,0.728,2023
+Carbonated drinks,0.307,2023
+Frozen noncarbonated juices and drinks,0.008,2023
+Nonfrozen noncarbonated juices and drinks,0.413,2023
+Beverage materials including coffee and tea,0.311,2023
+Coffee,0.2,2023
+Other beverage materials including tea,0.111,2023
+Other food at home,2.347,2023
+Sugar and sweets,0.302,2023
+Sugar and sugar substitutes,0.04,2023
+Candy and chewing gum,0.192,2023
+Other sweets,0.07,2023
+Fats and oils,0.26,2023
+Butter and margarine,0.086,2023
+Salad dressing,0.061,2023
+Other fats and oils including peanut butter,0.114,2023
+Other foods,1.785,2023
+Soups,0.104,2023
+Frozen and freeze dried prepared foods,0.275,2023
+Snacks,0.376,2023
+"Spices, seasonings, condiments, sauces",0.353,2023
+Baby food,0.038,2023
+Other miscellaneous foods,0.639,2023
+Food away from home,4.803,2023
+Full service meals and snacks,2.307,2023
+Limited service meals and snacks,2.229,2023
+Food at employee sites and schools,0.076,2023
+Food from vending machines and mobile vendors,0.025,2023
+Other food away from home,0.166,2023
+Alcoholic beverages,0.845,2023
+Alcoholic beverages at home,0.513,2023
+"Beer, ale, and other malt beverages at home",0.197,2023
+Distilled spirits at home,0.087,2023
+Wine at home,0.229,2023
+Alcoholic beverages away from home,0.332,2023
+Housing,44.384,2023
+Shelter,34.413,2023
+Rent of primary residence,7.528,2023
+Lodging away from home,1.085,2023
+"Housing at school, excluding board",0.163,2023
+Other lodging away from home including hotels and motels,0.923,2023
+Owners' equivalent rent of residences,25.424,2023
+Owners' equivalent rent of primary residence,24.038,2023
+Unsampled owners' equivalent rent of secondary residences,1.386,2023
+Tenants' and household insurance,0.376,2023
+Fuels and utilities,4.702,2023
+Household energy,3.646,2023
+Fuel oil and other fuels,0.215,2023
+Fuel oil,0.15,2023
+"Propane, kerosene, and firewood",0.065,2023
+Energy services,3.431,2023
+Electricity,2.541,2023
+Utility (piped) gas service,0.89,2023
+Water and sewer and trash collection services,1.056,2023
+Water and sewerage maintenance,0.757,2023
+Garbage and trash collection,0.3,2023
+Household furnishings and operations,5.269,2023
+Window and floor coverings and other linens,0.316,2023
+Floor coverings,0.086,2023
+Window coverings,0.074,2023
+Other linens,0.156,2023
+Furniture and bedding,1.188,2023
+Bedroom furniture,0.384,2023
+"Living room, kitchen, and dining room furniture",0.586,2023
+Other furniture,0.211,2023
+Unsampled furniture,0.007,2023
+Appliances,0.285,2023
+Major appliances,0.109,2023
+Other appliances,0.174,2023
+Unsampled appliances,0.002,2023
+Other household equipment and furnishings,0.575,2023
+"Clocks, lamps, and decorator items",0.317,2023
+Indoor plants and flowers,0.131,2023
+Dishes and flatware,0.042,2023
+Nonelectric cookware and tableware,0.085,2023
+"Tools, hardware, outdoor equipment and supplies",1.067,2023
+"Tools, hardware and supplies",0.273,2023
+Outdoor equipment and supplies,0.555,2023
+"Unsampled tools, hardware, outdoor equipment and supplies",0.239,2023
+Housekeeping supplies,0.966,2023
+Household cleaning products,0.325,2023
+Household paper products,0.18,2023
+Miscellaneous household products,0.462,2023
+Household operations,0.872,2023
+Domestic services,0.263,2023
+Gardening and lawncare services,0.316,2023
+"Moving, storage, freight expense",0.106,2023
+Repair of household items,0.112,2023
+Unsampled household operations,0.075,2023
+Apparel,2.479,2023
+Men's and boys' apparel,0.645,2023
+Men's apparel,0.476,2023
+"Men's suits, sport coats, and outerwear",0.067,2023
+"Men's underwear, nightwear, swimwear, and accessories",0.172,2023
+Men's shirts and sweaters,0.117,2023
+Men's pants and shorts,0.111,2023
+Unsampled men's apparel,0.01,2023
+Boys' apparel,0.169,2023
+Women's and girls' apparel,1.008,2023
+Women's apparel,0.84,2023
+Women's outerwear,0.046,2023
+Women's dresses,0.09,2023
+Women's suits and separates,0.381,2023
+"Women's underwear, nightwear, swimwear, and accessories",0.311,2023
+Unsampled women's apparel,0.011,2023
+Girls' apparel,0.167,2023
+Footwear,0.506,2023
+Men's footwear,0.184,2023
+Boys' and girls' footwear,0.122,2023
+Women's footwear,0.2,2023
+Infants' and toddlers' apparel,0.102,2023
+Jewelry and watches,0.219,2023
+Watches,0.037,2023
+Jewelry,0.182,2023
+Transportation,16.744,2023
+Private transportation,15.959,2023
+New and used motor vehicles,8.083,2023
+New vehicles,4.313,2023
+Used cars and trucks,2.668,2023
+Leased cars and trucks,0.727,2023
+Car and truck rental,0.127,2023
+Unsampled new and used motor vehicles,0.247,2023
+Motor fuel,3.275,2023
+Gasoline (all types),3.172,2023
+Other motor fuels,0.103,2023
+Motor vehicle parts and equipment,0.491,2023
+Tires,0.335,2023
+Vehicle accessories other than tires,0.156,2023
+Motor vehicle maintenance and repair,1.104,2023
+Motor vehicle body work,0.057,2023
+Motor vehicle maintenance and servicing,0.576,2023
+Motor vehicle repair,0.414,2023
+Unsampled service policies,0.057,2023
+Motor vehicle insurance,2.511,2023
+Motor vehicle fees,0.495,2023
+State motor vehicle registration and license fees,0.278,2023
+Parking and other fees,0.196,2023
+Unsampled motor vehicle fees,0.021,2023
+Public transportation,0.785,2023
+Airline fares,0.587,2023
+Other intercity transportation,0.049,2023
+Intracity transportation,0.145,2023
+Unsampled public transportation,0.004,2023
+Medical care,8.108,2023
+Medical care commodities,1.455,2023
+Medicinal drugs,1.34,2023
+Prescription drugs,0.945,2023
+Nonprescription drugs,0.396,2023
+Medical equipment and supplies,0.115,2023
+Medical care services,6.653,2023
+Professional services,3.611,2023
+Physicians' services,1.855,2023
+Dental services,0.917,2023
+Eyeglasses and eye care,0.314,2023
+Services by other medical professionals,0.524,2023
+Hospital and related services,2.273,2023
+Hospital services,1.94,2023
+Nursing homes and adult day services,0.186,2023
+Care of invalids and elderly at home,0.147,2023
+Health insurance,0.77,2023
+Recreation,5.385,2023
+Video and audio,1.266,2023
+Televisions,0.142,2023
+Cable and satellite television service,0.865,2023
+Other video equipment,0.016,2023
+"Video discs and other media, including rental of video",0.117,2023
+Audio equipment,0.056,2023
+Recorded music and music subscriptions,0.06,2023
+Unsampled video and audio,0.01,2023
+"Pets, pet products and services",1.205,2023
+Pets and pet products,0.669,2023
+Pet services including veterinary,0.536,2023
+Sporting goods,0.764,2023
+Sports vehicles including bicycles,0.439,2023
+Sports equipment,0.316,2023
+Unsampled sporting goods,0.009,2023
+Photography,0.061,2023
+Photographic equipment and supplies,0.021,2023
+Photographers and photo processing,0.038,2023
+Unsampled photography,0.001,2023
+Other recreational goods,0.44,2023
+Toys,0.353,2023
+"Sewing machines, fabric and supplies",0.024,2023
+Music instruments and accessories,0.051,2023
+Unsampled recreation commodities,0.012,2023
+Other recreation services,1.536,2023
+"Club membership for shopping clubs, fraternal, or other organizations, or participant sports fees",0.677,2023
+Admissions,0.438,2023
+Fees for lessons or instructions,0.184,2023
+Unsampled recreation services,0.236,2023
+Recreational reading materials,0.114,2023
+Newspapers and magazines,0.061,2023
+Recreational books,0.052,2023
+Unsampled recreational reading materials,0,2023
+Education and communication,5.845,2023
+Education,2.274,2023
+Educational books and supplies,0.099,2023
+"Tuition, other school fees, and childcare",2.175,2023
+College tuition and fees,1.197,2023
+Elementary and high school tuition and fees,0.308,2023
+Day care and preschool,0.569,2023
+Technical and business school tuition and fees,0.026,2023
+"Unsampled tuition, other school fees, and childcare",0.076,2023
+Communication,3.571,2023
+Postage and delivery services,0.074,2023
+Postage,0.063,2023
+Delivery services,0.01,2023
+Information and information processing,3.497,2023
+Telephone services,1.687,2023
+Wireless telephone services,1.445,2023
+Residential telephone services,0.242,2023
+"Information technology, hardware and services",1.81,2023
+"Computers, peripherals, and smart home assistants",0.371,2023
+Computer software and accessories,0.023,2023
+Internet services and electronic information providers,0.97,2023
+"Telephone hardware, calculators, and other consumer information items",0.439,2023
+Unsampled information and information processing,0.007,2023
+Other goods and services,2.677,2023
+Tobacco and smoking products,0.494,2023
+Cigarettes,0.41,2023
+Tobacco products other than cigarettes,0.077,2023
+Unsampled tobacco and smoking products,0.007,2023
+Personal care,2.183,2023
+Personal care products,0.599,2023
+"Hair, dental, shaving, and miscellaneous personal care products",0.315,2023
+"Cosmetics, perfume, bath, nail preparations and implements",0.273,2023
+Unsampled personal care products,0.011,2023
+Personal care services,0.607,2023
+Haircuts and other personal care services,0.607,2023
+Miscellaneous personal services,0.828,2023
+Legal services,0.24,2023
+Funeral expenses,0.169,2023
+Laundry and dry cleaning services,0.142,2023
+Apparel services other than laundry and dry cleaning,0.027,2023
+Financial services,0.174,2023
+Unsampled items,0.076,2023
+Miscellaneous personal goods,0.149,2023
+All items,100,2023
+Commodities,38.382,2023
+Commodities less food and beverages,24.006,2023
+Nondurables less food and beverages,11.36,2023
+"Nondurables less food, beverages, and apparel",8.881,2023
+Durables,12.646,2023
+Services,61.618,2023
+Rent of shelter,34.037,2023
+Transportation services,5.75,2023
+Other services,9.442,2023
+All items less food,86.469,2023
+All items less shelter,65.587,2023
+All items less medical care,91.892,2023
+Commodities less food,24.851,2023
+Nondurables less food,12.205,2023
+Nondurables less food and apparel,9.726,2023
+Nondurables,25.737,2023
+Apparel less footwear,1.974,2023
+Services less rent of shelter,27.581,2023
+Services less medical care services,54.964,2023
+Energy,6.921,2023
+All items less energy,93.079,2023
+All items less food and energy,79.548,2023
+Commodities less food and energy commodities,21.361,2023
+Energy commodities,3.49,2023
+Services less energy services,58.187,2023
+Domestically produced farm food,7.307,2023
+Utilities and public transportation,7.825,2023
