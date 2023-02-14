@@ -1,6 +1,8 @@
 # Inflation Analysis
 R scripts for reading in and analyzing CPI inflation data from the BLS's text website.
+
 Written by: Mike Konczal
+
 Last Updated: Feb 13, 2023.
  
 File 1_load_cpi_data.R reads the latest data from the BLS website, cleans it up, attaches a weights file, and saves it.
