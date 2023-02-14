@@ -1,7 +1,7 @@
 ###############################################################
-# Graphics that I'm watching, Summer 2022, inflation
+# Graphics that I'm watching, Early 2023, inflation
 # Mike Konczal
-# Last updated 11/07/2022
+# Last updated 2/13/2023
 
 setwd("/Users/mkonczal/Documents/GitHub/BLS-CPI-Inflation-Analysis/")
 library(hrbrthemes)

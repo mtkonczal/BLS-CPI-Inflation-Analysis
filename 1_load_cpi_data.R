@@ -3,7 +3,11 @@
 # This file reads in and store the CPI data.
 # Requires inflation_weights.csv file as weights aren't stored on download site.
 # Mike Konczal
-# Last updated 3/12/22
+# Last updated 2/13/2023
+
+# Takes in 2023 weights in a secondary folder, and then chooses which is present.
+# Needs a more general solution with previous weights prior to 2022.
+# For future update.
 
 library(janitor)
 library(tidyverse)
