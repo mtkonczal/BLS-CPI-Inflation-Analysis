@@ -73,11 +73,11 @@ title_longer_graphic <- "This is 3 and 6 month value"
 title_energy_food <- "Food Energy Graphic"
 
 #CHANGE THESE
-title0 <- "Core Inflation Stays in a New, Lower, Range"
+title0 <- "Core Inflation Moves Sideways"
 title1 <- "Core inflation drops for two months in a row, the first time since 2021"
 title2 <- "Core services outside housing flat again for two months in a row"
-title3 <- "Housing Leveled, Services Slowing, But Goods Back on the Rise"
-title4 <- "Goods continue into deflation, with autos leading the way"
+title3 <- "Housing Slows Again, But Goods Make a Jump"
+title4 <- "Goods at zero, with autos cancelling other goods"
 title5 <- "3-month inflation finally breaks lower"
 title_longer_graphic <- "Inflation is Moving Sideways Recently"
 title_energy_food <- "Food Inflation is Slowing While Energy Falls"
@@ -113,23 +113,36 @@ trend_2018_2020 <- cpi %>% filter(date > "2017-12-01", item_name == "All items l
 
 trend_2018_2020 <- as.numeric(trend_2018_2020)
 
+date1 = max(cpi$date)
+#date2 = date1 %m-% months(5)
+date2 = as.Date("2022-10-01")
+dates_interval = interval(date2,date1) %/% months(1)
+
 cpi %>% filter(date > "2017-12-01", item_name == "All items less food and energy") %>%
-  select(date, item_name, Pchange1a) %>%
+  select(date, item_name, Pchange1a,value) %>%
   mutate(num_label = round(100*Pchange1a, 1)) %>% mutate(num_label = ifelse(abs(num_label) < 0.16, NA, num_label)) %>%
   mutate(num_label2 = ifelse(date >= "2021-10-01", num_label, NA)) %>%
   mutate(trend = trend_2018_2020) %>%
+  mutate(first_trend = value[date == "2022-09-01"]/value[date=="2021-10-01"]) %>%
+  mutate(first_trend = first_trend^(12/11)-1) %>%
+  mutate(first_trend = if_else(date <= "2022-09-01" & date >= "2021-10-01",first_trend, as.numeric(NA) )) %>%
+  mutate(second_trend = value[date == date1]/value[date==date2]) %>%
+  mutate(second_trend = second_trend^(12/dates_interval)-1) %>%
+  mutate(second_trend = if_else(date <= date1 & date >= date2, second_trend, as.numeric(NA) )) %>%
   ggplot(aes(x = date, y = Pchange1a, fill = item_name, label = num_label)) + theme_lass +
   geom_bar(stat = 'identity', size=0, fill="#2D779C") +
-  geom_line(aes(date,trend), linetype=2, lineend="square", size=1, color="#E2E47E") +
+  geom_line(aes(date,first_trend), linetype=1, size=1, color="#E2E47E") +
+  geom_line(aes(date,second_trend), linetype=1, size=1, color="#E2E47E") +
+  geom_line(aes(date,trend_2018_2020), linetype=1, size=1, color="#E2E47E") +
   labs(y = NULL,
        x = NULL,
        title = title0,
-       subtitle = "Monthly percent increase in core goods and services, annualized. Dotted line is 2018-2019 value.",
-       caption ="BLS, CPI, 2022 weights prior to 2023, seasonally adjusted. Author's calculation. Mike Konczal, Roosevelt Institute") +
+       subtitle = "Monthly percent increase in core goods and services, annualized.",
+       caption ="Trend lines are, left to right, annualized change for 12/2017 to 1/2020, 10/2021 to 9/2022, and 10/2022 to current.\nBLS, CPI, seasonally adjusted. Author's calculation. Mike Konczal, Roosevelt Institute") +
   theme(panel.grid.major.y = element_line(size=0.5)) +
   theme(plot.title.position = "plot") +
   scale_y_continuous(labels = percent) +
-  geom_text(aes(x=date, y=Pchange1a, label=num_label2), nudge_y = 0.003, size=3, color="#E2E47E") +
+  geom_text(aes(x=date, y=Pchange1a, label=num_label2), nudge_y = 0.003, size=2.7, color="#E2E47E") +
   scale_x_date(date_labels = "%b\n%Y", breaks = MI_dates_three)
 
 ggsave("graphics/g1_core_newer.png", dpi="retina", width = 12, height=6.75, units = "in")
@@ -289,7 +302,7 @@ cpi %>% filter(date > "2020-12-01", item_name %in% c("Services less energy servi
   scale_fill_brewer(palette="RdPu") +
   scale_y_continuous(labels = percent) +
   scale_x_date(date_labels = "%b\n%Y", breaks=MI_dates) +
-  theme(legend.position = c(0.4,0.80), legend.title = element_blank(), legend.text = element_text(size=18),
+  theme(legend.position = c(0.25,0.85), legend.title = element_blank(), legend.text = element_text(size=18),
         axis.text.x = element_text(size=14), axis.text.y = element_text(size=19))
 
 ggsave("graphics/g3_services_medical.png", dpi="retina", width = 12, height=6.75, units = "in")
@@ -373,15 +386,15 @@ core <- cpi %>% filter(item_name == "All items less food and energy") %>%
   mutate(time_length = str_replace_all(time_length,"ThreeMonth", "3-Month Change")) %>%
   mutate(last_value = ifelse(date==max(date),change,NA))
 
-extra_value <- core %>% group_by(time_length) %>% filter(year(date)==2022) %>% filter(change == max(change)) %>%
-  ungroup() %>% select(date, time_length, extra_value = change)
+one_month <- cpi %>% filter(item_name == "All items less food and energy") %>%
+  select(date, Pchange1a) %>% mutate(time_length = "3-Month Change")
 
 MI_dates <- cpi %>% filter(date > "2010-12-01")
 MI_dates <- unique(MI_dates$date)
 MI_dates <- sort(MI_dates, decreasing = TRUE)
 MI_dates = MI_dates[seq(1, length(MI_dates), 12)]
 
-date_start = "2014-01-01"
+date_start = "2017-01-01"
 date_end = "2019-01-01"
 date_period <- interval(date_start, date_end)
 date_period = date_period %/% months(1)
@@ -390,13 +403,12 @@ pre_core <- cpi %>% filter(item_name == "All items less food and energy", date =
   mutate(change = value/lag(value,1)) %>% filter(!is.na(change)) %>% mutate(change = change^(12/date_period) - 1) %>% select(change)
 pre_core <- as.numeric(pre_core)
 
-core %>% filter(date > "2014-12-01") %>%
-  left_join(extra_value, by=c("date","time_length")) %>%
-  mutate(last_value = ifelse(!is.na(extra_value),extra_value,last_value)) %>%
-  ggplot(aes(date, change, color=time_length, label=label_percent()(last_value))) + geom_line(size=1.2) +
+core %>% filter(date >= "2017-01-01") %>%
+  left_join(one_month, by=c("date","time_length")) %>%
+  ggplot(aes(date, change, color=time_length, label=label_percent()(round(last_value,3)))) + geom_line(size=1.6) +
   labs(x="", y="",
        title=title_longer_graphic,
-       subtitle = paste("Core CPI inflation, monthly percentage change, annualized. Dotted line represented 2014 to 2019 value of ", round(pre_core,3)*100, "%, annualized.", sep=""),
+       subtitle = paste("Core CPI inflation, monthly percentage change, annualized. Dotted line represented 2017 to 2019 value of ", round(pre_core,3)*100, "%, annualized.", sep=""),
        caption = "All items less food and energy, monthly percent change, BLS, Author's calculations. Mike Konczal, Roosevelt Institute.") +
   theme_lass +
   geom_hline(yintercept = pre_core, linetype="dashed", color="#A4CCCC") +
@@ -407,11 +419,12 @@ core %>% filter(date > "2014-12-01") %>%
   scale_x_date(date_labels = "%b\n%Y", breaks=MI_dates) +
   theme(legend.position = c(0.90,0.15), legend.text = element_text(size=15)) +
   scale_color_manual(values=c("#2D779C", "#A4CCCC")) +
-  geom_text_repel(show.legend=FALSE)
+  geom_text_repel(show.legend=FALSE, nudge_x = 85, min.segment.length = Inf) +
+  geom_col(aes(date, Pchange1a), alpha=0.1, size=0, show.legend = FALSE)
 
 ggsave("graphics/three_six_core_inflation.png", dpi="retina", width = 12, height=6.75, units = "in")
 
-#### RIDGELINE GRAPH
+#### RIDGELINE GRAPH ####
 
 median_terms <- read_csv("weights/mediancpi_component_table.csv") %>% mutate(item_name = Component)
 median <- cpi %>%
@@ -438,7 +451,7 @@ median %>% mutate(dateF = as.factor(date)) %>%
   mutate(Pchange3a = (1+Pchange3)^4-1) %>%
   filter(date >= "2017-06-01") %>%
   filter(date != "2020-06-01") %>%
-  filter(month(date) %in% c(1,4,7,10)) %>%
+  filter(month(date) %in% c(3,6,9,12)) %>%
   mutate(monthC = format(date, "%B, %Y")) %>%
   mutate(monthC = fct_reorder(monthC,date)) %>%
   mutate(monthCR = fct_rev(monthC)) %>%
@@ -464,24 +477,11 @@ ggsave("graphics/trimmed_dist.png", dpi="retina", width = 12, height=12, units =
 
 
 
-##### DOUBLE GRAPHIC - CHANGING MEASURES ####
+##### Supercore Graphic ####
 MI_dates <- cpi %>% filter(date > "2010-12-01")
 MI_dates <- unique(MI_dates$date)
 MI_dates <- sort(MI_dates, decreasing = TRUE)
 MI_dates = MI_dates[seq(1, length(MI_dates), 12)]
-
-
-core_services <- cpi %>% filter(item_name == "Services less rent of shelter") %>%
-  select(date, value) %>%
-  mutate(ThreeMonth = (value/lag(value,3))^4-1) %>%
-  mutate(SixMonth = (value/lag(value,6))^2-1) %>%
-  mutate(YoY = (value/lag(value,12))-1) %>%
-  select(-value, YoY) %>%
-  pivot_longer(ThreeMonth:SixMonth, names_to = "time_length", values_to = "change") %>%
-  mutate(time_length = str_replace_all(time_length,"SixMonth", "6-Month Change")) %>%
-  mutate(time_length = str_replace_all(time_length,"ThreeMonth", "3-Month Change")) %>%
-  mutate(last_value = ifelse(date==max(date),change,NA)) %>%
-  mutate(type = "Services less rent of shelter")
 
 supercore <- cpi %>% filter(item_name == "All items less food, shelter, energy, and used cars and trucks") %>%
   select(date, value) %>%
@@ -493,20 +493,23 @@ supercore <- cpi %>% filter(item_name == "All items less food, shelter, energy, 
   mutate(time_length = str_replace_all(time_length,"SixMonth", "6-Month Change")) %>%
   mutate(time_length = str_replace_all(time_length,"ThreeMonth", "3-Month Change")) %>%
   mutate(last_value = ifelse(date==max(date),change,NA)) %>%
-  mutate(type = "All items less food, shelter, energy, and used cars and trucks") %>%
-  rbind(core_services)
+  mutate(type = "All items less food, shelter, energy, and used cars and trucks") #%>%
+  #rbind(core_services)
 
-date_start = "2010-01-01"
+date_start = "2015-01-01"
 date_end = "2019-01-01"
 date_period <- interval(date_start, date_end)
 date_period = date_period %/% months(1)
 
-pre_supercore <- cpi %>% filter(item_name == "Services less rent of shelter" | item_name == "All items less food, shelter, energy, and used cars and trucks",
+pre_supercore <- cpi %>% filter(item_name == "All items less food, shelter, energy, and used cars and trucks",
                                 date == date_start | date == date_end) %>% group_by(item_name) %>%
   mutate(change = value/lag(value,1)) %>% filter(!is.na(change)) %>% mutate(change = change^(12/date_period) - 1) %>% select(pre_values = change, type = item_name)
 
+one_month <- cpi %>% filter(item_name == "All items less food, shelter, energy, and used cars and trucks") %>%
+  select(date, Pchange1a) %>% mutate(time_length = "3-Month Change")
 
 supercore %>% filter(date > "2014-12-01") %>%
+  left_join(one_month, by=c("date","time_length")) %>%
   left_join(pre_supercore, by=c("type")) %>%
   mutate(type = str_replace_all(type, "Services less rent of shelter", "Non-housing services")) %>%
   mutate(type = str_replace_all(type, "All items less food, shelter, energy, and used cars and trucks", "Supercore: All items less food, shelter, energy, and used autos")) %>%
@@ -514,7 +517,7 @@ supercore %>% filter(date > "2014-12-01") %>%
   geom_line(aes(date,pre_values), linetype="dashed", color="#FFD3B5") +
   labs(x="", y="",
        title="Even Supercore Inflations Are Moving Sideways Right Now",
-       subtitle = "Monthly percent change, annualized.",
+       subtitle = "Monthly percent change, annualized. Line reflects 2015-2019 trend of 1.3 percent.",
        caption = "BLS, CPI, 2022 weights prior to 2023, seasonally adjusted. Author's calculations. Mike Konczal, Roosevelt Institute.") +
   theme_lass +
   scale_fill_brewer(palette="Paired") +
@@ -522,9 +525,10 @@ supercore %>% filter(date > "2014-12-01") %>%
   theme(plot.title.position = "plot") +
   scale_y_continuous(labels = percent) +
   scale_x_date(date_labels = "%b\n%Y", breaks=MI_dates) +
-  theme(legend.position = c(0.90,0.15), legend.text = element_text(size=15)) +
+  theme(legend.position = c(0.85,0.45), legend.text = element_text(size=15)) +
   scale_color_manual(values=c("#FFD3B5", "#F67280")) +
-  geom_text(show.legend=FALSE, nudge_x = 155)
+  geom_text_repel(show.legend=FALSE, nudge_x = 85) +
+  geom_col(aes(date, Pchange1a), alpha=0.1, size=0, fill="#FFD3B5",show.legend = FALSE)
 
 ggsave("graphics/three_six_supercores.png", dpi="retina", width = 12, height=6.75, units = "in")
 
@@ -532,6 +536,7 @@ ggsave("graphics/three_six_supercores.png", dpi="retina", width = 12, height=6.7
 #### DISTRIBUTION 3 PERCENT ####
 
 lowest <- read_csv("weights/most_prices.csv") %>% filter(category != "Meta", lowest == 1)
+core <- lowest %>% filter(category %in% c("Services","Goods"))
 
 MI_dates <- cpi %>% filter(date > "2012-01-01")
 MI_dates <- unique(MI_dates$date)
@@ -557,6 +562,9 @@ cpi %>% filter(item_name %in% lowest$item_name, !is.na(Pchange1), date > "2012-0
 
 ggsave("graphics/three_percent_growth.png", dpi="retina", width = 12, height=6.75, units = "in")
 
+cpi %>% filter(item_name %in% lowest$item_name, !is.na(Pchange1), date == max(date) | date == "2019-12-01") %>%
+  ggplot(aes(Pchange1a), color="date") + geom_density() + facet_wrap(~date)
+
 
 ##### just used autos ####
 ###### Used Cars - Short and Long ########
@@ -579,7 +587,7 @@ cpi %>% filter(date >= "2019-06-01", item_name %in% c("Commodities less food and
   geom_bar(stat = 'identity', size=0) +
   labs(y = NULL,
        x = NULL,
-       title = "Recent Deflation in Used Cars Couldn't Offset Overall Goods Inflation",
+       title = "Jump in Used Car Prices Offset Slowdown in Other Goods",
        subtitle = "Monthly contribution to inflation, annualized.",
        caption ="BLS, CPI, 2022 weights prior to 2023, seasonally adjusted. Author's calculation. Mike Konczal, Roosevelt Institute") +
   theme_lass +
@@ -610,9 +618,9 @@ cpi %>% filter(item_name == "Food at home", date == max(date)) %>% summarize( n 
 #### GRAPHIC FOOD ####
 # Comparison point
 #food_dates <- cpi %>% filter(item_name %in% food_index) %>% filter(date == max(date) | date == max(date) %m-% months(7) | date == max(date) %m-% months(4)) %>%
-food_dates <- cpi %>% filter(item_name %in% food_index) %>% filter(date == max(date) | date == "2022-08-01" | date == "2022-04-01") %>%
+food_dates <- cpi %>% filter(item_name %in% food_index) %>% filter(date == max(date) | date == "2022-12-01" | date == "2022-08-01") %>%
   mutate(date = paste(as.character(month(date, label = TRUE, abbr = FALSE)), ", ", as.character(year(date)), sep = "")) %>%
-  mutate(date = factor(date,levels=c("January, 2023","August, 2022","April, 2022")), name = reorder_within(item_name, Pchange3, date))
+  mutate(date = factor(date,levels=c("April, 2023","December, 2022","August, 2022")), name = reorder_within(item_name, Pchange3, date))
 
 ggplot(food_dates, aes(name, Pchange3, fill = date)) +
   geom_col(show.legend = FALSE, size=0) +
@@ -626,14 +634,14 @@ ggplot(food_dates, aes(name, Pchange3, fill = date)) +
        x = NULL,
        title = "Food Price Increases Have Broadened Over The Past Year",
        subtitle = "Price increase over previous three months of listed date. These categories represent 68 percent of all spending on food at home.",
-       caption ="BLS, CPI, all subcategories of 'Food at home.' Seasonally Adjusted. Author's Calculation. @rortybomb") +
+       caption ="BLS, CPI, all subcategories of 'Food at home.' Seasonally Adjusted. Author's Calculation. Mike Konczal, Roosevelt Institute.") +
 
   theme(panel.grid.major.x = element_line(size=0.5)) +
   scale_y_continuous(labels = scales::percent) +
   theme(plot.title.position = "plot") +
   labs(y = "Price Increase Over Previous Three Months",
        x = NULL,
-       title = "Food Price Increases Have Narrowed Recently, Though Eggs Remain High",
+       title = "Food Price Increases Have Narrowed Recently, With Eggs in Freefall",
        subtitle = "Price increase over previous three months of date. Categories represent 68 percent of spending on food at home.",
        caption ="BLS, CPI, all subcategories of 'Food at home.' Seasonally Adjusted. Author's Calculation. @rortybomb") +
   theme(axis.text.y = element_text(size=5),

@@ -884,8 +884,87 @@ item_basket_core_goods <- c("Commodities less food and energy commodities",
 
 
 cpi %>% filter(item_name %in% item_basket_core_goods) %>%
+  mutate(item_name = str_replace_all(item_name,"Commodities less food and energy commodities","All Core Goods")) %>%
   group_by(item_name) %>%
   mutate(trend = value[date=="2020-01-01"]/value[date=="2018-01-01"], trend = trend^(0.5)-1) %>%
-  filter(year(date) > 2016) %>%
+  filter(year(date) > 2016) %>% ungroup() %>%
+  mutate(item_name = factor(item_name)) %>%
+  mutate(item_name = relevel(item_name, "All Core Goods")) %>%
   ggplot(aes(date,Pchange1a)) + geom_line() + theme_classic() + facet_wrap(~item_name, scales = "free_y") +
-  geom_line(aes(date,trend),color="red")
+  scale_y_continuous(labels = percent) +
+  geom_line(aes(date,trend),color="red") +
+  labs(y="",
+       x="",
+       title="Many categories of goods remain above prepandemic trend, not just autos",
+       subtitle="Monthly percentage change, annualized. Red line is 2018-2019 value.",
+       caption="BLS, CPI, Seasonally Adjusted, author's calculations. Mike Konczal, Roosevelt Institute.")
+
+ggsave("graphics/each_goods.png", dpi="retina", width = 12, height=6.75, units = "in")
+
+cpi %>% filter(item_name %in% c("Owners' equivalent rent of residences","Rent of primary residence")) %>%
+  ggplot(aes(date,Pchange1a, color=item_name)) + geom_line() + theme_classic() +
+  theme(legend.position = c(0.4,0.8)) +
+  scale_y_continuous(labels = percent)
+
+
+###### THE FIRST MONTH - JANUARY TURNOVER GRAPHIC #####
+lowest <- read_csv("weights/most_prices.csv") %>% filter(category != "Meta", lowest == 1)
+
+cpi_NSA <- cpi_data %>%
+  filter(period != "M13") %>%
+  filter(seasonal == "U") %>%
+  filter(item_name %in% lowest$item_name) %>%
+  filter(area_code == "0000") %>%
+  mutate(month = month(date))
+
+cpi_NSA %>% group_by(item_name) %>%
+  mutate(pchange = value/lag(value)-1) %>%
+  filter(!is.na(pchange)) %>%
+  ungroup() %>%
+  group_by(month) %>%
+  summarize(mean(pchange))
+
+##### AEI CHART ####
+lowest <- read_csv("weights/most_prices.csv") %>% filter(lowest == 1)
+
+categories <- lowest %>% select(item_name, category)
+
+AEI_chart <- cpi %>% filter(item_name %in% lowest$item_name) %>%
+  left_join(categories, by=c("item_name")) %>% filter(category %in% c("Goods","Services"))
+
+c2 <- AEI_chart %>% group_by(item_name) %>%
+  filter(date == min(date)) %>%
+  filter(date <= "2000-01-01") %>% ungroup()
+
+c3 <- AEI_chart %>% filter(item_name %in% c2$item_name) %>%
+ # filter(date >= "2000-01-01") %>%
+  group_by(item_name, category) %>%
+  summarize(change = value[date=="2023-01-01"]/value[date=="2000-01-01"]-1) %>%
+  ungroup() %>%
+  arrange(desc(change))
+
+c3 <- c3 %>%
+  mutate(item_name = str_replace_all(item_name, "Club membership for shopping clubs, fraternal, or other organizations, or participant sports fees","Club memberships")) %>%
+  mutate(item_name = str_replace_all(item_name, "Other lodging away from home including hotels and motels","Other lodging"))
+
+c3 %>% head(20) %>%
+  mutate(category = as.factor(category), name = reorder_within(item_name, change, category))  %>%
+  ggplot(aes(name, change, fill = category)) +
+  geom_col(size=0) +
+  #facet_wrap(~category, scales = "free_y", ncol=1) +
+  coord_flip() +
+  scale_x_reordered() +
+  theme_lass +
+  theme(panel.grid.major.x = element_line(size=0.5)) +
+  scale_y_continuous(labels = scales::percent) +
+  theme(plot.title.position = "plot") +
+  labs(y = NULL,
+       x = NULL,
+       title = "Food Price Increases Have Broadened Over The Past Year",
+       subtitle = "Price increase over previous three months of listed date. These categories represent 68 percent of all spending on food at home.",
+       caption ="BLS, CPI, all subcategories of 'Food at home.' Seasonally Adjusted. Author's Calculation. @rortybomb") +
+  theme(axis.text.y = element_text(size=18, face="bold"))
+
+#ggsave("food_prices.png", dpi="retina") 
+
+
