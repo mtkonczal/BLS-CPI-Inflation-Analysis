@@ -14,13 +14,33 @@ library(scales)
 library(tidytext)
 library(lubridate)
 library(x12)
+library(ggridges)
 ##### SET UP SOME THINGS #####
 source(file = "1_load_cpi_data.R")
 
 #load("data/cpi_data.RData")
 
 ##### REPLICATION CODE ### STARTING HERE #### SPECIAL GRAPHIC
+#######
+#SET UP DATA:
+cpi <- cpi_data %>%
+  filter(period != "M13") %>%
+  filter(seasonal == "S") %>%
+  arrange(date) %>%
+  group_by(item_name) %>%
+  mutate(Pchange1 = (value/lag(value)-1)) %>%
+  mutate(Pchange1a = (1 + Pchange1)^12 - 1) %>%
+  mutate(Wchange1 = (Pchange1*weight)/100) %>%
+  mutate(Wchange1a = (1 + Wchange1)^12 - 1) %>%
+  mutate(Pchange3 = (value/lag(value, 3)-1)) %>%
+  mutate(three_months = (lag(value, 1)/lag(value, 4)-1)) %>%
+  mutate(Wthree_months = (three_months*weight)/100) %>%
+  mutate(Wthree_monthsA = (1 + Wthree_months)^4 - 1) %>%
+  mutate(Pchange12 = (value/lag(value, 12)-1)) %>%
+  mutate(Wchange12 = (Pchange12*weight)/100) %>%
+  ungroup()
 
+### Other setup
 cpi <- cpi_data %>%
   filter(period != "M13") %>%
   filter(seasonal == "S") %>%
@@ -968,3 +988,350 @@ c3 %>% head(20) %>%
 #ggsave("food_prices.png", dpi="retina") 
 
 
+##### Attempting to redo the disaggregation by categories ####
+
+
+item_basket_core_services <- c("Services less energy services",
+                               "Shelter",
+                               "Medical care services",
+                               "Transportation services",
+                               "Recreation services",
+                               "Education and communication services",
+                               "Other personal services")
+
+item_basket_core_goods <- c("Commodities less food and energy commodities",
+                            "Household furnishings and supplies",
+                            "Apparel",
+                            "Transportation commodities less motor fuel",
+                            "Medical care commodities",
+                            "Recreation commodities",
+                            "Education and communication commodities",
+                            "Alcoholic beverages",
+                            "Other goods")
+
+max_date <- max(unique(cpi$date))
+delay_date_6 <- max_date %m-% months(6)
+
+df <- cpi %>% filter(item_name %in% c(item_basket_core_goods,item_basket_core_services, "All items less food and energy")) %>%
+  select(date, item_name, value) %>%
+  group_by(item_name) %>%
+  summarize(rate_2022 = value[date=="2022-09-01"]/value[date=="2021-09-01"]-1,
+            rate_2019 = value[date=="2019-09-01"]/value[date=="2018-09-01"]-1,
+            rate_2023 = (value[date==max_date]/value[date==delay_date_6])^2-1) %>%
+  ungroup() %>%
+  pivot_longer(rate_2022:rate_2023, names_to = "time_period", values_to = "value")
+
+
+df %>%
+  ggplot(aes(time_period,value)) + geom_col() + coord_flip() + facet_wrap(~item_name)
+
+
+cpi %>% filter(item_name %in% c(item_basket_core_services)) %>%
+  filter(year(date) > 2016) %>%
+  ggplot(aes(date,Pchange12)) + geom_line() +
+  facet_wrap(~item_name)
+
+# Not sure the right way to do this - are we normal at a higher level?
+cpi %>%
+  group_by(date) %>%
+  filter(!is.na(Pchange3)) %>%
+  summarize(std = sd(Pchange3)) %>%
+  ggplot(aes(date,std)) + geom_line()
+                 
+lowest <- read_csv("weights/most_prices.csv") %>% filter(category != "Meta", lowest == 1)
+core <- lowest %>% filter(category %in% c("Services","Goods"))
+
+cpi %>%
+  filter(item_name %in% core$item_name) %>%
+  group_by(date) %>%
+  filter(!is.na(Pchange3)) %>%
+  summarize(std = sd(Pchange3)) %>%
+  ggplot(aes(date,std)) + geom_line()
+
+
+cpi %>% filter(item_name %in% lowest$item_name, !is.na(Pchange1), date > "2012-01-01") %>%
+  group_by(date) %>%
+  filter(!is.na(Pchange3)) %>%
+  summarize(std = sd(Pchange3)) %>%
+  ggplot(aes(date,std)) + geom_line()
+
+
+#### Regional divergence? ####
+
+a <- cpi_data %>% filter(item_name == "Services less energy services")
+a <- a %>% filter(!is.na(date)) %>% filter(date == max(date))
+
+unique(a$series_title)
+
+item_basket_headline <- c("All items less food and energy","Services less energy services","Commodities less food and energy commodities")
+
+item_basket_core_services <- c("Shelter",
+                               "Medical care services",
+                               "Transportation services",
+                               "Recreation services",
+                               "Education and communication services",
+                               "Other personal services")
+
+item_basket_core_goods <- c("Household furnishings and supplies",
+                            "Apparel",
+                            "Transportation commodities less motor fuel",
+                            "Medical care commodities",
+                            "Recreation commodities",
+                            "Education and communication commodities",
+                            "Alcoholic beverages",
+                            "Other goods")
+
+regional_area_codes <- c("0100","0200","0300","0400")
+area_names <- GET("https://download.bls.gov/pub/time.series/cu/cu.area", user_agent("rortybomb@gmail.com")) %>%
+  content(as = "text") %>%
+  fread()
+
+a <- cpi_data %>% filter(item_name %in% c(item_basket_core_services,item_basket_core_goods), area_code %in% regional_area_codes, !is.na(date), periodicity_code == "R") %>%
+  left_join(area_names, by="area_code") %>%
+  filter(year(date) > 2013) %>%
+  group_by(series_title, area_code) %>%
+  arrange(date) %>%
+  mutate(YoY = value/lag(value,12)-1) %>%
+  ungroup() %>%
+  group_by(date, item_name) %>%
+  mutate(high_low = if_else(YoY == max(YoY) | YoY == min(YoY), TRUE, FALSE)) %>%
+  ungroup()
+
+list_keep <- a %>% filter(date == max(date), high_low) %>% select(item_name, area_code) %>% arrange(item_name)
+list_keep[1,2]
+
+for (i in 1:28) {
+b <- a %>% filter(item_name == as.character(list_keep[i,1]) & area_code == as.character(list_keep[i,2]))
+if(i == 1)
+  c <- b
+else
+  c <- rbind(c,b)
+}
+
+c %>%
+  ggplot(aes(date,YoY, color=area_names)) + geom_line(size=1.2) + theme_classic() + facet_wrap(~item_name, scales = "free") +
+  theme_classic() +
+  theme(legend.position = "bottom",
+        legend.text = element_text(size=25),
+        strip.text = element_text(size=)) +
+  scale_y_continuous(labels = percent) +
+  scale_x_date(date_labels = "%b\n%Y") +
+  labs(title="Growing Regional Differences Within Inflation Categories, Especially Services",
+       subtitle="Year over Year inflation, seasonally unadjusted, by region for major categories, only showing highest and lowest lines for last month",
+       caption="BLS, CPI. Preliminary, what does this mean? Mike Konczal, Roosevelt Institute")
+
+ggsave("graphics/regionals.png", dpi="retina", width = 12, height=12, units = "in")
+
+a %>%
+  ggplot(aes(date,YoY, color=area_name)) + geom_line(size=1) + theme_classic() + facet_wrap(~item_name, scales = "free") +
+  theme_classic() +
+  theme(legend.position = "bottom",
+        legend.text = element_text(size=25),
+        strip.text = element_text(size=)) +
+  scale_y_continuous(labels = percent) +
+  scale_x_date(date_labels = "%b\n%Y") +
+  labs(title="Growing Regional Differences Within Inflation Categories, Especially Services",
+       subtitle="Year over Year inflation, seasonally unadjusted, by region for major categories",
+       caption="BLS, CPI. Preliminary, what does this mean? Mike Konczal, Roosevelt Institute")
+
+ggsave("graphics/regionals_all.png", dpi="retina", width = 12, height=12, units = "in")
+
+
+cpi_data %>% filter(item_name %in% item_basket_headline, area_code %in% regional_area_codes, !is.na(date)) %>%
+  left_join(area_names, by="area_code") %>%
+  filter(year(date) > 2011) %>%
+  group_by(series_title, area_code) %>%
+  arrange(date) %>%
+  mutate(YoY = value/lag(value,12)-1) %>%
+  ungroup() %>%
+  ggplot(aes(date,YoY, color=area_name)) + geom_line() + theme_classic() + facet_wrap(~item_name) 
+
+
+
+a <- cpi_data %>% filter(item_name %in% c(item_basket_core_services,item_basket_core_goods), area_code %in% regional_area_codes, !is.na(date), periodicity_code == "R") %>%
+  left_join(area_names, by="area_code") %>%
+  filter(year(date) > 2013) %>%
+  group_by(series_title, area_code) %>%
+  arrange(date) %>%
+  mutate(YoY = value/lag(value,12)-1) %>%
+  ungroup() %>%
+  group_by(date, item_name) %>%
+  mutate(high_low = if_else(YoY == max(YoY) | YoY == min(YoY), TRUE, FALSE)) %>%
+  ungroup()
+
+
+##### Supercore regional ####
+
+cpi %>% filter(date > "2017-12-01", item_name %in% c("Services less energy services", "Shelter", "Commodities less food and energy commodities")) %>%
+  mutate(item_name = str_replace_all(item_name, "Commodities less food and energy commodities","Core_goods")) %>%
+  select(date, item_name, Wchange1a) %>%
+  pivot_wider(names_from = item_name, values_from = Wchange1a) %>%
+  mutate(`Rest of core services` = `Services less energy services` - `Shelter`) %>%
+  select(-`Services less energy services`) %>%
+  pivot_longer(c(Shelter, `Rest of core services`,Core_goods), names_to = "item_name", values_to = "Wchange1a")
+
+
+cpi_data %>% filter(item_name %in% c("Services less energy services", "Shelter", "Commodities less food and energy commodities"),
+                    area_code %in% regional_area_codes, !is.na(date), periodicity_code == "R") %>%
+  mutate(item_name = str_replace_all(item_name, "Commodities less food and energy commodities","Core_goods")) %>%
+  group_by(series_title, area_name) %>%
+  arrange(date) %>%
+  mutate(YoY = value/lag(value,12)-1) %>%
+  mutate(YoY_W = YoY*weight/100) %>%
+  ungroup() %>%
+  filter(year(date) >= 2015) %>%
+  select(date, item_name, area_name, YoY_W) %>%
+  pivot_wider(names_from = item_name, values_from = YoY_W) %>%
+  mutate(`Rest of core services` = `Services less energy services` - `Shelter`) %>%
+  select(-`Services less energy services`) %>%
+  pivot_longer(c(Shelter, `Rest of core services`,Core_goods), names_to = "item_name", values_to = "YoY_W") %>%
+  mutate(item_name = str_replace_all(item_name, "Core_goods","Core goods")) %>%
+  mutate(item_name = factor(item_name, levels = c("Core goods", "Shelter", "Rest of core services"))) %>%
+  mutate(num_label = round(100*YoY_W, 1)) %>% mutate(num_label = ifelse(abs(num_label) < 0.16, NA, num_label)) %>%
+  
+  ggplot(aes(x = date, y = YoY_W, color=area_name)) +
+  geom_line(size=1) +
+  theme(legend.position = "bottom", legend.title = element_blank()) + 
+  facet_grid(~item_name) +
+  labs(y = NULL,
+       x = NULL,
+       title = "Onion by region, why not?",
+       subtitle = "Monthly contribution to inflation, year-over-year, by region. Preliminary. Beware, this uses national weights for subregions.",
+       caption ="BLS, CPI, seasonally unadjusted, 2022 weights prior to 2023. Shelter category is 'shelter.' Author's calculation. Mike Konczal, Roosevelt Institute") +
+  theme_lass +
+  scale_color_brewer(palette="Spectral", name = "item_name") +
+  scale_y_continuous(labels = percent) +
+  scale_x_date(date_labels = "%b\n%Y") +
+  theme(axis.text.x = element_text(size=14), axis.text.y = element_text(size=19)) +
+  theme(legend.position = "bottom",
+        legend.text = element_text(size=25),
+        strip.text = element_text(size=20))
+
+ggsave("graphics/three_regional_categories.png", dpi="retina", width = 12, height=6.75, units = "in")
+  
+
+
+
+
+cpi_data %>% filter(item_name %in% c("Services less rent of shelter", "Shelter", "Commodities less food and energy commodities"),
+                    area_code %in% regional_area_codes, !is.na(date), periodicity_code == "R") %>%
+  mutate(item_name = str_replace_all(item_name, "Commodities less food and energy commodities","Core_goods")) %>%
+  group_by(series_title, area_name) %>%
+  arrange(date) %>%
+  mutate(YoY = value/lag(value,12)-1) %>%
+  mutate(YoY_W = YoY*weight/100) %>%
+  ungroup() %>%
+  filter(year(date) >= 2015) %>%
+  select(date, item_name, area_name, YoY) %>%
+  ggplot(aes(x = date, y = YoY, color=area_name)) +
+  geom_line(size=1) +
+  theme(legend.position = "bottom", legend.title = element_blank()) + 
+  facet_grid(~item_name) +
+  labs(y = NULL,
+       x = NULL,
+       title = "Onion by region, why not?",
+       subtitle = "Monthly contribution to inflation, year-over-year, by region. Preliminary. Beware, this uses national weights for subregions.",
+       caption ="BLS, CPI, seasonally unadjusted, 2022 weights prior to 2023. Shelter category is 'shelter.' Author's calculation. Mike Konczal, Roosevelt Institute") +
+  theme_lass +
+  scale_color_brewer(palette="Spectral", name = "item_name") +
+  scale_y_continuous(labels = percent) +
+  scale_x_date(date_labels = "%b\n%Y") +
+  theme(axis.text.x = element_text(size=14), axis.text.y = element_text(size=19)) +
+  theme(legend.position = "bottom",
+        legend.text = element_text(size=25),
+        strip.text = element_text(size=20))
+
+ggsave("graphics/three_regional_categories.png", dpi="retina", width = 12, height=6.75, units = "in")
+
+
+
+
+lowest <- read_csv("weights/most_prices.csv") %>% filter(category != "Meta", lowest == 1)
+core <- lowest %>% filter(category %in% c("Services","Goods"))
+
+MI_dates <- cpi %>% filter(date > "2012-01-01")
+MI_dates <- unique(MI_dates$date)
+MI_dates <- sort(MI_dates, decreasing = TRUE)
+MI_dates_three = MI_dates[seq(1, length(MI_dates), 12)]
+
+cpi %>% filter(item_name %in% core$item_name, !is.na(Pchange1), date > "2012-01-01") %>% mutate(p3 = (Pchange1a > 0.03)) %>%
+  group_by(date) %>%
+  summarize(total_3 = sum(p3)/n()) %>% ungroup() %>% ungroup() %>%
+  mutate(last_value = ifelse(date==max(date) | total_3==max(total_3),total_3,NA)) %>%
+  ggplot(aes(date, total_3, label=label_percent()(last_value))) + geom_line(size=1) + theme_lass +
+  labs(y = NULL,
+       x = NULL,
+       title = "Percent of Items With 3% Price Growth Has Decreased From High Levels",
+       subtitle = "Percent of 141 CPI items having at least 3 percent monthly price increases, annualized.",
+       caption ="BLS, CPI, only seasonally adjusted items included. Author's calculation. Mike Konczal, Roosevelt Institute") +
+  theme(panel.grid.major.y = element_line(size=0.5)) +
+  theme(plot.title.position = "plot") +
+  scale_y_continuous(labels = percent) +
+  scale_x_date(date_labels = "%b\n%Y", breaks = MI_dates_three) +
+  geom_text(show.legend=FALSE, nudge_x = 80, nudge_y = 0.011)
+
+max_date <- max(cpi$date)
+
+a <-
+cpi %>% filter(item_name %in% core$item_name) %>%
+  group_by(item_name) %>%
+  summarize(change_2019 = value[date=="2020-01-01"]/value[date=="2019-01-01"]-1,
+            change_2023 = value[date==max_date]/value[date == max_date %m-% months(12)]-1) %>%
+  mutate(relative_diff = change_2023/change_2019,
+         absolute_diff = change_2023-change_2019,
+         time_one = 1,
+         time_two = 2) %>%
+  
+  ggplot() + geom_segment(aes(x = time_one, y = change_2019, xend = time_two, yend = change_2023)) + theme_classic()
+
+
+##### Health Insurance ######
+HI_dates <- cpi_data %>% filter(item_name %in% c("Health insurance")) %>%
+  filter(period != "M13", begin_period != "S01") %>% filter(area_code == "0000") %>%
+  select(date)
+
+
+HI_dates <- unique(HI_dates$date)
+HI_dates <- sort(HI_dates, decreasing = TRUE)
+HI_dates = HI_dates[seq(1, length(HI_dates), 12)]
+
+cpi_data %>% filter(item_name %in% c("Health insurance")) %>%
+  filter(period != "M13", begin_period != "S01") %>% filter(area_code == "0000") %>%
+  arrange(date) %>%
+  mutate(Pchange1 = (value/lag(value)-1)) %>%
+  mutate(Wchange1 = (Pchange1*weight)/100) %>%
+  mutate(Wchange1a = (1 + Wchange1)^12 - 1) %>%
+  
+  ggplot(aes(x = date, y = Wchange1a)) +
+  geom_bar(stat = 'identity', size=0) + theme_classic() +
+  theme(legend.position = "bottom", legend.title = element_blank()) + 
+  labs(y = NULL,
+       x = NULL,
+       title = "Health Insurance Goes Sharply Negative, Likely to Continue",
+       subtitle = "Monthly contribution to inflation, annualized. Values tend to reset Sep/Oct.",
+       caption ="BLS, CPI, 2022 weights prior to 2023, Seasonally Unadjusted. Author's Calculation. Mike Konczal, Roosevelt Institute") +
+  theme_lass +
+  scale_fill_brewer(palette="Paired") +
+  scale_y_continuous(labels = percent) +
+  scale_x_date(date_labels = "%b %y", breaks=HI_dates) +
+  theme(panel.grid.major.x = element_line(size=1),
+        panel.grid.major.y = element_blank()
+  )
+
+ggsave("graphics/g1_health_insurance.png", dpi="retina", width = 12, height=6.75, units = "in")
+
+#### Unadjusted monthly ####
+
+cpi_data %>% filter(seasonal == "U", item_name == "All items less food and energy", period != "M13", area_code == "0000", substr(period,1,1) == "M") %>%
+  select(date, item_name, value) %>%
+  mutate(change = (value/lag(value,1))^12-1, month = month(date), monthF = as.factor(month), year=year(date)) %>%
+  ggplot(aes(monthF,change, color=as.factor(year))) + geom_line() + theme_classic()
+  
+substr(a$period,1,1)
+
+
+unique(cpi$item_name) %>% filter(item_)
+
+"Uncooked beef roasts" %in% cpi$item_name
+"Men's underwear, hosiery, nightwear, and swimwear" %in% cpi$item_name
+unique(cpi[grepl("wear", cpi$item_name),]$item_name)

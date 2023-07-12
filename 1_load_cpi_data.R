@@ -17,15 +17,17 @@ library(magrittr)
 
 ############### SECTION 1: READ IN AND CLEAN UP DATA #####################
 
-cpi_data <- GET("https://download.bls.gov/pub/time.series/cu/cu.data.0.Current", user_agent("konczal@gmail.com")) %>%
-  content(as = "text") %>%
-  fread()
+cpi_data <- read_delim("../../../Desktop/cu.data.02.Current")
+
+#cpi_data <- GET("https://download.bls.gov/pub/time.series/cu/cu.data.0.Current", user_agent("konczal@gmail.com")) %>%
+#  content(as = "text") %>%
+#  fread()
 cpi_data <- cpi_data %>%
   clean_names()
 cpi_data$value <- as.numeric(cpi_data$value)
 cpi_data$series_id <- str_trim(cpi_data$series_id)
-cpi_data$date <- paste(substr(cpi_data$period, 2,3), "01", substr(cpi_data$year, 3, 4), sep="/")
-cpi_data$date <- as.Date(cpi_data$date, "%m/%d/%y")
+cpi_data$date <- paste(substr(cpi_data$period, 2,3), "01", cpi_data$year, sep="/")
+cpi_data$date <- as.Date(cpi_data$date, "%m/%d/%Y")
 
 series <- GET("https://download.bls.gov/pub/time.series/cu/cu.series", user_agent("rortybomb@gmail.com")) %>%
   content(as = "text") %>%
@@ -38,6 +40,12 @@ items <- GET("https://download.bls.gov/pub/time.series/cu/cu.item", user_agent("
   content(as = "text") %>%
   fread()
 series <- inner_join(series, items, by = c("item_code"))
+
+area_code <- GET("https://download.bls.gov/pub/time.series/cu/cu.area", user_agent("rortybomb@gmail.com")) %>%
+  content(as = "text") %>%
+  fread()
+series <- inner_join(series, area_code, by = c("area_code"))
+
 
 cpi_data <- inner_join(cpi_data, series, by = c("series_id"))
 
