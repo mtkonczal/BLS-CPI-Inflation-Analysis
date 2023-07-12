@@ -17,11 +17,10 @@ library(magrittr)
 
 ############### SECTION 1: READ IN AND CLEAN UP DATA #####################
 
-cpi_data <- read_delim("../../../Desktop/cu.data.02.Current")
 
-#cpi_data <- GET("https://download.bls.gov/pub/time.series/cu/cu.data.0.Current", user_agent("konczal@gmail.com")) %>%
-#  content(as = "text") %>%
-#  fread()
+cpi_data <- GET("https://download.bls.gov/pub/time.series/cu/cu.data.0.Current", user_agent("konczal@gmail.com")) %>%
+  content(as = "text") %>%
+  fread()
 cpi_data <- cpi_data %>%
   clean_names()
 cpi_data$value <- as.numeric(cpi_data$value)
