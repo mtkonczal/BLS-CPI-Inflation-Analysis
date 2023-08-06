@@ -1335,3 +1335,109 @@ unique(cpi$item_name) %>% filter(item_)
 "Uncooked beef roasts" %in% cpi$item_name
 "Men's underwear, hosiery, nightwear, and swimwear" %in% cpi$item_name
 unique(cpi[grepl("wear", cpi$item_name),]$item_name)
+
+
+##### How to Make an Index ####
+
+
+cpi_goods_ex_autos <- cpi %>% filter(item_name %in% c("Commodities less food and energy commodities", "Used cars and trucks")) %>%
+  select(date, item_name, Wchange1a) %>%
+  pivot_wider(names_from = item_name, values_from = Wchange1a) %>%
+  mutate(`Goods ex used autos` = `Commodities less food and energy commodities` - `Used cars and trucks`) %>%
+  select(-`Commodities less food and energy commodities`) %>%
+  pivot_longer(c(`Goods ex used autos`, `Used cars and trucks`), names_to = "item_name", values_to = "Wchange1a") %>%
+  filter(item_name == "Goods ex used autos")
+
+
+cpi_goods_ex_autos_index <-
+  cpi %>%
+  mutate(weight_nhs = if_else(!is.na(weight_2023), weight_2023, weight)) %>%
+  select(date, item_name, Wchange1, weight_nhs) %>%
+  mutate(weight_nhs = weight_nhs/100) %>%
+  group_by(date) %>%
+  summarize(nhsWP1 = Wchange1[item_name == "Commodities less food and energy commodities"] - Wchange1[item_name == "Used cars and trucks"],
+            nhs_weight = weight_nhs[item_name == "Commodities less food and energy commodities"] - weight_nhs[item_name == "Used cars and trucks"],
+  ) %>%
+  ungroup() %>%
+  mutate(nhsWP1A = nhsWP1/nhs_weight) %>%
+  mutate(nhsWP1A = (nhsWP1A+1)^12-1) %>%
+  mutate(index = nhsWP1/nhs_weight+1) %>% filter(!is.na(index)) %>%
+  mutate(index = cumprod(index), type = "cpi")
+#### Make difference ####
+
+cpi_goods_ex_autos_index %>% mutate(diff = (index/lag(index,3))^4-1) %>%
+  ggplot(aes(date,diff, color=type)) + geom_line(size=1.2) + theme_lass +
+  scale_color_manual(values=c("#F67280")) +
+  scale_y_continuous(labels = percent) +
+  scale_x_date(date_labels = "%b\n%Y") +
+  theme(legend.position = "none", legend.title = element_blank(), legend.text = element_text(size=16),
+        axis.text.x = element_text(size=14), axis.text.y = element_text(size=19)) +
+  labs(title="Core Goods ex Used Autos, CPI, 3-month Percent Change, Annualized",
+       caption="BLS, CPI, Seasonally-Adjusted. Author's calculations. Mike Konczal, Roosevelt Institute.") +
+  geom_hline(yintercept = 0, color="white")
+
+ggsave("graphics/goods_ex_autos.png", dpi="retina", width = 12, height=6.75, units = "in")
+
+
+
+
+#### Single Food Chart ####
+
+
+##### FOOD #####
+
+
+food_index <- c("Rice, pasta, cornmeal","Breakfast cereal", "Flour and prepared flour mixes",
+                "Bread", "Fresh biscuits, rolls, muffins", "Cakes, cupcakes, and cookie",
+                "Beef and veal", "Pork", "Other meats", "Poultry", "Fish and seafood", "Eggs",
+                "Milk", "Fresh fruits", "Fresh vegetables", "Processed fruits and vegetables", "Juices and nonalcoholic drinks",
+                "Beverage materials including coffee and tea", "Fats and oils", "Sugar and sweets")
+
+# total weights of food_index
+cpi %>% filter(item_name %in% food_index, date == max(date)) %>% summarize( n = sum(weight))
+cpi %>% filter(item_name == "Food at home", date == max(date)) %>% summarize( n = sum(weight))
+
+cpi %>% filter(item_name %in% food_index, date == max(date), Pchange3 < 0) %>%  summarize( n = sum(weight))
+#### GRAPHIC FOOD ####
+# Comparison point
+#food_dates <- cpi %>% filter(item_name %in% food_index) %>% filter(date == max(date) | date == max(date) %m-% months(7) | date == max(date) %m-% months(4)) %>%
+food_dates <- cpi %>% filter(item_name %in% food_index) %>%
+  group_by(item_name) %>%
+  mutate(Pchange6 = (value/lag(value, 6)-1)) %>%
+  ungroup() %>%
+  filter(date == max(date) | date == "2022-06-01") %>%
+  mutate(date = paste(as.character(lubridate::month(date, label = TRUE, abbr = FALSE)), ", ", as.character(year(date)), sep = "")) %>%
+  mutate(date = factor(date,levels=c("June, 2023","June, 2022")), name = reorder_within(item_name, Pchange6, date))
+
+ggplot(food_dates, aes(name, Pchange6, fill = date)) +
+  geom_col(show.legend = FALSE, size=0) +
+  facet_wrap(~date, scales = "free_y", ncol=1) + theme_lass +
+  coord_flip() +
+  scale_x_reordered() +
+  theme(panel.grid.major.x = element_line(size=0.5)) +
+  scale_y_continuous(labels = scales::percent) +
+  theme(plot.title.position = "plot") +
+  theme(panel.grid.major.x = element_line(size=0.5)) +
+  scale_y_continuous(labels = scales::percent) +
+  theme(plot.title.position = "plot") +
+  labs(y = "Price Increase Over Previous Three Months",
+       x = NULL,
+       title = "Food Price Increases Have Narrowed Recently, With Eggs in Freefall",
+       subtitle = "Price increase over previous six months of date. Categories represent 68 percent of spending on food at home.",
+       caption ="BLS, CPI, all subcategories of 'Food at home.' Seasonally Adjusted. Author's Calculation. @rortybomb") +
+  theme(axis.text.y = element_text(size=12),
+        axis.text.x = element_text(size=22, face="bold"), strip.text = element_text(color="white", size = 14)) +
+  theme(panel.spacing.y=unit(0, "lines"), panel.grid.major.y = element_blank(),
+        plot.title = element_text(size = 20),
+        plot.subtitle = element_text(size=12, color="white"))
+
+ggsave("graphics/food_chart.png", dpi="retina", width = 12, height=12, units = "in")
+
+
+ahe <- read_csv("data/ahe.csv") %>% rename(ahe = CES0500000003, ahepi = AHETPI, cpi = CPIAUCSL, date = DATE) %>%
+  mutate(ahe = ahe/lag(ahe,1)-1, ahepi = ahepi/lag(ahepi,1)-1, cpi = cpi/lag(cpi,1)-1) %>%
+  mutate(real_ahe = ahe - cpi, real_ahepi = ahepi - cpi)
+
+
+ahe %>%
+  ggplot() + geom_line(aes(date, real_ahe)) + geom_line(aes(date, real_ahepi),color="red")
