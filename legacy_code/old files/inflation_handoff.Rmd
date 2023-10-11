@@ -1,0 +1,46 @@
+---
+title: "Inflation Handoff Analysis for April, 2022"
+author: "Mike Konczal"
+date: "`r format(Sys.time(), '%d %B %Y')`"
+output: pdf_document
+header-includes:
+    - \usepackage{caption}
+---
+\captionsetup[table]{labelformat=empty}                 
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+knitr::opts_chunk$set(eval = TRUE)
+library(tidyverse)
+library(huxtable)
+```
+A key thing to watch for in inflation this month is whether or not the positive trends underneath core inflation accelerate or retreat. We're looking to see continued validation for Handoff Theory, an argument that inflation will come down as goods inflation normalizes at zero or even in deflation, while inflation increases for services are contained.
+
+If Handoff continues, the worst of inflation is behind us, and we can start turning to the question of the timeframe and level for how inflation will level out. If it backslides, perhaps because of difficulty in supply chains resulting from outbreaks in China, the slog becomes worse.
+
+We can analyze this Handoff Theory with **four** sets of data points. Let's track them in real time.
+
+## Goods
+
+The **first** argument is that inflation in core goods should return to longer-term trends of near zero as both supply chains unlock and consumers seek out services. Let's look at core goods excluding autos. The quicker that goods return to zero, the better. How was last month's progress in getting to zero?
+
+The **second** is that some goods that have had the biggest price increases actually experience some deflation, as their prices go negative as they normalize. There are several candidates, but autos (new and used cars plus motor parts) is the most obvious one. This happened in a big way last month. Did it continue?
+
+## Services
+
+The **third** is that as services reopen and expand back to trend, inflation will not pick up significantly. Let's look at core services minus housing. If core services remains stable and don't increase too much, that will help with reducing inflation. Did it stay steady?
+
+The **fourth** is that shelter, counted as a service, didn't increase too much. We expect housing to increase as a result of many pandemic and other medium-term factors, but how much did it end up increasing?
+
+(All weights are 2022 weights. Numbers presented are seasonally adjusted, always annualized, author's calculations. This code was locked down the night before the numbers were available.)
+
+\newpage
+```{r goods, echo=FALSE}
+# This source call gives us all our data for the report
+source("cpi_handoff_analysis.R")
+
+handoff_chart %>%
+  as_huxtable()  %>%
+  set_caption("How Did We Do? Contribution to Inflation, Annualized") %>%
+  set_number_format(row=c(2:5), col=everywhere, value = fmt_percent(2)) %>%
+  set_bold(1, 1:5, value = TRUE)
+```
