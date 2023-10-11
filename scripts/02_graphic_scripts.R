@@ -7,6 +7,25 @@
 # Libraries
 library(lubridate)
 
+create_cpi_changes <- function(cpi_data){
+  cpi <- cpi_data %>%
+    filter(period != "M13") %>%
+    filter(seasonal == "S") %>%
+    arrange(date) %>%
+    group_by(item_name) %>%
+    mutate(Pchange1 = (value/lag(value)-1)) %>%
+    mutate(Pchange1a = (1 + Pchange1)^12 - 1) %>%
+    mutate(Wchange1 = (Pchange1*weight)/100) %>%
+    mutate(Wchange1a = (1 + Wchange1)^12 - 1) %>%
+    mutate(Pchange3 = (value/lag(value, 3)-1)) %>%
+    mutate(Pchange3a = (1 + Pchange3)^12 - 1) %>%
+    mutate(Wchange3 = (Pchange3*weight)/100) %>%
+    mutate(Wchange3a = (1 + Wchange3)^4 - 1) %>%
+    mutate(Pchange12 = (value/lag(value, 12)-1)) %>%
+    mutate(Wchange12 = (Pchange12*weight)/100) %>%
+    ungroup()
+  return(cpi)
+}
 
 calculate_trend <- function(data, variable_name, start_date, end_date) {
   trend <- data %>%
@@ -106,6 +125,224 @@ three_six_graphic <- function(cpi_df, variable_name, start_date, end_pre_date, b
   }
   return(p)
 }
+
+# A function to generate a stacked bar chart visualizing the contribution to inflation.
+# 
+# Args:
+#   cpi_data: Data frame containing the CPI data.
+#   item_array: Vector of item names to be included in the plot.
+#   start_date: Date from which to start plotting.
+#   title: Title of the plot (default is NA).
+#   date_breaks_length: Length of date breaks (default is 12).
+# 
+# Returns:
+#   A ggplot object.
+stacked_graphic <- function(cpi_data, item_array, start_date, title = NA, date_breaks_length = 12, add_labels = FALSE){
+  
+  date_breaks <- generate_dates(cpi_data$date, date_breaks_length)
+  
+  cpi_data %>% filter(item_name %in% item_array) %>%
+    filter(date >= start_date) %>%
+    mutate(num_label = round(100*Wchange1a, 1)) %>% mutate(num_label = ifelse(abs(num_label) < 0.16, NA, num_label)) %>%
+    ggplot(aes(x = date, y = Wchange1a, fill = item_name, label = num_label)) +
+    geom_bar(stat = 'identity', size=0) + theme_lass +
+    labs(y = NULL,
+         x = NULL,
+         title = title,
+         subtitle = "Monthly Contribution to Inflation, Annualized.",
+         caption ="BLS, CPI, 2022 weights prior to 2023, seasonally adjusted. Author's calculation. Mike Konczal, Roosevelt Institute") +
+    scale_fill_brewer(palette="RdYlGn") +
+    scale_y_continuous(labels = percent) +
+    scale_x_date(date_labels = "%b\n%Y", breaks=date_breaks) +
+    {if(add_labels)geom_text(size = 4, position = position_stack(vjust = 0.5), color="black")} +
+    theme(legend.position = c(0.9,0.85), legend.title = element_blank(), legend.text = element_text(size=18),
+          axis.text.x = element_text(size=14), axis.text.y = element_text(size=19))
+}
+
+
+
+onion_chart <- function(cpi_data, start_date, breaks_length = 12, title = NA){
+  
+  date_breaks <- generate_dates(cpi_data$date, breaks_length)
+  
+  three_categories <- cpi_data %>%
+    filter(date > start_date, item_name %in% c("Services less energy services", "Shelter", "Commodities less food and energy commodities")) %>%
+    mutate(item_name = str_replace_all(item_name, "Commodities less food and energy commodities", "Core_goods")) %>%
+    select(date, item_name, Wchange1a) %>%
+    pivot_wider(names_from = item_name, values_from = Wchange1a) %>%
+    mutate(`Rest of core services` = `Services less energy services` - `Shelter`) %>%
+    select(-`Services less energy services`) %>%
+    pivot_longer(c(Shelter, `Rest of core services`, Core_goods), names_to = "item_name", values_to = "Wchange1a") %>%
+    mutate(item_name = str_replace_all(item_name, "Core_goods", "Core goods")) %>%
+    mutate(item_name = factor(item_name, levels = c("Core goods", "Shelter", "Rest of core services"))) %>%
+    mutate(num_label = round(100 * Wchange1a, 1)) %>%
+    mutate(num_label = ifelse(abs(num_label) < 0.16, NA, num_label))
+  
+  three_categories %>%
+    ggplot(aes(x = date, y = Wchange1a, fill=item_name)) +
+    geom_bar(stat = 'identity', size=0) +
+    theme(legend.position = "bottom", legend.title = element_blank()) + 
+    facet_grid(~item_name) +
+    labs(y = NULL,
+         x = NULL,
+         title = title,
+         subtitle = "Monthly contribution to inflation, annualized.",
+         caption ="BLS, CPI, 2022 weights prior to 2023, seasonally adjusted. Author's calculation. Mike Konczal, Roosevelt Institute") +
+    theme_lass +
+    scale_fill_brewer(palette="RdPu", name = "item_name") +
+    scale_y_continuous(labels = percent) +
+    scale_x_date(date_labels = "%b\n%Y", breaks = date_breaks) +
+    theme(axis.text.x = element_text(size=14), axis.text.y = element_text(size=19))
+  
+}
+
+onion_chart2 <- function(cpi_data, start_date, title = NA){
+  
+  date_breaks <- generate_dates(cpi_data$date, date_breaks_length)
+
+  three_categories <- cpi_data %>%
+    filter(date > start_date, item_name %in% c("Services less energy services", "Shelter", "Commodities less food and energy commodities")) %>%
+    mutate(item_name = str_replace_all(item_name, "Commodities less food and energy commodities", "Core_goods")) %>%
+    select(date, item_name, Wchange1a) %>%
+    pivot_wider(names_from = item_name, values_from = Wchange1a) %>%
+    mutate(`Rest of core services` = `Services less energy services` - `Shelter`) %>%
+    select(-`Services less energy services`) %>%
+    pivot_longer(c(Shelter, `Rest of core services`, Core_goods), names_to = "item_name", values_to = "Wchange1a") %>%
+    mutate(item_name = str_replace_all(item_name, "Core_goods", "Core goods")) %>%
+    mutate(item_name = factor(item_name, levels = c("Core goods", "Shelter", "Rest of core services"))) %>%
+    mutate(num_label = round(100 * Wchange1a, 1)) %>%
+    mutate(num_label = ifelse(abs(num_label) < 0.16, NA, num_label))
+  
+  three_categories %>%
+    ggplot(aes(x = date, y = Wchange1a, fill=item_name)) +
+    geom_bar(stat = 'identity', size=0) +
+    theme(legend.position = "bottom", legend.title = element_blank()) + 
+    facet_grid(~item_name) +
+    labs(y = NULL,
+         x = NULL,
+         title = title,
+         subtitle = "Monthly contribution to inflation, annualized.",
+         caption ="BLS, CPI, 2022 weights prior to 2023, seasonally adjusted. Author's calculation. Mike Konczal, Roosevelt Institute") +
+    theme_lass +
+    scale_fill_brewer(palette="RdPu", name = "item_name") +
+    scale_y_continuous(labels = percent) +
+    scale_x_date(date_labels = "%b\n%Y", breaks = MI_dates_three_categories) +
+    theme(axis.text.x = element_text(size=14), axis.text.y = element_text(size=19))
+
+}
+
+#####
+subtract_cpi_items <- function(cpi, start_date, base_item, subtract_array,
+                               add_on_array = NA, rest_name_variable = "Rest of Variable"){
+
+  c1 <- cpi %>% filter(date >= start_date) %>%
+    filter(item_name %in% subtract_array) %>%
+    select(date, Wchange1a) %>%
+    group_by(date) %>%
+    summarize(total_rest = sum(Wchange1a))
+  
+  c2 <- cpi %>%
+    filter(item_name == base_item) %>%
+    select(date, Wchange1a) %>%
+    left_join(c1, by="date") %>%
+    mutate(Wchange1a = Wchange1a - total_rest) %>%
+    mutate(item_name = rest_name_variable) %>%
+    select(date, item_name, Wchange1a)
+  
+  if(!is.na(add_on_array))
+    c3 <- cpi %>%
+    filter(item_name %in% add_on_array) %>%
+    select(date, item_name, Wchange1a)
+  
+  c <- cpi %>% filter(date >= start_date) %>%
+    filter(item_name %in% subtract_array) %>%
+    select(date, item_name, Wchange1a) %>%
+    rbind(c2)
+  
+  if(!is.na(add_on_array))
+    c <- c %>% rbind(c3)
+  
+  c <- c %>%
+    arrange(date) %>%
+    filter(date >= start_date) %>%
+    mutate(num_label = round(100*Wchange1a, 1)) %>% mutate(num_label = ifelse(abs(num_label) < 0.16, NA, num_label))
+  
+  return(c)
+}  
+
+draw_ridgeline <- function(cpi, item_list, top_cut = 0.85, bottom_cut = 0.15, title = NA) {
+
+    median_data <- cpi %>%
+      filter(item_name %in% item_list | item_name == "Owners' equivalent rent of residences") %>%
+      filter(!is.na(date)) %>%
+      arrange(date) %>%
+      group_by(date) %>%
+      mutate(normalized = sum(weight)) %>%
+      mutate(weightN = weight / normalized) %>%
+      arrange(Pchange3) %>%
+      mutate(cumsum = cumsum(weight) / 100) %>%
+      mutate(cumsumN = cumsum(weightN)) %>%
+      ungroup() %>%
+      mutate(Pchange3a = (1 + Pchange3)^4 - 1)
+  
+  quarters_backwards <- (month(max(cpi$date)) + c(0, 3, 6, 9) - 1) %% 12 + 1
+  
+    # THIS IS THE GRAPHIC - 30 percent-trimmed distribution
+    median_data %>%
+      mutate(dateF = as.factor(date)) %>%
+      filter(cumsumN <= top_cut & cumsum >= bottom_cut) %>%
+      filter(date >= "2017-06-01") %>%
+      filter(date != "2020-06-01") %>%
+      filter(month(date) %in% quarters_backwards) %>%
+      mutate(monthC = format(date, "%B, %Y")) %>%
+      mutate(monthC = fct_reorder(monthC, date)) %>%
+      mutate(monthCR = fct_rev(monthC)) %>%
+      ggplot(aes(x = Pchange3a, y = monthCR, fill = stat(x))) +
+      geom_density_ridges_gradient() +
+      scale_fill_viridis(option = "H") +
+      theme_ridges() +
+      theme_lass +
+      theme(legend.position = "none") +
+      scale_x_continuous(labels = percent) +
+      labs(
+        title = title,
+        subtitle = "Distribution of the Cleveland Fed's Median/Trimmed-Mean CPI price basket, 3-month change annualized, with components\nwhose expenditure weights fall above/below the 85/15th percentile of price changes removed.",
+        x = "Three Month Percent Change", y = "", caption = "OER is treated as one value, instead of broken out by region and manually seasonally adjusted as per Cleveland Fed's methodology.Some 2020s removed as negative outlier. Mike Konczal, Roosevelt Institute"
+      ) +
+      theme(
+        plot.title.position = "plot", legend.position = "none", legend.title = element_blank(),
+        plot.title = element_text(size = 25, margin = margin(0, 0, 5, 0)),
+        plot.subtitle = element_text(size = 15),
+        plot.caption = element_text(size = 10, face = "italic"),
+        axis.text.y = element_text(size = 12, face = "bold"),
+        axis.text.x = element_text(size = 12)
+      )
+}
+
+unadjusted_analysis <- function(cpi_data, years_array, title = NA) {
+  
+  cpi_data %>%
+    filter(series_id == "CUUR0000SA0L1E") %>%
+    select(date, value) %>%
+    mutate(month = month(date), year = as.factor(year(date))) %>%
+    mutate(pchange1 = value / lag(value, 1) - 1) %>%
+    filter(year(date) %in% years_array) %>%
+    ggplot(aes(month, pchange1, color = year)) +
+    geom_line(size = 1.2) +
+    theme_lass +
+    scale_x_continuous(breaks = 1:12, labels = month.abb) +
+    scale_y_continuous(labels = percent) +
+    geom_text_repel(aes(label = year),
+      size = 7,
+      data = . %>% group_by(year) %>% filter(month == 4) %>% ungroup()
+    ) +
+    labs(
+      title = title,
+      subtitle = "Seasonally unadjusted values for core CPI inflation, 1-month percent change, not annualized.",
+      caption = "Inspired by Paul Romer's blog. Mike Konczal, Roosevelt Institute"
+    )
+}
+
 
 ##### SET UP SOME THINGS #####
 theme_lass <-   theme_modern_rc(ticks = TRUE) + theme(legend.position = "none", legend.title = element_blank(),
