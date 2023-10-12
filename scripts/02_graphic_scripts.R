@@ -6,6 +6,10 @@
 
 # Libraries
 library(lubridate)
+library(hrbrthemes)
+library(ggrepel)
+library(viridis)
+library(ggridges)
 
 create_cpi_changes <- function(cpi_data){
   cpi <- cpi_data %>%
@@ -62,13 +66,13 @@ make_three_six_data <- function(cpi_df, variable_name, label_length) {
       OneMonth = (value/lag(value,1))^12-1,
       ThreeMonth = (value/lag(value,3))^4-1,
       SixMonth = (value/lag(value,6))^2-1,
-      last_value = ifelse(date==max(date),SixMonth,NA),
       above_label = ifelse(date >= max(date) %m-% months(label_length), round(100*OneMonth, 1), NA)
     ) %>%
     pivot_longer(cols = c(ThreeMonth, SixMonth),
                  names_to = "time_length",
                  values_to = "change") %>%
     mutate(
+      last_value = ifelse(date==max(date),change,NA),
       time_length = case_when(
         time_length == "ThreeMonth" ~ "3-Month Change",
         time_length == "SixMonth" ~ "6-Month Change",
@@ -79,7 +83,7 @@ make_three_six_data <- function(cpi_df, variable_name, label_length) {
   return(cpi_df)
 }
 
-three_six_graphic <- function(cpi_df, variable_name, start_date, end_pre_date, breaks_value = 6, title="",
+three_six_graphic <- function(cpi_df, variable_name, start_date, end_pre_date, start_graphic, breaks_value = 6, title="",
                               legend.position.c = c(0.90,0.85), colors = c("3-Month Change" = "#2D779C", "6-Month Change" = "#A4CCCC"),
                               add_above_labels = FALSE, label_length = 6, include_3_6 = TRUE,
                               column_alpha=1) {
@@ -91,13 +95,12 @@ three_six_graphic <- function(cpi_df, variable_name, start_date, end_pre_date, b
   
   # Plot
   p <- cpi_df %>% 
-    filter(date >= start_date) %>%
-    ggplot(aes(date, change, color=time_length)) +
+    filter(date >= start_graphic) %>%
+    ggplot(aes(date, change, color=time_length,label=label_percent()(round(last_value,3)))) +
     {if(include_3_6)geom_line(size=1.6)} +
     geom_hline(yintercept = pre_trend, linetype="dashed", color="#A4CCCC") +
     geom_col(aes(date, OneMonth), alpha=column_alpha, size=0, show.legend = FALSE) +
     geom_text_repel(
-      aes(label=scales::label_percent()(round(last_value,3))),
       show.legend=FALSE, nudge_x = 85, min.segment.length = Inf
     ) +
     labs(
@@ -137,7 +140,7 @@ three_six_graphic <- function(cpi_df, variable_name, start_date, end_pre_date, b
 # 
 # Returns:
 #   A ggplot object.
-stacked_graphic <- function(cpi_data, item_array, start_date, title = NA, date_breaks_length = 12, add_labels = FALSE){
+stacked_graphic <- function(cpi_data, item_array, start_date, title = NA, palette = "RdYlGn", date_breaks_length = 12, add_labels = FALSE, legend.position = c(0.9,0.85)){
   
   date_breaks <- generate_dates(cpi_data$date, date_breaks_length)
   
@@ -151,11 +154,11 @@ stacked_graphic <- function(cpi_data, item_array, start_date, title = NA, date_b
          title = title,
          subtitle = "Monthly Contribution to Inflation, Annualized.",
          caption ="BLS, CPI, 2022 weights prior to 2023, seasonally adjusted. Author's calculation. Mike Konczal, Roosevelt Institute") +
-    scale_fill_brewer(palette="RdYlGn") +
+    scale_fill_brewer(palette=palette) +
     scale_y_continuous(labels = percent) +
     scale_x_date(date_labels = "%b\n%Y", breaks=date_breaks) +
     {if(add_labels)geom_text(size = 4, position = position_stack(vjust = 0.5), color="black")} +
-    theme(legend.position = c(0.9,0.85), legend.title = element_blank(), legend.text = element_text(size=18),
+    theme(legend.position = legend.position, legend.title = element_blank(), legend.text = element_text(size=18),
           axis.text.x = element_text(size=14), axis.text.y = element_text(size=19))
 }
 
@@ -166,7 +169,7 @@ onion_chart <- function(cpi_data, start_date, breaks_length = 12, title = NA){
   date_breaks <- generate_dates(cpi_data$date, breaks_length)
   
   three_categories <- cpi_data %>%
-    filter(date > start_date, item_name %in% c("Services less energy services", "Shelter", "Commodities less food and energy commodities")) %>%
+    filter(item_name %in% c("Services less energy services", "Shelter", "Commodities less food and energy commodities")) %>%
     mutate(item_name = str_replace_all(item_name, "Commodities less food and energy commodities", "Core_goods")) %>%
     select(date, item_name, Wchange1a) %>%
     pivot_wider(names_from = item_name, values_from = Wchange1a) %>%
@@ -178,7 +181,16 @@ onion_chart <- function(cpi_data, start_date, breaks_length = 12, title = NA){
     mutate(num_label = round(100 * Wchange1a, 1)) %>%
     mutate(num_label = ifelse(abs(num_label) < 0.16, NA, num_label))
   
+  
+  three_trend_2018_2020 <- three_categories %>%
+    filter(date <= "2020-01-01" & date >= "2018-01-01") %>%
+    select(item_name, Wchange1a) %>%
+    group_by(item_name) %>%
+    summarize(geometric_mean = (prod(1 + Wchange1a))^(1 / n()) - 1)
+  
   three_categories %>%
+    left_join(three_trend_2018_2020, by="item_name") %>%
+    filter(date >= start_date) %>%
     ggplot(aes(x = date, y = Wchange1a, fill=item_name)) +
     geom_bar(stat = 'identity', size=0) +
     theme(legend.position = "bottom", legend.title = element_blank()) + 
@@ -186,13 +198,14 @@ onion_chart <- function(cpi_data, start_date, breaks_length = 12, title = NA){
     labs(y = NULL,
          x = NULL,
          title = title,
-         subtitle = "Monthly contribution to inflation, annualized.",
+         subtitle = "Monthly contribution to inflation, annualized. Yellow line is 2018-19 geometric mean (which was below target).",
          caption ="BLS, CPI, 2022 weights prior to 2023, seasonally adjusted. Author's calculation. Mike Konczal, Roosevelt Institute") +
     theme_lass +
     scale_fill_brewer(palette="RdPu", name = "item_name") +
     scale_y_continuous(labels = percent) +
     scale_x_date(date_labels = "%b\n%Y", breaks = date_breaks) +
-    theme(axis.text.x = element_text(size=14), axis.text.y = element_text(size=19))
+    theme(axis.text.x = element_text(size=14), axis.text.y = element_text(size=19)) +
+    geom_line(aes(date,geometric_mean), color="#E2E47E", size=1.4)
   
 }
 

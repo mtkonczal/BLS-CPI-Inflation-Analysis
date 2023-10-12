@@ -69,7 +69,3 @@ cpi_data$weight <- ifelse(!is.na(cpi_data$weight_2023), cpi_data$weight_2023, cp
 # Clean up the environment
 rm(data.0.Current,series,item,area,cpi_weights,cpi_weights_2023)
 
-# Save data
-save(cpi_data, file = "data/last_cpi_data.RData")
-
-

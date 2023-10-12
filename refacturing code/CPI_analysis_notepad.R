@@ -1465,3 +1465,4 @@ cpi_data %>% filter(series_id == "CUUR0000SA0L1E") %>%
        caption="Inspired by Paul Romer's blog. Mike Konczal, Roosevelt Institute")
 
 
+median_terms <- read_csv("weights/mediancpi_component_table.csv") %>% mutate(item_name = Component)
