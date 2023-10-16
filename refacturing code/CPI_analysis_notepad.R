@@ -1466,3 +1466,42 @@ cpi_data %>% filter(series_id == "CUUR0000SA0L1E") %>%
 
 
 median_terms <- read_csv("weights/mediancpi_component_table.csv") %>% mutate(item_name = Component)
+
+median_terms$item_name
+
+density_test <-
+  cpi %>% filter(year(date) == 2023) %>%
+  filter(item_name %in% median_terms$item_name) %>%
+  select(date, Pchange3a, Pchange1a) %>%
+  pivot_longer(Pchange3a:Pchange1a, names_to = "length_type", values_to = "Pvalues")
+
+write_csv(density_test, file = "../../../Desktop/shiny_density_test.csv")
+
+thresholds <- density_test %>% 
+  group_by(date) %>% 
+  summarise(
+    lower_thresh = quantile(Pchange3a, 0.03),
+    upper_thresh = quantile(Pchange3a, 0.97)
+  )
+
+# Merge thresholds back into the original data
+density_test <- merge(density_test, thresholds, by = "date")
+
+# Filter data to exclude the tails
+density_test_filtered <- density_test %>% 
+  filter(Pchange3a > lower_thresh & Pchange3a < upper_thresh)
+
+
+
+# Create a density plot
+ggplot(density_test_filtered, aes(x = Pchange3a, fill = as.factor(date))) + 
+  geom_density(alpha = 0.5) + 
+  labs(
+    title = "PRELIMINARY: Density Plot - 3 month change, 45 CPI items, top/bottom 3% excluded",
+    x = "Value",
+    y = "Density",
+    caption = "Mike Konczal, Roosevelt Institute"
+  ) + 
+  theme_minimal() + 
+  scale_fill_manual(values = c("skyblue", "pink"), name = "Date") +
+  theme(legend.position = c(0.8,0.7))
