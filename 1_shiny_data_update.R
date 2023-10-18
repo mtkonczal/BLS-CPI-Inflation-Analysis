@@ -77,8 +77,7 @@ NIPA_monthly_data <- load_flat_files(type = "M")
 
 pce_density_values <- NIPA_monthly_data %>%
   filter(table_id == "U20404") %>%
-  filter(series_label %in% most_pce_prices$series_code,
-         year(date) >= 1970) %>%
+  filter(series_label %in% most_pce_prices$series_code) %>%
   select(date, series_code, series_label, value) %>%
   group_by(series_code) %>%
   mutate(Pchange1a = (value / lag(value,1))^12 - 1,
@@ -97,9 +96,11 @@ pce_density_values <- NIPA_monthly_data %>%
   )) %>%
   na.omit() %>%
   select(date, length_type, Pvalues) %>%
+  filter(year(date) >= 2011) %>%
   mutate(inflation_type = "PCE")
 
-cpi_density_values
-pce_density_values
+# For now, filter this here.
+cpi_density_values <- cpi_density_values %>%
+  filter(date <= max(pce_density_values$date))
 
 write_csv(rbind(cpi_density_values,pce_density_values), file = "data/shiny_density_test.csv")
