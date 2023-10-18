@@ -1,0 +1,401 @@
+﻿LineDescription,leading_spaces,level,lowest,category
+            Personal consumption expenditures,0,Aggregates,FALSE,Aggregate
+Goods,0,Level 0,FALSE,Goods
+    Durable goods,4,Level 1,FALSE,Goods
+        Motor vehicles and parts,8,Level 2,FALSE,Goods
+            New motor vehicles (55),12,Level 3,FALSE,Goods
+                New autos,16,Level 4,FALSE,Goods
+                    New domestic autos,20,Level 5,TRUE,Goods
+                    New foreign autos,20,Level 5,TRUE,Goods
+                New light trucks,16,Level 4,TRUE,Goods
+            Net purchases of used motor vehicles (56),12,Level 3,FALSE,Goods
+                Used autos,16,Level 4,FALSE,Goods
+                    Net transactions in used autos,20,Level 5,TRUE,Goods
+                    Used auto margin,20,Level 5,TRUE,Goods
+                    Employee reimbursement,20,Level 5,TRUE,Goods
+                Used light trucks,16,Level 4,FALSE,Goods
+                    Net transactions in used trucks,20,Level 5,TRUE,Goods
+                    Used truck margin,20,Level 5,TRUE,Goods
+            Motor vehicle parts and accessories (58),12,Level 3,FALSE,Goods
+                Tires,16,Level 4,TRUE,Goods
+                Accessories and parts,16,Level 4,TRUE,Goods
+        Furnishings and durable household equipment,8,Level 2,FALSE,Goods
+            Furniture and furnishings (parts of 31 and 32),12,Level 3,FALSE,Goods
+                Furniture,16,Level 4,TRUE,Goods
+"                Clocks, lamps, lighting fixtures, and other household decorative items",16,Level 4,TRUE,Goods
+                Carpets and other floor coverings,16,Level 4,TRUE,Goods
+                Window coverings,16,Level 4,TRUE,Goods
+            Household appliances (part of 33),12,Level 3,FALSE,Goods
+                Major household appliances,16,Level 4,TRUE,Goods
+                Small electric household appliances,16,Level 4,TRUE,Goods
+"            Glassware, tableware, and household utensils (34)",12,Level 3,FALSE,Goods
+                Dishes and flatware,16,Level 4,TRUE,Goods
+                Nonelectric cookware and tableware,16,Level 4,TRUE,Goods
+            Tools and equipment for house and garden (35),12,Level 3,FALSE,Goods
+"                Tools, hardware, and supplies",16,Level 4,TRUE,Goods
+                Outdoor equipment and supplies,16,Level 4,TRUE,Goods
+        Recreational goods and vehicles,8,Level 2,FALSE,Goods
+"            Video, audio, photographic, and information processing equipment and media (75, 76, and part of 93)",12,Level 3,FALSE,Goods
+                Video and audio equipment,16,Level 4,FALSE,Goods
+                    Televisions,20,Level 5,TRUE,Goods
+                    Other video equipment,20,Level 5,TRUE,Goods
+                    Audio equipment,20,Level 5,TRUE,Goods
+                    Recording media,20,Level 5,FALSE,Goods
+"                        Audio discs, tapes, vinyl, and permanent digital downloads",24,Level 6,TRUE,Goods
+"                        Video discs, tapes, and permanent digital downloads",24,Level 6,TRUE,Goods
+                Photographic equipment,16,Level 4,TRUE,Goods
+                Information processing equipment,16,Level 4,FALSE,Goods
+                    Personal computers/tablets and peripheral equipment,20,Level 5,TRUE,Goods
+                    Computer software and accessories,20,Level 5,TRUE,Goods
+"                    Calculators, typewriters, and other information processing equipment",20,Level 5,TRUE,Goods
+"            Sporting equipment, supplies, guns, and ammunition (part of 80)",12,Level 3,TRUE,Goods
+            Sports and recreational vehicles (79),12,Level 3,FALSE,Goods
+                Motorcycles,16,Level 4,TRUE,Goods
+                Bicycles and accessories,16,Level 4,TRUE,Goods
+"                Pleasure boats, aircraft, and other recreational vehicles",16,Level 4,FALSE,Goods
+                    Pleasure boats,20,Level 5,TRUE,Goods
+                    Pleasure aircraft,20,Level 5,TRUE,Goods
+                    Other recreational vehicles,20,Level 5,TRUE,Goods
+            Recreational books (part of 90),12,Level 3,TRUE,Goods
+            Musical instruments (part of 80),12,Level 3,TRUE,Goods
+        Other durable goods,8,Level 2,FALSE,Goods
+            Jewelry and watches (part of 119),12,Level 3,FALSE,Goods
+                Jewelry,16,Level 4,TRUE,Goods
+                Watches,16,Level 4,TRUE,Goods
+            Therapeutic appliances and equipment (42),12,Level 3,FALSE,Goods
+                Therapeutic medical equipment,16,Level 4,TRUE,Goods
+                Corrective eyeglasses and contact lenses,16,Level 4,TRUE,Goods
+            Educational books (96),12,Level 3,TRUE,Goods
+            Luggage and similar personal items (part of 119),12,Level 3,TRUE,Goods
+            Telephone and related communication equipment,12,Level 3,TRUE,Goods
+    Nondurable goods,4,Level 1,FALSE,Goods
+        Food and beverages purchased for off-premises consumption,8,Level 2,FALSE,Food
+            Food and nonalcoholic beverages purchased for off-premises consumption (4),12,Level 3,FALSE,Food
+                Food purchased for off-premises consumption,16,Level 4,FALSE,Food
+                    Cereals and bakery products,20,Level 5,FALSE,Food
+                        Cereals,24,Level 6,TRUE,Food
+                        Bakery products,24,Level 6,TRUE,Food
+                    Meats and poultry,20,Level 5,FALSE,Food
+                        Beef and veal,24,Level 6,TRUE,Food
+                        Pork,24,Level 6,TRUE,Food
+                        Other meats,24,Level 6,TRUE,Food
+                        Poultry,24,Level 6,TRUE,Food
+                    Fish and seafood,20,Level 5,TRUE,Food
+"                    Milk, dairy products, and eggs",20,Level 5,FALSE,Food
+                        Fresh milk,24,Level 6,TRUE,Food
+                        Processed dairy products,24,Level 6,TRUE,Food
+                        Eggs,24,Level 6,TRUE,Food
+                    Fats and oils,20,Level 5,TRUE,Food
+                    Fresh fruits and vegetables,20,Level 5,FALSE,Food
+                        Fruit (fresh),24,Level 6,TRUE,Food
+                        Vegetables (fresh),24,Level 6,TRUE,Food
+                    Processed fruits and vegetables,20,Level 5,TRUE,Food
+                    Sugar and sweets,20,Level 5,TRUE,Food
+"                    Food products, not elsewhere classified",20,Level 5,TRUE,Food
+                Nonalcoholic beverages purchased for off-premises consumption,16,Level 4,FALSE,Food
+"                    Coffee, tea, and other beverage materials",20,Level 5,TRUE,Food
+"                    Mineral waters, soft drinks, and vegetable juices",20,Level 5,TRUE,Food
+            Alcoholic beverages purchased for off-premises consumption (5),12,Level 3,FALSE,Food
+                Spirits,16,Level 4,TRUE,Food
+                Wine,16,Level 4,TRUE,Food
+                Beer,16,Level 4,TRUE,Food
+            Food produced and consumed on farms (6),12,Level 3,TRUE,Food
+        Clothing and footwear,8,Level 2,FALSE,Goods
+            Garments,12,Level 3,FALSE,Goods
+                Women's and girls' clothing (10),16,Level 4,TRUE,Goods
+                Men's and boys' clothing (11),16,Level 4,TRUE,Goods
+                Children's and infants' clothing (12),16,Level 4,TRUE,Goods
+            Other clothing materials and footwear (13 and 17),12,Level 3,FALSE,Goods
+                Clothing materials,16,Level 4,TRUE,Goods
+                Standard clothing issued to military personnel,16,Level 4,TRUE,Goods
+                Shoes and other footwear,16,Level 4,TRUE,Goods
+        Gasoline and other energy goods,8,Level 2,FALSE,Energy
+"            Motor vehicle fuels, lubricants, and fluids (59)",12,Level 3,FALSE,Energy
+                Gasoline and other motor fuel,16,Level 4,TRUE,Energy
+                Lubricants and fluids,16,Level 4,TRUE,Energy
+            Fuel oil and other fuels (29),12,Level 3,FALSE,Energy
+                Fuel oil,16,Level 4,TRUE,Energy
+                Other fuels,16,Level 4,TRUE,Energy
+        Other nondurable goods,8,Level 2,FALSE,Goods
+            Pharmaceutical and other medical products (40 and 41),12,Level 3,FALSE,Goods
+                Pharmaceutical products,16,Level 4,FALSE,Goods
+                    Prescription drugs,20,Level 5,TRUE,Goods
+                    Nonprescription drugs,20,Level 5,TRUE,Goods
+                Other medical products,16,Level 4,TRUE,Goods
+"            Recreational items (parts of 80, 92, and 93)",12,Level 3,FALSE,Goods
+"                Games, toys, and hobbies",16,Level 4,TRUE,Goods
+                Pets and related products,16,Level 4,TRUE,Goods
+"                Flowers, seeds, and potted plants",16,Level 4,TRUE,Goods
+                Film and photographic supplies,16,Level 4,TRUE,Goods
+            Household supplies (parts of 32 and 36),12,Level 3,FALSE,Goods
+                Household cleaning products,16,Level 4,TRUE,Goods
+                Household paper products,16,Level 4,TRUE,Goods
+                Household linens,16,Level 4,TRUE,Goods
+                Sewing items,16,Level 4,TRUE,Goods
+                Miscellaneous household products,16,Level 4,TRUE,Goods
+            Personal care products (part of 118),12,Level 3,FALSE,Goods
+"                Hair, dental, shaving, and miscellaneous personal care products except electrical products",16,Level 4,TRUE,Goods
+                Cosmetic / perfumes / bath / nail preparations and implements,16,Level 4,TRUE,Goods
+                Electric appliances for personal care,16,Level 4,TRUE,Goods
+            Tobacco (127),12,Level 3,TRUE,Goods
+"            Magazines, newspapers, and stationery (part of 90)",12,Level 3,FALSE,Goods
+                Newspapers and periodicals,16,Level 4,TRUE,Goods
+                Stationery and miscellaneous printed materials,16,Level 4,TRUE,Goods
+            Net expenditures abroad by U.S. residents (131),12,Level 3,FALSE,Goods
+                Expenditures abroad by U.S. residents,16,Level 4,FALSE,Goods
+                    Government employees' expenditures abroad,20,Level 5,TRUE,Goods
+                    Private employees' expenditures abroad,20,Level 5,TRUE,Goods
+                Less: Personal remittances in kind to nonresidents,16,Level 4,TRUE,Goods
+Services,0,Level 0,FALSE,Services
+    Household consumption expenditures (for services),4,Level 1,FALSE,Services
+        Housing and utilities,8,Level 2,FALSE,Services
+            Housing,12,Level 3,FALSE,Services
+                Rental of tenant-occupied nonfarm housing (20),16,Level 4,FALSE,Services
+                    Tenant-occupied mobile homes,20,Level 5,TRUE,Services
+                    Tenant-occupied stationary homes and landlord durables,20,Level 5,FALSE,Services
+                        Tenant-occupied stationary homes,24,Level 6,TRUE,Services
+                        Tenant landlord durables,24,Level 6,TRUE,Services
+"                        Tenant-occupied, including landlord durables",24,Level 6,TRUE,Services
+                Imputed rental of owner-occupied nonfarm housing (21),16,Level 4,FALSE,Services
+                    Owner-occupied mobile homes,20,Level 5,TRUE,Services
+                    Owner-occupied stationary homes,20,Level 5,TRUE,Services
+                Rental value of farm dwellings (22),16,Level 4,TRUE,Services
+                Group housing (23),16,Level 4,TRUE,Services
+            Household utilities,12,Level 3,FALSE,Services
+                Water supply and sanitation (25),16,Level 4,FALSE,Services
+                    Water supply and sewage maintenance,20,Level 5,TRUE,Services
+                    Garbage and trash collection,20,Level 5,TRUE,Services
+                Electricity and gas,16,Level 4,FALSE,Energy
+                    Electricity (27),20,Level 5,TRUE,Energy
+                    Natural gas (28),20,Level 5,TRUE,Energy
+        Health care,8,Level 2,FALSE,Services
+            Outpatient services,12,Level 3,FALSE,Services
+                Physician services (44),16,Level 4,TRUE,Services
+                Dental services (45),16,Level 4,TRUE,Services
+                Paramedical services (46),16,Level 4,FALSE,Services
+                    Home health care,20,Level 5,TRUE,Services
+                    Medical laboratories,20,Level 5,TRUE,Services
+                    Other professional medical services,20,Level 5,FALSE,Services
+                        Specialty outpatient care facilities and health and allied services,24,Level 6,TRUE,Services
+                        All other professional medical services,24,Level 6,TRUE,Services
+            Hospital and nursing home services,12,Level 3,FALSE,Services
+                Hospitals (51),16,Level 4,FALSE,Services
+                    Nonprofit hospitals' services to households,20,Level 5,TRUE,Services
+                    Proprietary hospitals,20,Level 5,TRUE,Services
+                    Government hospitals,20,Level 5,TRUE,Services
+                Nursing homes (52),16,Level 4,FALSE,Services
+                    Nonprofit nursing homes' services to households,20,Level 5,TRUE,Services
+                    Proprietary and government nursing homes,20,Level 5,TRUE,Services
+        Transportation services,8,Level 2,FALSE,Services
+            Motor vehicle services,12,Level 3,FALSE,Services
+                Motor vehicle maintenance and repair (60),16,Level 4,TRUE,Services
+                Other motor vehicle services (61),16,Level 4,FALSE,Services
+                    Motor vehicle leasing,20,Level 5,FALSE,Services
+                        Auto leasing,24,Level 6,TRUE,Services
+                        Truck leasing,24,Level 6,TRUE,Services
+                    Motor vehicle rental,20,Level 5,TRUE,Services
+                    Parking fees and tolls,20,Level 5,TRUE,Services
+            Public transportation,12,Level 3,FALSE,Services
+                Ground transportation (63),16,Level 4,FALSE,Services
+                    Railway transportation,20,Level 5,TRUE,Services
+                    Road transportation,20,Level 5,FALSE,Services
+                        Intercity buses,24,Level 6,TRUE,Services
+                        Taxicabs and ride sharing services,24,Level 6,TRUE,Services
+                        Intracity mass transit,24,Level 6,TRUE,Services
+                        Other road transportation service,24,Level 6,TRUE,Services
+                Air transportation (64),16,Level 4,TRUE,Services
+                Water transportation (65),16,Level 4,TRUE,Services
+        Recreation services,8,Level 2,FALSE,Services
+"            Membership clubs, sports centers, parks, theaters, and museums (82)",12,Level 3,FALSE,Services
+                Membership clubs and participant sports centers,16,Level 4,TRUE,Services
+"                Amusement parks, campgrounds, and related recreational services",16,Level 4,TRUE,Services
+                Admissions to specified spectator amusements,16,Level 4,FALSE,Services
+                    Motion picture theaters,20,Level 5,TRUE,Services
+"                    Live entertainment, excluding sports",20,Level 5,TRUE,Services
+                    Spectator sports,20,Level 5,TRUE,Services
+                Museums and libraries,16,Level 4,TRUE,Services
+"            Audio-video, photographic, and information processing equipment services (parts of 77 and 93)",12,Level 3,FALSE,Services
+"                Cable, satellite, and other live television services",16,Level 4,TRUE,Services
+                Photo processing,16,Level 4,TRUE,Services
+                Photo studios,16,Level 4,TRUE,Services
+"                Repair and rental of audio-visual, photographic, and information processing equipment",16,Level 4,TRUE,Services
+                Video and audio streaming and rental,16,Level 4,FALSE,Services
+                    Video streaming and rental,20,Level 5,TRUE,Services
+                    Audio streaming and radio services (including satellite radio),20,Level 5,TRUE,Services
+            Gambling (91),12,Level 3,FALSE,Services
+                Casino gambling,16,Level 4,TRUE,Services
+                Lotteries,16,Level 4,TRUE,Services
+                Pari-mutuel net receipts,16,Level 4,TRUE,Services
+"            Other recreational services (81, 94, and part of 92)",12,Level 3,FALSE,Services
+                Veterinary and other services for pets,16,Level 4,TRUE,Services
+                Package tours,16,Level 4,TRUE,Services
+                Maintenance and repair of recreational vehicles and sports equipment,16,Level 4,TRUE,Services
+        Food services and accommodations,8,Level 2,FALSE,Services
+            Food services,12,Level 3,FALSE,Services
+                Purchased meals and beverages (102),16,Level 4,FALSE,Services
+                    Meals and nonalcoholic beverages,20,Level 5,FALSE,Services
+                        Meals at schools,24,Level 6,FALSE,Services
+                            Elementary and secondary school lunches,28,Level 7,TRUE,Services
+                            Higher education school lunches,28,Level 7,TRUE,Services
+                        Other purchased meals,24,Level 6,FALSE,Services
+                            Meals at limited service eating places,28,Level 7,TRUE,Services
+                            Meals at other eating places,28,Level 7,TRUE,Services
+                            Meals at drinking places,28,Level 7,TRUE,Services
+                    Alcohol in purchased meals,20,Level 5,TRUE,Services
+                Food furnished to employees (including military) (103),16,Level 4,FALSE,Services
+                    Food supplied to civilians,20,Level 5,TRUE,Services
+                    Food supplied to military,20,Level 5,TRUE,Services
+            Accommodations (104),12,Level 3,FALSE,Services
+                Hotels and motels,16,Level 4,TRUE,Services
+                Housing at schools,16,Level 4,TRUE,Services
+        Financial services and insurance,8,Level 2,FALSE,Services
+            Financial services,12,Level 3,FALSE,Services
+                Financial services furnished without payment (107),16,Level 4,FALSE,Services
+                    Commercial banks,20,Level 5,TRUE,Services
+                    Other depository institutions and regulated investment companies,20,Level 5,TRUE,Services
+                    Pension funds,20,Level 5,TRUE,Services
+"                Financial service charges, fees, and commissions (108)",16,Level 4,FALSE,Services
+                    Financial service charges and fees,20,Level 5,TRUE,Services
+                    Securities commissions,20,Level 5,FALSE,Services
+                        Direct commissions,24,Level 6,FALSE,Services
+                            Exchange-listed equities,28,Level 7,TRUE,Services
+                            Other direct commissions,28,Level 7,TRUE,Services
+                        Indirect commissions,24,Level 6,FALSE,Services
+                            Over-the-counter equity securities,28,Level 7,TRUE,Services
+                            Other imputed commissions,28,Level 7,TRUE,Services
+                        Mutual fund sales charges,24,Level 6,TRUE,Services
+                    Portfolio management and investment advice services,20,Level 5,TRUE,Services
+"                    Trust, fiduciary, and custody activities",20,Level 5,TRUE,Services
+            Insurance,12,Level 3,FALSE,Services
+                Life insurance (110),16,Level 4,TRUE,Services
+                Net household insurance (111),16,Level 4,FALSE,Services
+                    Household insurance premiums and premium supplements,20,Level 5,TRUE,Services
+                    Less: Household insurance normal losses,20,Level 5,TRUE,Services
+                Net health insurance (112),16,Level 4,FALSE,Services
+                    Medical care and hospitalization,20,Level 5,TRUE,Services
+                    Income loss,20,Level 5,TRUE,Services
+                    Workers' compensation,20,Level 5,TRUE,Services
+                Net motor vehicle and other transportation insurance (116),16,Level 4,TRUE,Services
+        Other services,8,Level 2,FALSE,Services
+            Communication,12,Level 3,FALSE,Services
+                Telecommunication services (71),16,Level 4,FALSE,Services
+"                    Land-line telephone services, local charges",20,Level 5,TRUE,Services
+"                    Land-line telephone services, long-distance charges",20,Level 5,TRUE,Services
+                    Cellular telephone services,20,Level 5,TRUE,Services
+                Postal and delivery services (68),16,Level 4,FALSE,Services
+                    First-class postal service (by U.S. Postal Service),20,Level 5,TRUE,Services
+                    Other delivery services (by non-U.S. postal facilities),20,Level 5,TRUE,Services
+                Internet access (72),16,Level 4,TRUE,Services
+            Education services,12,Level 3,FALSE,Services
+                Higher education (97),16,Level 4,FALSE,Services
+                    Proprietary and public higher education,20,Level 5,TRUE,Services
+                    Nonprofit private higher education services to households,20,Level 5,TRUE,Services
+"                Nursery, elementary, and secondary schools (98)",16,Level 4,FALSE,Services
+                    Elementary and secondary schools,20,Level 5,TRUE,Services
+                    Day care and nursery schools,20,Level 5,TRUE,Services
+                Commercial and vocational schools (99),16,Level 4,TRUE,Services
+            Professional and other services (121),12,Level 3,FALSE,Services
+                Legal services,16,Level 4,TRUE,Services
+                Accounting and other business services,16,Level 4,FALSE,Services
+                    Tax preparation and other related services,20,Level 5,TRUE,Services
+                    Employment agency services,20,Level 5,TRUE,Services
+                    Other personal business services,20,Level 5,TRUE,Services
+                Labor organization dues,16,Level 4,TRUE,Services
+                Professional association dues,16,Level 4,TRUE,Services
+                Funeral and burial services,16,Level 4,TRUE,Services
+            Personal care and clothing services (14 and parts of 17 and 118),12,Level 3,FALSE,Services
+                Personal care services,16,Level 4,FALSE,Services
+                    Hairdressing salons and personal grooming establishments,20,Level 5,TRUE,Services
+                    Miscellaneous personal care services,20,Level 5,TRUE,Services
+                Clothing and footwear services,16,Level 4,FALSE,Services
+                    Laundry and drycleaning services,20,Level 5,TRUE,Services
+"                    Clothing repair, rental, and alterations",20,Level 5,TRUE,Services
+                    Repair and hire of footwear,20,Level 5,TRUE,Services
+            Social services and religious activities (120),12,Level 3,FALSE,Services
+                Child care,16,Level 4,TRUE,Services
+                Social assistance,16,Level 4,FALSE,Services
+                    Homes for the elderly,20,Level 5,TRUE,Services
+                    Residential mental health and substance abuse,20,Level 5,TRUE,Services
+                    Individual and family services,20,Level 5,TRUE,Services
+                    Vocational rehabilitation services,20,Level 5,TRUE,Services
+                    Community food and housing / emergency / other relief services,20,Level 5,TRUE,Services
+"                    Other social assistance, not elsewere classified",20,Level 5,TRUE,Services
+                Social advocacy and civic and social organizations,16,Level 4,TRUE,Services
+                Religious organizations' services to households,16,Level 4,TRUE,Services
+                Foundations and grantmaking and giving services to households,16,Level 4,TRUE,Services
+"            Household maintenance (parts of 31, 33, and 36)",12,Level 3,FALSE,Services
+                Domestic services,16,Level 4,TRUE,Services
+"                Moving, storage, and freight services",16,Level 4,TRUE,Services
+"                Repair of furniture, furnishings, and floor coverings",16,Level 4,TRUE,Services
+                Repair of household appliances,16,Level 4,TRUE,Services
+                Other household services,16,Level 4,TRUE,Services
+            Net foreign travel,12,Level 3,FALSE,Services
+                Foreign travel by U.S. residents (129),16,Level 4,FALSE,Services
+                    Passenger fares for foreign travel,20,Level 5,TRUE,Services
+                    U.S. travel outside the United States,20,Level 5,TRUE,Services
+                    U.S. student expenditures,20,Level 5,TRUE,Services
+                Less: Expenditures in the United States by nonresidents (130),16,Level 4,FALSE,Services
+                    Foreign travel in the United States,20,Level 5,TRUE,Services
+                    Medical expenditures of foreigners,20,Level 5,TRUE,Services
+                    Expenditures of foreign students in the United States,20,Level 5,TRUE,Services
+    Final consumption expenditures of nonprofit institutions serving households (NPISHs) (132),4,Level 1,FALSE,Services
+        Gross output of nonprofit institutions (133),8,Level 2,FALSE,Services
+"            Health, gross output",12,Level 3,FALSE,Services
+"                Outpatient services, gross output",16,Level 4,TRUE,Services
+"                Nonprofit hospitals, gross output",16,Level 4,TRUE,Services
+"                Nonprofit nursing homes, gross output",16,Level 4,TRUE,Services
+"            Recreation services, gross output",12,Level 3,TRUE,Services
+"            Education services, gross output",12,Level 3,TRUE,Services
+"            Social services, gross output",12,Level 3,TRUE,Services
+"            Religious organizations, gross output",12,Level 3,TRUE,Services
+"            Foundations and grantmaking and giving establishments, gross output",12,Level 3,TRUE,Services
+"            Social advocacy establishments, gross output",12,Level 3,TRUE,Services
+"            Civic and social organizations, gross output",12,Level 3,TRUE,Services
+"            Professional advocacy, gross output",12,Level 3,TRUE,Services
+        Less: Receipts from sales of goods and services by nonprofit institutions (134),8,Level 2,FALSE,Services
+            Health services to households,12,Level 3,FALSE,Services
+                Outpatient services to households,16,Level 4,TRUE,Services
+                Nonprofit hospitals services to households,16,Level 4,TRUE,Services
+                Nonprofit nursing homes services to households,16,Level 4,TRUE,Services
+            Recreation services to households,12,Level 3,TRUE,Services
+            Education services to households,12,Level 3,TRUE,Services
+            Social services to households,12,Level 3,TRUE,Services
+            Religious organizations' services to households,12,Level 3,TRUE,Services
+            Foundations and grantmaking and giving services to households,12,Level 3,TRUE,Services
+            Services of social advocacy establishments to households,12,Level 3,TRUE,Services
+            Civic and social organizations' services to households,12,Level 3,TRUE,Services
+            Professional advocacy services to households,12,Level 3,TRUE,Services
+    Control group,4,Aggregates,FALSE,Aggregate
+    PCE food and energy,4,Aggregates,FALSE,Aggregate
+    PCE energy goods and services1,4,Aggregates,FALSE,Aggregate
+    PCE excluding food,4,Aggregates,FALSE,Aggregate
+    PCE excluding energy,4,Aggregates,FALSE,Aggregate
+    PCE excluding food and energy2,4,Aggregates,FALSE,Aggregate
+    PCE goods excluding food and energy2,4,Aggregates,FALSE,Aggregate
+    PCE services excluding energy,4,Aggregates,FALSE,Aggregate
+        Market-based PCE,8,Aggregates,FALSE,Aggregate
+    Market-based PCE motor vehicles and parts,4,Aggregates,FALSE,Aggregate
+    Market-based PCE durable goods other than motor vehicles and parts,4,Aggregates,FALSE,Aggregate
+    Market-based PCE food and beverages purchased for off-premises consumption,4,Aggregates,FALSE,Aggregate
+    Market-based PCE clothing and footwear,4,Aggregates,FALSE,Aggregate
+    Market-based PCE gasoline and other energy goods,4,Aggregates,FALSE,Aggregate
+    Market-based PCE other nondurable goods,4,Aggregates,FALSE,Aggregate
+    Market-based PCE services,4,Aggregates,FALSE,Aggregate
+        Market-based PCE housing services,8,Aggregates,FALSE,Aggregate
+        Market-based PCE household utilities,8,Aggregates,FALSE,Aggregate
+        Market-based PCE health care,8,Aggregates,FALSE,Aggregate
+        Market-based PCE transportation services,8,Aggregates,FALSE,Aggregate
+        Market-based PCE recreation services,8,Aggregates,FALSE,Aggregate
+        Market-based PCE food services and accommodations,8,Aggregates,FALSE,Aggregate
+        Market-based PCE financial services and insurance,8,Aggregates,FALSE,Aggregate
+        Market-based PCE other services,8,Aggregates,FALSE,Aggregate
+            Market-based PCE communication services,12,Aggregates,FALSE,Aggregate
+            Market-based PCE education,12,Aggregates,FALSE,Aggregate
+            Market-based PCE professional services,12,Aggregates,FALSE,Aggregate
+            Market-based PCE personal care and clothing services,12,Aggregates,FALSE,Aggregate
+            Market-based PCE child care,12,Aggregates,FALSE,Aggregate
+            Market-based PCE household maintenance,12,Aggregates,FALSE,Aggregate
+Market-based PCE food and energy,0,Aggregates,FALSE,Aggregate
+Market-based PCE excluding food,0,Aggregates,FALSE,Aggregate
+Market-based PCE excluding energy,0,Aggregates,FALSE,Aggregate
+Market-based PCE excluding food and energy,0,Aggregates,FALSE,Aggregate

@@ -22,9 +22,11 @@ create_cpi_changes <- function(cpi_data){
     mutate(Wchange1 = (Pchange1*weight)/100) %>%
     mutate(Wchange1a = (1 + Wchange1)^12 - 1) %>%
     mutate(Pchange3 = (value/lag(value, 3)-1)) %>%
-    mutate(Pchange3a = (1 + Pchange3)^12 - 1) %>%
+    mutate(Pchange3a = (1 + Pchange3)^4 - 1) %>%
     mutate(Wchange3 = (Pchange3*weight)/100) %>%
     mutate(Wchange3a = (1 + Wchange3)^4 - 1) %>%
+    mutate(Pchange6 = (value/lag(value, 6)-1)) %>%
+    mutate(Pchange6a = (1 + Pchange3)^2 - 1) %>%
     mutate(Pchange12 = (value/lag(value, 12)-1)) %>%
     mutate(Wchange12 = (Pchange12*weight)/100) %>%
     ungroup()
