@@ -9,11 +9,65 @@ library(hrbrthemes)
 library(ggrepel)
 library(viridis)
 library(ggridges)
+library(gt)
 
 source("scripts/01_download_cpi_data.R")
 source("scripts/02_graphic_scripts.R")
 
 cpi <- create_cpi_changes(cpi_data)
+
+max_date <- format(max(cpi$date), '%B, %Y')
+headlines <- c("All items less food and energy",
+               "Services less energy services",
+               "Commodities less food and energy commodities",
+               "Shelter",
+               "All items less food, shelter, energy, and used cars and trucks")
+
+gt_p <- cpi %>%
+  filter(item_name %in% headlines,
+         date == max(date)) %>%
+  mutate(item_name = factor(item_name, levels=headlines)) %>%
+  select(category = item_name,
+         `1-month change` = Pchange1a,
+         `3-month change` = Pchange3a,
+         `6-month change` = Pchange6a,
+         `12-month change` = Pchange12) %>%
+  arrange(category) %>%
+  gt() %>%
+  tab_header(
+    title = "Inflation Stuff!",
+    subtitle = glue::glue("CPI For {max_date} (all values annualized)")
+  ) %>%
+  fmt_percent()
+gt_p
+gtsave(gt_p, "hello.png")
+
+
+View(cpi %>%
+  filter(item_name == "All items",
+         date == max(date)) )
+
+
+# Define the start and end dates for the data range
+start_date <- "2010-06-07"
+end_date <- "2010-06-14"
+
+# Create a gt table based on preprocessed
+# `sp500` table data
+sp500 |>
+  dplyr::filter(date >= start_date & date <= end_date) |>
+  dplyr::select(-adj_close) |>
+  gt() |>
+  tab_header(
+    title = "S&P 500",
+    subtitle = glue::glue("{start_date} to {end_date}")
+  ) |>
+  fmt_currency() |>
+  fmt_date(columns = date, date_style = "wd_m_day_year") |>
+  fmt_number(columns = volume, suffixing = TRUE)
+
+
+
 
 #Graphic 1: Overview
 core_3_6_title <- "Core Inflation Continues to Fall"

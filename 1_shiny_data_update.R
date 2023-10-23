@@ -96,7 +96,7 @@ pce_density_values <- NIPA_monthly_data %>%
   )) %>%
   na.omit() %>%
   select(date, length_type, Pvalues) %>%
-  filter(year(date) >= 2011) %>%
+  filter(year(date) >= 2000) %>%
   mutate(inflation_type = "PCE")
 
 # For now, filter this here.
@@ -104,3 +104,5 @@ cpi_density_values <- cpi_density_values %>%
   filter(date <= max(pce_density_values$date))
 
 write_csv(rbind(cpi_density_values,pce_density_values), file = "data/shiny_density_test.csv")
+
+saveRDS(rbind(cpi_density_values,pce_density_values), "data/shiny_density_test.rds")
