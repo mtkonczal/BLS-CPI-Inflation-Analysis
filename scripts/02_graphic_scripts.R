@@ -10,6 +10,7 @@ library(hrbrthemes)
 library(ggrepel)
 library(viridis)
 library(ggridges)
+library(scales)
 
 create_cpi_changes <- function(cpi_data){
   cpi <- cpi_data %>%
