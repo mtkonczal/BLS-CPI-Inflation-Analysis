@@ -1531,3 +1531,95 @@ ggsave("graphics/housing.png", dpi="retina", width = 12, height=6.75, units = "i
 
 
 
+
+
+
+
+#### HOUSING CHECK ####
+housing_elements <- c("Owners' equivalent rent of residences","Rent of primary residence")
+date_breaks <- generate_dates(cpi$date, 12)
+
+cpi %>% filter(item_name %in% housing_elements) %>%
+  group_by(item_name) %>%
+  mutate(change1a = value/lag(value,1),
+         change1a = change1a^12 - 1) %>%
+  filter(year(date) > 2018) %>%
+  ggplot(aes(date,change1a, fill=item_name)) + geom_bar(size=0, stat="identity") + facet_wrap(~item_name) +
+  theme_lass +
+  labs(y = NULL,
+       x = NULL,
+       title = "Housing is TK",
+       subtitle = "Monthly percent change, annualized, seasonally-adjusted.",
+       caption ="BLS, CPI, Author's calculation. Mike Konczal, Roosevelt Institute") +
+  #scale_fill_brewer(palette=palette) +
+  scale_y_continuous(labels = percent) +
+  scale_x_date(date_labels = "%b\n%Y", breaks=date_breaks)
+
+ggsave("graphics/housing.png", dpi="retina", width = 12, height=6.75, units = "in")
+
+
+#### Chart
+max_date <- format(max(cpi$date), '%B, %Y')
+headlines <- c("All items less food and energy",
+               "Services less energy services",
+               "Commodities less food and energy commodities",
+               "Shelter",
+               "All items less food, shelter, energy, and used cars and trucks")
+
+gt_p <- cpi %>%
+  filter(item_name %in% headlines,
+         date == max(date)) %>%
+  mutate(item_name = factor(item_name, levels=headlines)) %>%
+  select(category = item_name,
+         `1-month change` = Pchange1a,
+         `3-month change` = Pchange3a,
+         `6-month change` = Pchange6a,
+         `12-month change` = Pchange12) %>%
+  arrange(category) %>%
+  gt() %>%
+  tab_header(
+    title = "Inflation Stuff!",
+    subtitle = glue::glue("CPI For {max_date} (all values annualized)")
+  ) %>%
+  fmt_percent()
+gt_p
+gtsave(gt_p, "hello.png")
+
+
+
+
+#### PCE
+getSymbols("PCEPILFE", src = "FRED")  # This will create an object with the name PCEPILFE in your workspace
+getSymbols("CPILFESL", src = "FRED")  # This will create an object with the name PCEPILFE in your workspace
+date_breaks <- generate_dates(cpi$date, 60)
+
+cpi_core <- cpi %>% filter(item_name %in% housing_elements) %>% select(date, value) %>% mutate(type = "Core CPI")
+
+pce_data <- data.frame(date = index(PCEPILFE), core_pce = coredata(PCEPILFE)) %>%
+  as_tibble() %>%
+  select(date, value = PCEPILFE) %>%
+  mutate(type = "Core PCE")
+
+
+cpi_data <- data.frame(date = index(CPILFESL), core_pce = coredata(CPILFESL)) %>%
+  as_tibble() %>%
+  select(date, value = CPILFESL) %>%
+  mutate(type = "Core CPI")
+
+rbind(cpi_data, pce_data) %>%
+  group_by(type) %>%
+  mutate(value = value/value[date=="1970-01-01"]) %>%
+  ungroup() %>%
+  ggplot(aes(date,value, color=type)) + geom_line() +
+  theme_lass +
+  labs(y = NULL,
+       x = NULL,
+       title = "Core CPI Grows Faster Than Core PCE",
+       subtitle = "Index value normalized so January 1970 = 1.",
+       caption ="BLS, CPI, BEA, Author's calculation. Mike Konczal, Roosevelt Institute") +
+  scale_x_date(date_labels = "%b\n%Y", breaks=date_breaks) +
+  theme(legend.position = c(0.7,0.8))
+
+ggsave("graphics/pce_core.png", dpi="retina", width = 12, height=6.75, units = "in")
+
+
