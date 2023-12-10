@@ -1623,3 +1623,27 @@ rbind(cpi_data, pce_data) %>%
 ggsave("graphics/pce_core.png", dpi="retina", width = 12, height=6.75, units = "in")
 
 
+
+
+cpi %>% filter(item_name == "Other uncooked poultry including turkey") %>%
+  ggplot(aes(date,value)) + geom_line()
+
+
+
+#### LONG ####
+
+View(as_tibble(unique(cpi_data$item_name)))
+
+unique(cpi_data$year)
+
+cpi %>% filter(item_name == "All items") 
+
+cpi_data %>% 
+  distinct(year)
+
+
+cpi_data %>% filter(series_title == "All items in U.S. city average, all urban consumers, not seasonally adjusted",
+                    period == "M13") %>%
+  mutate(diff = value/lag(value,1) - 1,
+         diffD = diff - lag(diff,1)) %>%
+  ggplot(aes(year,diffD)) + geom_line()
