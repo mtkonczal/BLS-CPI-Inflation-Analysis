@@ -1647,3 +1647,18 @@ cpi_data %>% filter(series_title == "All items in U.S. city average, all urban c
   mutate(diff = value/lag(value,1) - 1,
          diffD = diff - lag(diff,1)) %>%
   ggplot(aes(year,diffD)) + geom_line()
+
+
+####
+
+less_food <- cpi %>% filter(item_name == "All items less food")
+old_food <- read_csv("data/all_items_less_food_1930s_1997.csv")
+
+old_food_1997 <- old_food %>%
+  filter(year == 1997) %>%
+  select(date, old_value = value, seasonal)
+
+a <- less_food %>%
+  select(date, value, seasonal, item_name) %>%
+  left_join(old_food_1997, by=c("date","seasonal")) %>%
+  mutate(diff = value - old_value)

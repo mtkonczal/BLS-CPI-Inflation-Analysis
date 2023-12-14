@@ -72,4 +72,5 @@ ggsave("graphics/g5.png", dpi="retina", width = 12, height=14, units = "in")
 unadjusted_analysis(cpi_data, c(2019,2022,2023), title="Unadjusted sliding into prepandemic values?")
 ggsave("graphics/g7.png", dpi="retina", width = 12, height=6.75, units = "in")
 
-
+source("1940s_core_graphic.R")
+source("core_1960s.R")
