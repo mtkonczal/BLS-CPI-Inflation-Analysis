@@ -1662,3 +1662,34 @@ a <- less_food %>%
   select(date, value, seasonal, item_name) %>%
   left_join(old_food_1997, by=c("date","seasonal")) %>%
   mutate(diff = value - old_value)
+
+medians <- cpi %>% filter(item_name %in% median_terms$item_name)
+
+medians %>% filter(year(date) < 2020) %>%
+  group_by(item_name) %>%
+  summarize(changes = sd(Pchange1, na.rm=TRUE)) %>%
+  arrange(desc(changes))
+               
+
+
+cpi %>% filter(item_name %in% c("Day care and preschool", "All items", "All items less food and energy")) %>%
+  group_by(item_name) %>%
+  mutate(normalized_change = value/value[date == "2020-01-01"]) %>%
+  ungroup() %>%
+  filter(year(date) >= 2019) %>%
+  ggplot(aes(date, normalized_change, color = item_name)) +
+  theme_classic() + 
+  geom_line() +
+  labs(title = "CPI consumer price levels, index January 2020 = 1") +
+  theme(plot.title.position = "plot",
+        legend.position = c(0.3, 0.8),
+        legend.title = element_blank())
+
+cpi %>% filter(item_name %in% c("Day care and preschool", "All items", "All items less food and energy")) %>%
+  filter(year(date) > 2017) %>%
+  ggplot(aes(date, Pchange12, color=item_name)) + geom_line() +
+  theme_classic() +
+  labs(title="CPI consumer price levels, year over year change") +
+  theme(plot.title.position = "plot",
+        legend.position = c(0.3, 0.8),
+        legend.title = element_blank())
