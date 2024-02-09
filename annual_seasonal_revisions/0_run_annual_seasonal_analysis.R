@@ -28,19 +28,19 @@ pre_cpi <- readRDS("data/pre_revision_cpi.rds") %>% mutate(type = "Pre-revisions
 # Overall compare
 start_date_graphics <- "2022-01-01"
 breaks_value <- generate_dates(cpi$date, 6)
-overall_title <- "Overall Title"
-colors = c("Post-revisions" = "#2D779C", "Pre-revisions" = "#A4CCCC")
+overall_title <- "Revisions Don't Change Our Story of Inflation"
+colors = c("Post-revisions" = "#2D779C", "Pre-revisions" = "#E2E47E")
 
   rbind(cpi, pre_cpi) %>%
-    filter(item_name == "All items") %>%
+    filter(item_name == "All items less food and energy") %>%
     filter(date >= start_date_graphics) %>%
-    ggplot(aes(date, Pchange1, color = type)) +
+    ggplot(aes(date, Pchange1a, color = type)) +
     geom_line(size = 1.6) +
     labs(
       x = "", y = "",
       title = overall_title,
       subtitle = paste0(
-        "Core CPI inflation, monthly percentage change, annualized."
+        "1-month percentage change in Core CPI inflation, before/after January 2024 seasonal adjustment."
       ),
       caption = "All items less food and energy, monthly percent change, BLS, Author's calculations. Mike Konczal, Roosevelt Institute."
     ) +
@@ -50,10 +50,11 @@ colors = c("Post-revisions" = "#2D779C", "Pre-revisions" = "#A4CCCC")
     scale_x_date(date_labels = "%b\n%Y", breaks = breaks_value) +
     theme(
       panel.grid.major.y = element_line(size = 0.5),
-      legend.position = c(0.45, 0.8),
+      legend.position = c(0.8, 0.45),
       legend.text = element_text(size = 15)
     )
-
+  ggsave("graphics/core_revision.png", dpi = "retina", width = 12.5, height = 8.5)
+  
   ##### GGSAVE ME
 
   
@@ -82,8 +83,43 @@ colors = c("Post-revisions" = "#2D779C", "Pre-revisions" = "#A4CCCC")
       legend.text = element_text(size = 15)
     )
   
+  rbind(cpi, pre_cpi) %>%
+    filter(item_name %in% c("All items less food and energy", "All items")) %>%
+    mutate(previous_6 = lag(Pchange6a, 6)) %>%
+    filter(date == max(date)) %>%
+    select(item_name, type, Pchange1a, Pchange3a, Pchange6a, previous_6, Pchange12) %>%
+    gt(groupname_col = "item_name") %>%
+    row_group_order(groups = c("All items", "All items less food and energy")) %>%
+    tab_header(title = md("**Summary of the January 2024 Seasonal Adjustment Revisions**"),
+               subtitle = "CPI Data for December 2023, all data annualized") %>%
+    cols_label(
+      Pchange1a = "1-Month Change",
+      Pchange3a = "3-Month Change",
+      Pchange6a = "6-Month Change",
+      previous_6 = ("6-Month Change\n6-Months Prior"),
+      Pchange12 = "12-Month Change"
+    ) %>%
+    opt_stylize(style = 6, color = "blue") %>%
+    fmt_percent(
+      columns = c(Pchange1a,Pchange3a,Pchange6a,previous_6, Pchange12)
+    ) %>%
+    gtsave(., filename="graphics/jobs_chart.png")
+    
 
-
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
 cpi <- create_cpi_changes(cpi_data)
 
 #Get Core data results in a View Window

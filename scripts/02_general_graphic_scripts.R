@@ -28,7 +28,7 @@ create_cpi_changes <- function(cpi_data){
     mutate(Wchange3 = (Pchange3*weight)/100) %>%
     mutate(Wchange3a = (1 + Wchange3)^4 - 1) %>%
     mutate(Pchange6 = (value/lag(value, 6)-1)) %>%
-    mutate(Pchange6a = (1 + Pchange3)^2 - 1) %>%
+    mutate(Pchange6a = (1 + Pchange6)^2 - 1) %>%
     mutate(Pchange12 = (value/lag(value, 12)-1)) %>%
     mutate(Wchange12 = (Pchange12*weight)/100) %>%
     ungroup()
@@ -351,7 +351,7 @@ unadjusted_analysis <- function(cpi_data, years_array, title = NA) {
     scale_y_continuous(labels = percent) +
     geom_text_repel(aes(label = year),
       size = 7,
-      data = . %>% group_by(year) %>% filter(month == 3) %>% ungroup()
+      data = . %>% group_by(year) %>% filter(month == 8) %>% ungroup()
     ) +
     labs(
       title = title,
