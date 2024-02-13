@@ -10,7 +10,7 @@ library(lubridate)
 
 #### Do CPI First ####
 source("scripts/01_download_cpi_data.R")
-source("scripts/02_graphic_scripts.R")
+source("scripts/02_general_graphic_scripts.R")
 
 cpi <- create_cpi_changes(cpi_data)
 
