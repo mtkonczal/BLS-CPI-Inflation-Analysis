@@ -96,7 +96,7 @@ pce_cpi_divergence_contributions <- function(title = "", start_date = "2010-01-0
   beaKey <- read_csv("/Users/mkonczal/Documents/data_folder/BEA_key/BEA_key.csv")
   beaKey <- as.character(beaKey)
   
-  beaR_dates <- '2011,2012,2013,2014,2015,2016,2017,2018,2019,2020,2021,2022,2023'
+  beaR_dates <- '2011,2012,2013,2014,2015,2016,2017,2018,2019,2020,2021,2022,2023,2024'
 
   reconcile_df <- get_NIPA_data(beaKey, 'U90100', 'Q', beaR_dates, data_set_name = 'NIUnderlyingDetail')
   reconcile_df <- BEA_date_quarterly(reconcile_df)

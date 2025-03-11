@@ -4,6 +4,9 @@
 # Written by: Mike Konczal
 # Last updated: 10/10/2023
 
+cpi_list <- c("data.0.Current","series","item","area")
+eci_list <- c("data.1.AllData","series","industry","owner","subcell","occupation","periodicity","estimate")
+
 # Libraries
 library(janitor)
 library(tidyverse)
@@ -41,7 +44,7 @@ main_data = "data.0.Current"
 endpoints <- c(main_data,"series","item","area")
 
 for(i in endpoints){
-  assign(i,download_data(i,config$cpi_data_url,config$user_email))
+  assign(i,download_data(i,config$cpi_data_url,config$user_email)) 
 }
 
 cpi_data <- get(main_data) %>%
@@ -71,3 +74,28 @@ cpi_data$weight <- ifelse(!is.na(cpi_data$weight_2023), cpi_data$weight_2023, cp
 
 # Clean up the environment
 rm(series,item,area,cpi_weights,cpi_weights_2023)
+
+
+cpi %>% filter(item_name == "Motor vehicle insurance") %>%
+  filter(month(date) == 01, seasonal == "S") %>%
+  select(year, item_name, Pchange1) %>% arrange(desc(Pchange1))
+
+
+
+not_eggs <- 
+  cpi %>%
+  filter(item_name %in% c("Food at home","Eggs")) %>%
+  group_by(date) %>%
+  reframe(food = (Wchange1[item_name == "Food at home"]),
+          eggs = Wchange1[item_name == "Eggs"],
+          foodW = weight[item_name == "Food at home"]/100,
+          eggsW = weight[item_name == "Eggs"]/100) %>%
+  ungroup()
+
+not_eggs %>%
+  mutate(food_not_eggs = (food - eggs)/(foodW - eggsW),
+         food_not_eggsA = (1+food_not_eggs)^12-1) %>%
+  ggplot(aes(date, food_not_eggsA)) + geom_line() 
+
+
+tail(not_eggs)

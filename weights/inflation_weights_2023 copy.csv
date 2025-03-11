@@ -1,4 +1,4 @@
-item_name,weight,year_weight
+﻿item_name,weight,year_weight
 All items,100,2023
 Food and beverages,14.376,2023
 Food,13.531,2023
@@ -320,15 +320,3 @@ Energy commodities,3.49,2023
 Services less energy services,58.187,2023
 Domestically produced farm food,7.307,2023
 Utilities and public transportation,7.825,2023
-Transportation services,6.305,2024
-Car and truck rental,0.130,2024
-Motor vehicle maintenance and repair,1.019,2024
-Motor vehicle insurance,2.796,2024
-Motor vehicle fees,0.495,2024
-Public transportation,1.468,2024
-Transportation services,6.305,2025
-Car and truck rental,0.130,2025
-Motor vehicle maintenance and repair,1.019,2025
-Motor vehicle insurance,2.796,2025
-Motor vehicle fees,0.495,2025
-Public transportation,1.468,2025

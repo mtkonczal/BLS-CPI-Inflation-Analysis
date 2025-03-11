@@ -1092,8 +1092,10 @@ else
   c <- rbind(c,b)
 }
 
+
 c %>%
-  ggplot(aes(date,YoY, color=area_names)) + geom_line(size=1.2) + theme_classic() + facet_wrap(~item_name, scales = "free") +
+  rename(area_name = area_name.x) %>%
+  ggplot(aes(date,YoY, color=area_name)) + geom_line(size=1.2) + theme_classic() + facet_wrap(~item_name, scales = "free") +
   theme_classic() +
   theme(legend.position = "bottom",
         legend.text = element_text(size=25),
@@ -1693,3 +1695,75 @@ cpi %>% filter(item_name %in% c("Day care and preschool", "All items", "All item
   theme(plot.title.position = "plot",
         legend.position = c(0.3, 0.8),
         legend.title = element_blank())
+
+
+food <- lowest %>% filter(category == "Food")
+
+cpi %>% filter(item_name %in% food$item_name) %>%
+  group_by(date) %>%
+  filter(!is.na(Pchange1)) %>%
+  summarize(number_items = sum(n()),
+            number_negative = sum(Pchange1 < 0),
+            per_negative = number_negative/number_items) %>%
+  ggplot(aes(date, per_negative)) + geom_line()
+
+
+
+
+compare_date <- max(cpi$date) %m-% months(12)
+
+diff <- cpi %>% group_by(item_name) %>%
+  reframe(current = value[date == max(date)],
+            previous = value[date == compare_date],
+          change_percent = current/previous -1) %>%
+  arrange(change_percent)
+
+
+price_levels <- read_csv("weights/most_prices.csv")
+
+df <- diff %>%
+  left_join(price_levels, by="item_name") %>%
+  filter(change_percent < 0) %>%
+  mutate(weighted_contribution = weight*change_percent) %>%
+  select(item_name, current, previous, change_percent, category)
+
+write_csv(x = df, file="cpi_all_items_YoY_decreases_May_2024.csv")
+
+
+diff2 <- cpi %>% group_by(item_name) %>%
+  reframe(current = value[date == max(date)],
+          previous = value[date == "2019-12-01"],
+          change_percent = current/previous -1) %>%
+  arrange(change_percent) %>%
+  left_join(price_levels, by="item_name") %>%
+  filter(change_percent < 0) 
+
+
+
+df_2022 <- df %>% select(item_name, April_2022 = previous,
+                         change_percent_2022 = change_percent) 
+View(df)
+
+df <- df %>% select(-timed) %>%
+  left_join(df_2022, by="item_name")
+
+write_csv(x = df, file="decreases_two_years.csv")
+
+### Food
+
+big_food_categories <- c("Food at home", "Cereals and bakery products","Dairy and related products","Fruits and vegetables", "Other food at home", "Meats, poultry, and fish", "Nonalcoholic beverages and beverage materials")
+
+compare_dates <- c(max(cpi$date), max(cpi$date) %m-% months(12), max(cpi$date) %m-% months(60))
+
+cpi %>%
+  filter(item_name %in% big_food_categories) %>%
+  ggplot(aes(date, Pchange12)) + geom_line() + facet_wrap(~item_name)
+
+df1 <- cpi %>%
+  filter(item_name %in% big_food_categories) %>%
+  
+
+cpi %>%
+  filter(item_name %in% big_food_categories) %>%
+  group_by(item_name) %>%
+  summarize(change_in_2024 = value[date == max(date)]/value[date == "2024-01-01"] - 1)

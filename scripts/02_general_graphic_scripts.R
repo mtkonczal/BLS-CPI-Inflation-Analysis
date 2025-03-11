@@ -117,7 +117,7 @@ three_six_graphic <- function(cpi_df, variable_name, start_date, end_pre_date, s
         "Dotted line represented 2017 to 2019 value of ", 
         scales::percent(round(pre_trend,3)), " annualized."
       ),
-      caption = "All items less food and energy, monthly percent change, BLS, Author's calculations. Mike Konczal, Roosevelt Institute."
+      caption = "All items less food and energy, monthly percent change, BLS, Author's calculations. Mike Konczal."
     ) +
     theme_lass +
     scale_color_manual(values=colors) +
@@ -159,7 +159,7 @@ stacked_graphic <- function(cpi_data, item_array, start_date, title = NA, palett
          x = NULL,
          title = title,
          subtitle = "Monthly Contribution to Inflation, Annualized.",
-         caption ="BLS, CPI, 2022 weights prior to 2023, seasonally adjusted. Author's calculation. Mike Konczal, Roosevelt Institute") +
+         caption ="BLS, CPI, 2022 weights prior to 2023, seasonally adjusted. Author's calculation. Mike Konczal") +
     scale_fill_brewer(palette=palette) +
     scale_y_continuous(labels = percent) +
     scale_x_date(date_labels = "%b\n%Y", breaks=date_breaks) +
@@ -204,8 +204,8 @@ onion_chart <- function(cpi_data, start_date, breaks_length = 12, title = NA){
     labs(y = NULL,
          x = NULL,
          title = title,
-         subtitle = "Monthly contribution to inflation, annualized. Yellow line is 2018-19 geometric mean (which was below target).",
-         caption ="BLS, CPI, 2022 weights prior to 2023, seasonally adjusted. Author's calculation. Mike Konczal, Roosevelt Institute") +
+         subtitle = "Monthly contribution to inflation, annualized. Yellow line is 2018-19 geometric mean.",
+         caption ="BLS, CPI, 2022 weights prior to 2023, seasonally adjusted. Author's calculation. Mike Konczal.") +
     theme_lass +
     scale_fill_brewer(palette="RdPu", name = "item_name") +
     scale_y_continuous(labels = percent) +
@@ -241,7 +241,7 @@ onion_chart2 <- function(cpi_data, start_date, title = NA){
          x = NULL,
          title = title,
          subtitle = "Monthly contribution to inflation, annualized.",
-         caption ="BLS, CPI, 2022 weights prior to 2023, seasonally adjusted. Author's calculation. Mike Konczal, Roosevelt Institute") +
+         caption ="BLS, CPI, 2022 weights prior to 2023, seasonally adjusted. Author's calculation. Mike Konczal") +
     theme_lass +
     scale_fill_brewer(palette="RdPu", name = "item_name") +
     scale_y_continuous(labels = percent) +
@@ -326,7 +326,7 @@ draw_ridgeline <- function(cpi, item_list, top_cut = 0.85, bottom_cut = 0.15, ti
       labs(
         title = title,
         subtitle = "Distribution of the Cleveland Fed's Median/Trimmed-Mean CPI price basket, 3-month change annualized, with components\nwhose expenditure weights fall above/below the 85/15th percentile of price changes removed.",
-        x = "Three Month Percent Change", y = "", caption = "OER is treated as one value, instead of broken out by region and manually seasonally adjusted as per Cleveland Fed's methodology.Some 2020s removed as negative outlier. Mike Konczal, Roosevelt Institute"
+        x = "Three Month Percent Change", y = "", caption = "OER is treated as one value, instead of broken out by region and manually seasonally adjusted as per Cleveland Fed's methodology.Some 2020s removed as negative outlier. Mike Konczal"
       ) +
       theme(
         plot.title.position = "plot", legend.position = "none", legend.title = element_blank(),
@@ -358,7 +358,7 @@ unadjusted_analysis <- function(cpi_data, years_array, title = NA) {
     labs(
       title = title,
       subtitle = "Seasonally unadjusted values for core CPI inflation, 1-month percent change, not annualized.",
-      caption = "Inspired by Paul Romer's blog. Mike Konczal, Roosevelt Institute"
+      caption = "Inspired by Paul Romer's blog. Mike Konczal"
     )
 }
 
@@ -441,7 +441,7 @@ cpi_versus_pce <- function(cpi_df, compare_length = 6, start_graphic = "2014-01-
       x="", y="",
       title=title,
       subtitle = "Core CPI inflation vs core PCE inflation, 6-month change, annualized. Bars measure difference between them.",
-      caption = "CPI: BLS, All items less food and energy. PCE: BEA, PCE excluding food and energy, Author's calculations. Mike Konczal, Roosevelt Institute."
+      caption = "CPI: BLS, All items less food and energy. PCE: BEA, PCE excluding food and energy, Author's calculations. Mike Konczal."
     ) +
     theme_lass +
     scale_color_manual(values=colors) +
