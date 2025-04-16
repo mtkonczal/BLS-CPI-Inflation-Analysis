@@ -8,6 +8,8 @@ library(viridis)
 library(ggridges)
 library(gt)
 library(govMacroTools)
+library(tidyverse)
+library(janitor)
 
 # Download the data:
 source("scripts/01_download_cpi_data.R")
@@ -25,14 +27,14 @@ cpi <- create_cpi_changes(cpi_data)
 
 
 #Graphic 1: Overview
-core_3_6_title <- "Core Inflation Picked Up in January"
+core_3_6_title <- "Core Inflation Eases in March"
 three_six_graphic(cpi, "All items less food and energy", "2018-01-01", "2020-01-01", "2021-01-01",
                   title = core_3_6_title, include_3_6 = TRUE, column_alpha = 0.2,
                   colors = c("3-Month Change" = "#2D779C", "6-Month Change" = "#A4CCCC"))
 ggsave("graphics/g1.png", dpi="retina", width = 12, height=6.75, units = "in")
 
 # Graphic 2: Onion Chart
-onion_title = "Starting Off the Year Poorly"
+onion_title = "Inflation on Target Across Board"
 start_onion_date <- max(cpi$date) %m-% months(30)
 onion_chart(cpi, start_onion_date, title=onion_title)
 ggsave("graphics/g2.png", dpi="retina", width = 12, height=6.75, units = "in")
@@ -52,7 +54,7 @@ services_breakdown <- subtract_cpi_items(cpi, "2018-01-01", "Services less energ
                    subtract_array = subtract_array, add_on_array = "Food away from home")
 
 stacked_graphic(services_breakdown, unique(services_breakdown$item_name), start_date = "2022-01-01",
-                title = "Transportation Services, Perhaps Subject to Tariffs, Drove January Pop", date_breaks_length = 12, add_labels = TRUE, palette= "RdPu", legend.position = c(0.85,0.9))
+                title = "Transportation Services Drive Decline", date_breaks_length = 12, add_labels = TRUE, palette= "RdPu", legend.position = c(0.85,0.9))
 ggsave("graphics/g4.png", dpi="retina", width = 12, height=6.75, units = "in")
 
 # Graphic 5: Food and Energy
@@ -86,15 +88,6 @@ source("3_trump_tariffs.R")
 
 
 
-View(
-cpi %>%
-  filter(item_name == "Motor vehicle insurance") %>%
-  select(item_name, date, Pchange1)
-)
-
-
-
-
 # transportation services breakdown
 subtract_array <- c("Car and truck rental", "Motor vehicle insurance", "Motor vehicle fees", "Public transportation","Motor vehicle maintenance and repair")
 services_breakdown <- subtract_cpi_items(cpi, "2018-01-01", "Transportation services",
@@ -104,3 +97,66 @@ stacked_graphic(services_breakdown, unique(services_breakdown$item_name), start_
                 title = "What's Happening in Transportation Services?", date_breaks_length = 12, add_labels = TRUE, palette= "RdPu", legend.position = c(0.6,0.9))
 ggsave("graphics/g_ts.png", dpi="retina", width = 12, height=6.75, units = "in")
 
+
+
+
+# Real Wages ----
+cpi_rate <- cpi %>% filter(series_id == "CUSR0000SA0") %>%
+  select(date, cpi_rate = value)
+
+ahe <- getFRED("CES0500000003", rename_variables = "ahe") %>%
+  inner_join(cpi_rate, by="date") %>%
+  mutate(real_wages = ahe/cpi_rate,
+         real_wages3m = real_wages/lag(real_wages, 3)-1,
+         real_wages1m = real_wages/lag(real_wages, 1)-1)
+
+
+ahe %>%
+  filter(year(date) >= 2021) %>%
+  ggplot(aes(date, real_wages1m)) + geom_line() +
+  theme_classic() +
+  geom_hline(yintercept = 0)
+
+
+
+cpi %>%
+  filter(item_name %in% median_terms$item_name | item_name == "Owners' equivalent rent of residences",
+         date %in% c(max(date), max(date) %m-% months(12))) %>%
+  select(date, Pchange3, item_name, weight) %>%
+  mutate(dateF = as.factor(date)) %>%
+  ggplot(aes(Pchange3, fill=dateF)) + geom_density()
+  
+
+
+goods_level <- read_csv("data/core_goods_display_levels.csv") %>%
+  filter(display_level == 1)
+
+goods_level
+
+cpi %>% filter(item_name %in% goods_level$subcategory) %>%
+  filter(year(date) > 2022) %>%
+  ggplot(aes(date, Pchange1, color=item_name)) +
+  geom_line() +
+  theme_classic() +
+  facet_wrap(~item_name) +
+  geom_vline(xintercept = as.Date("2024-11-01"))
+
+cpi %>%
+  filter(item_name %in% c("Other lodging away from home including hotels and motels", "Airline fares")) %>%
+  filter(year(date) >= 2018) %>%
+  ggplot(aes(date, Pchange1)) +
+  geom_line() +
+  facet_wrap(~item_name, scales = "free") +
+  theme_classic(base_size = 18) +
+  geom_hline(yintercept = 0) +
+  scale_y_continuous(labels = percent) +
+  labs(subtitle="1-month percent change.",
+       x="",
+       y="",
+       caption="Mike Konczal")
+
+
+cpi %>%
+  filter(item_name == "Other lodging away from home including hotels and motels") %>%
+  select(date, item_name, Pchange1) %>%
+  arrange(Pchange1)

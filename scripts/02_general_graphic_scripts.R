@@ -28,7 +28,7 @@ create_cpi_changes <- function(cpi_data){
     mutate(Wchange3 = (Pchange3*weight)/100) %>%
     mutate(Wchange3a = (1 + Wchange3)^4 - 1) %>%
     mutate(Pchange6 = (value/lag(value, 6)-1)) %>%
-    mutate(Pchange6a = (1 + Pchange3)^2 - 1) %>%
+    mutate(Pchange6a = (1 + Pchange6)^2 - 1) %>%
     mutate(Wchange6 = (Pchange6*weight)/100) %>%
     mutate(Wchange6a = (1 + Wchange6)^2 - 1) %>%
     mutate(Pchange12 = (value/lag(value, 12)-1)) %>%
@@ -362,29 +362,33 @@ unadjusted_analysis <- function(cpi_data, years_array, title = NA) {
     )
 }
 
-
 ##### SET UP SOME THINGS #####
-theme_lass <-   theme_modern_rc(ticks = TRUE) + theme(legend.position = "none", legend.title = element_blank(),
-                                                      panel.grid.major.y = element_line(size=0.5),
-                                                      panel.grid.minor.y = element_blank(),
-                                                      plot.title.position = "plot",
-                                                      axis.title.x = element_blank(),
-                                                      axis.title.y = element_blank(),
-                                                      plot.title = element_text(size = 25, face="bold"),
-                                                      plot.subtitle = element_text(size=15, color="white"),
-                                                      plot.caption = element_text(size=10, face="italic"),
-                                                      legend.text = element_text(size=12),
-                                                      axis.text.y = element_text(size=12, face="bold"),
-                                                      axis.text.x = element_text(size=12, face="bold"),
-                                                      strip.text = element_text(face = "bold", color="white", hjust = 0.5, size = 10),
-                                                      panel.grid.major.x = element_blank(),
-                                                      panel.grid.minor.x = element_blank(),
-                                                      strip.background = element_blank()) +
-  theme(text = element_text(family = "Larsseit"),
-        plot.title = element_text(family = "Larsseit"),
-        plot.subtitle = element_text(family = "Larsseit"),
-        plot.caption = element_text(family="Larsseit"),
-        strip.text = element_text(family="Larsseit"))
+theme_lass <- theme_modern_rc(ticks = TRUE) + theme(
+  legend.position = "none", legend.title = element_blank(),
+  panel.grid.major.y = element_line(size = 0.5),
+  panel.grid.minor.y = element_blank(),
+  plot.title.position = "plot",
+  axis.title.x = element_blank(),
+  axis.title.y = element_blank(),
+  plot.title = element_text(size = 25, face = "bold"),
+  plot.subtitle = element_text(size = 15, color = "white"),
+  plot.caption = element_text(size = 10, face = "italic"),
+  legend.text = element_text(size = 12),
+  axis.text.y = element_text(size = 12, face = "bold"),
+  axis.text.x = element_text(size = 12, face = "bold"),
+  strip.text = element_text(face = "bold", color = "white", hjust = 0.5, size = 10),
+  panel.grid.major.x = element_blank(),
+  panel.grid.minor.x = element_blank(),
+  strip.background = element_blank()
+) +
+  theme(
+    text = element_text(family = "Public Sans"),
+    plot.title = element_text(family = "Publico Banner"),
+    plot.subtitle = element_text(family = "Publico Banner"),
+    plot.caption = element_text(family = "Public Sans"),
+    strip.text = element_text(family = "Public Sans")
+  )
+
 
 
 
