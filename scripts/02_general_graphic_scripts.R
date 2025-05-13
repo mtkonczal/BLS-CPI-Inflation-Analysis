@@ -104,18 +104,16 @@ three_six_graphic <- function(cpi_df, variable_name, start_date, end_pre_date, s
     filter(date >= start_graphic) %>%
     ggplot(aes(date, change, color=time_length,label=label_percent()(round(last_value,3)))) +
     {if(include_3_6)geom_line(size=1.6)} +
-    geom_hline(yintercept = pre_trend, linetype="dashed", color="#A4CCCC") +
+    #geom_hline(yintercept = pre_trend, linetype="dashed", color="#A4CCCC") +
     geom_col(aes(date, OneMonth), alpha=column_alpha, size=0, show.legend = FALSE) +
     geom_text_repel(
-      show.legend=FALSE, nudge_x = 85, min.segment.length = Inf
+      show.legend=FALSE, nudge_x = 40, min.segment.length = Inf, size=6
     ) +
     labs(
       x="", y="",
       title=title,
       subtitle = paste0(
-        "Core CPI inflation, monthly percentage change, annualized. ",
-        "Dotted line represented 2017 to 2019 value of ", 
-        scales::percent(round(pre_trend,3)), " annualized."
+        "Core CPI inflation, monthly percentage change, annualized."
       ),
       caption = "All items less food and energy, monthly percent change, BLS, Author's calculations. Mike Konczal."
     ) +
@@ -363,6 +361,7 @@ unadjusted_analysis <- function(cpi_data, years_array, title = NA) {
 }
 
 ##### SET UP SOME THINGS #####
+
 theme_lass <- theme_modern_rc(ticks = TRUE) + theme(
   legend.position = "none", legend.title = element_blank(),
   panel.grid.major.y = element_line(size = 0.5),

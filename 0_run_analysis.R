@@ -27,17 +27,17 @@ cpi <- create_cpi_changes(cpi_data)
 
 
 #Graphic 1: Overview
-core_3_6_title <- "Core Inflation Eases in March"
-three_six_graphic(cpi, "All items less food and energy", "2018-01-01", "2020-01-01", "2021-01-01",
+core_3_6_title <- "Core Inflation Continues to Ease in April"
+g <- three_six_graphic(cpi, "All items less food and energy", "2018-01-01", "2020-01-01", "2022-01-01",
                   title = core_3_6_title, include_3_6 = TRUE, column_alpha = 0.2,
                   colors = c("3-Month Change" = "#2D779C", "6-Month Change" = "#A4CCCC"))
-ggsave("graphics/g1.png", dpi="retina", width = 12, height=6.75, units = "in")
+ggsave("graphics/g1_core_inflation.png", dpi="retina", width = 12, height=6.75, units = "in")
 
 # Graphic 2: Onion Chart
-onion_title = "Inflation on Target Across Board"
+onion_title = "Tariff Inflation Not Showing Up Yet"
 start_onion_date <- max(cpi$date) %m-% months(30)
 onion_chart(cpi, start_onion_date, title=onion_title)
-ggsave("graphics/g2.png", dpi="retina", width = 12, height=6.75, units = "in")
+ggsave("graphics/g2_onion_chart.png", dpi="retina", width = 12, height=6.75, units = "in")
 
 # Graphic 3: Core Goods
 goods_minus_used_autos <- subtract_cpi_items(cpi, "2018-01-01",
@@ -46,7 +46,7 @@ goods_minus_used_autos <- subtract_cpi_items(cpi, "2018-01-01",
 
 stacked_graphic(goods_minus_used_autos, unique(goods_minus_used_autos$item_name),start_date = "2020-01-01",
                 palette = "Greens", title = "Auto Prices Taking Off Since Trump Took Office", date_breaks_length = 12, legend.position = c(0.7,0.85))
-ggsave("graphics/g3.png", dpi="retina", width = 12, height=6.75, units = "in")
+ggsave("graphics/g3_core_goods_breakdown.png", dpi="retina", width = 12, height=6.75, units = "in")
 
 # Graphic 4: Core Services
 subtract_array <- c("Shelter", "Medical care services", "Transportation services")
@@ -55,7 +55,7 @@ services_breakdown <- subtract_cpi_items(cpi, "2018-01-01", "Services less energ
 
 stacked_graphic(services_breakdown, unique(services_breakdown$item_name), start_date = "2022-01-01",
                 title = "Transportation Services Drive Decline", date_breaks_length = 12, add_labels = TRUE, palette= "RdPu", legend.position = c(0.85,0.9))
-ggsave("graphics/g4.png", dpi="retina", width = 12, height=6.75, units = "in")
+ggsave("graphics/g4_services_breakdown.png", dpi="retina", width = 12, height=6.75, units = "in")
 
 # Graphic 5: Food and Energy
 stacked_graphic(cpi, c("Energy","Food"),start_date = "2019-01-01",title = "Energy Starts to Fall", date_breaks_length = 12)
@@ -64,7 +64,7 @@ ggsave("graphics/energy_food.png", dpi="retina", width = 12, height=6.75, units 
 # Graphic 6: Ridgeline Graphic
 median_terms <- read_csv("weights/mediancpi_component_table.csv") %>% mutate(item_name = Component)
 draw_ridgeline(cpi, median_terms$item_name, title="Price Distribution moved out, is now moving back.")
-ggsave("graphics/g5.png", dpi="retina", width = 12, height=14, units = "in")
+ggsave("graphics/g5_ridgeline.png", dpi="retina", width = 12, height=14, units = "in")
 
 ## Graphic 7: Seasonally Unadjusted
 #unadjusted_analysis(cpi_data, c(2019,2022,2023, 2024), title="Unadjusted sliding into prepandemic values?")
@@ -107,17 +107,48 @@ cpi_rate <- cpi %>% filter(series_id == "CUSR0000SA0") %>%
 ahe <- getFRED("CES0500000003", rename_variables = "ahe") %>%
   inner_join(cpi_rate, by="date") %>%
   mutate(real_wages = ahe/cpi_rate,
-         real_wages3m = real_wages/lag(real_wages, 3)-1,
-         real_wages1m = real_wages/lag(real_wages, 1)-1)
+         real_wages4m = real_wages/lag(real_wages, 4)-1,
+         real_wages1m = real_wages/lag(real_wages, 1)-1,
+         real_wages_Trump = real_wages/real_wages[date == "2025-01-01"]-1)
 
 
 ahe %>%
-  filter(year(date) >= 2021) %>%
-  ggplot(aes(date, real_wages1m)) + geom_line() +
-  theme_classic() +
-  geom_hline(yintercept = 0)
+  filter(year(date) >= 2025) %>%
+  ggplot(aes(date, real_wages_Trump)) +
+  geom_line(size = 1.2) +
+  theme_lass +
+  geom_hline(yintercept = 0, color = "white") +
+  scale_y_continuous(label = percent) +
+  scale_x_date(breaks = "1 month", date_labels = "%B\n%Y") +
+  labs(
+    title = "Real Wages Up or Down Under President Trump?",
+    subtitle = "Change in Average Hourly Earnings Divided by Overall CPI, Since January 2025.",
+    caption = "Mike Konczal"
+  )
+ggsave("graphics/real_wages_Trump.png", dpi = "retina", width = 12, height = 6.75, units = "in")
+  
+# Nobody is Coming Here Portfolio ----
+cpi %>%
+  filter(item_name %in% c("Other lodging away from home including hotels and motels", "Airline fares")) %>%
+  group_by(item_name) %>%
+  mutate(Pchange4 = value/lag(value, 4) - 1) %>%
+  filter(year(date) >= 2018) %>%
+  ggplot(aes(date, value)) +
+  #ggplot(aes(date, Pchange1)) +
+  theme_lass +
+  geom_line(size = 1.2) +
+  facet_wrap(~item_name, scales = "free") +
+  geom_hline(yintercept = 0) +
+  scale_y_continuous(labels = percent) +
+  labs(subtitle="1-month percent change.",
+       title = "Hotels and Airfare Prices are Falling",
+       x="",
+       y="",
+       caption="Mike Konczal")
+ggsave("graphics/nobody_is_coming_here.png", dpi="retina", width = 12, height=6.75, units = "in")
 
 
+# Stop! -----
 
 cpi %>%
   filter(item_name %in% median_terms$item_name | item_name == "Owners' equivalent rent of residences",
@@ -134,26 +165,23 @@ goods_level <- read_csv("data/core_goods_display_levels.csv") %>%
 goods_level
 
 cpi %>% filter(item_name %in% goods_level$subcategory) %>%
-  filter(year(date) > 2022) %>%
-  ggplot(aes(date, Pchange1, color=item_name)) +
-  geom_line() +
-  theme_classic() +
-  facet_wrap(~item_name) +
-  geom_vline(xintercept = as.Date("2024-11-01"))
-
-cpi %>%
-  filter(item_name %in% c("Other lodging away from home including hotels and motels", "Airline fares")) %>%
-  filter(year(date) >= 2018) %>%
-  ggplot(aes(date, Pchange1)) +
-  geom_line() +
-  facet_wrap(~item_name, scales = "free") +
+  filter(year(date) >= 2023) %>%
+  group_by(item_name) %>%
+  mutate(Trump_change = value/value[date == "2025-01-01"]) %>%
+  ungroup() %>%
+  ggplot(aes(date, Trump_change, color=item_name)) +
+  geom_line(show.legend = FALSE) +
   theme_classic(base_size = 18) +
-  geom_hline(yintercept = 0) +
-  scale_y_continuous(labels = percent) +
-  labs(subtitle="1-month percent change.",
-       x="",
-       y="",
-       caption="Mike Konczal")
+  facet_wrap(~item_name, scales = "free") +
+  geom_vline(xintercept = as.Date("2025-01-01")) +
+  scale_x_date(date_labels = "%b\n%Y") +
+  labs(title = "Tariffs not in data yet.",
+       subtitle = "Percent change since January 2025, January 2025 = 1. Major goods items.",
+       x = "",
+       y = "",
+       caption = "Mike Konczal") +
+  theme(plot.title.position = "plot")
+
 
 
 cpi %>%

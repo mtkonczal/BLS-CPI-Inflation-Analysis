@@ -6,8 +6,8 @@ df <- cpi_data %>%
   mutate(pchange1 = value / lag(value, 1) - 1) %>%
   ungroup()
 
-first_title <- "March in Line With Prepandemic Values"
-years_array <- c(2019,2022,2023, 2024, 2025)
+first_title <- "April in Line With Prepandemic Values"
+years_array <- c(2019,2022, 2024, 2025)
 
 second_title <- "Seasonally Unadjusted Values Returning to Broad Historical Range"
 third_title <- "Compared to historical values, 2024 lines up"
