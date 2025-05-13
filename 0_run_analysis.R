@@ -181,10 +181,3 @@ cpi %>% filter(item_name %in% goods_level$subcategory) %>%
        y = "",
        caption = "Mike Konczal") +
   theme(plot.title.position = "plot")
-
-
-
-cpi %>%
-  filter(item_name == "Other lodging away from home including hotels and motels") %>%
-  select(date, item_name, Pchange1) %>%
-  arrange(Pchange1)
