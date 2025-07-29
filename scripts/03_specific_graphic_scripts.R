@@ -50,7 +50,7 @@ housing_cpi_versus_pce <- function(cpi_df, compare_length = 24, start_graphic = 
       subtitle = "PRELIMINARY: Contribution to inflation, housing, one-month annualized, CPI versus PCE.",
       caption = "CPI: Housing. 2022 weights prior to 2023. PCE: Housing. NIPA Tables 2.4.4U and 2.4.5U, weights approximated as nominal consumption shares as a percent of the total.\nAuthor's calculations. Mike Konczal, Roosevelt Institute."
     ) +
-    theme_lass +
+    theme_esp() +
     scale_color_manual(values = colors) +
     scale_y_continuous(labels = scales::percent) +
     scale_x_date(date_labels = "%b\n%Y", breaks = breaks_value) +
@@ -138,7 +138,7 @@ pce_cpi_divergence_contributions <- function(title = "", start_date = "2010-01-0
        labs(title=title,
             subtitle="Table 9.1U. Reconciliation of Percent Change in the CPI with Percent Change in the PCE Price Index, quarterly value annualized.\nRed cirlces reflect total difference between headline CPI and PCE.",
             caption="Mike Konczal, Roosevelt Institute") +
-    theme_lass +
+    theme_esp() +
     scale_fill_brewer(palette="BrBG") +
     scale_y_continuous(labels = percent) +
     scale_x_date(date_labels = "%b\n%Y", breaks=date_breaks) +

@@ -6,7 +6,7 @@ df <- cpi_data %>%
   mutate(pchange1 = value / lag(value, 1) - 1) %>%
   ungroup()
 
-first_title <- "April in Line With Prepandemic Values"
+first_title <- "June Went the Wrong Direction"
 years_array <- c(2019,2022, 2024, 2025)
 
 second_title <- "Seasonally Unadjusted Values Returning to Broad Historical Range"
@@ -35,7 +35,7 @@ df %>%
   ggplot(aes(month, pchange1, color = year)) +
   geom_line(size = 1.2) +
   geom_point(size = 1.2) +
-  theme_lass +
+  theme_esp() +
   scale_x_continuous(breaks = 1:12, labels = month.name) +
   scale_y_continuous(labels = percent) +
   geom_text_repel(aes(label = year),
@@ -59,7 +59,7 @@ df %>%
   ggplot(aes(month, pchange1, color = year)) +
   geom_line(size = 1.2) +
   geom_point(size = 1.2) +
-  theme_lass +
+  theme_esp() +
   scale_x_continuous(breaks = 1:12, labels = month.name) +
   scale_y_continuous(labels = percent) +
   geom_text_repel(aes(label = year),
@@ -123,12 +123,6 @@ df %>%
 
 ggsave("graphics/unadjusted_g3.png", dpi="retina", width = 20, height=6.75, units = "in")
 
-
-
-
-View(df %>% filter(item_name == "All items less food and energy") %>%
-  filter(month(date) == 1) %>%
-  select(year, item_name, pchange1))
 
 
 

@@ -27,14 +27,22 @@ cpi <- create_cpi_changes(cpi_data)
 
 
 #Graphic 1: Overview
-core_3_6_title <- "Core Inflation Continues to Ease in April"
+core_3_6_title <- "Core Inflation Continues to Ease in June"
 g <- three_six_graphic(cpi, "All items less food and energy", "2018-01-01", "2020-01-01", "2022-01-01",
                   title = core_3_6_title, include_3_6 = TRUE, column_alpha = 0.2,
-                  colors = c("3-Month Change" = "#2D779C", "6-Month Change" = "#A4CCCC"))
+                  colors = c("3-Month Change" = "#2c3254", "6-Month Change" = "#ff8361"))
 ggsave("graphics/g1_core_inflation.png", dpi="retina", width = 12, height=6.75, units = "in")
 
+
+#Graphic 1: Overview
+core_3_6_title <- "Services less Shelter Still Elevated in June"
+g <- three_six_graphic(cpi, "Services less rent of shelter", "2018-01-01", "2020-01-01", "2023-01-01",
+                       title = core_3_6_title, include_3_6 = TRUE, column_alpha = 0.2,
+                       colors = c("3-Month Change" = "#2c3254", "6-Month Change" = "#ff8361"))
+ggsave("graphics/supercore.png", dpi="retina", width = 12, height=6.75, units = "in")
+
 # Graphic 2: Onion Chart
-onion_title = "Tariff Inflation Not Showing Up Yet"
+onion_title = "Lower Shelter Covering Up Higher Inflation in June"
 start_onion_date <- max(cpi$date) %m-% months(30)
 onion_chart(cpi, start_onion_date, title=onion_title)
 ggsave("graphics/g2_onion_chart.png", dpi="retina", width = 12, height=6.75, units = "in")
@@ -116,7 +124,7 @@ ahe %>%
   filter(year(date) >= 2025) %>%
   ggplot(aes(date, real_wages_Trump)) +
   geom_line(size = 1.2) +
-  theme_lass +
+  theme_esp() +
   geom_hline(yintercept = 0, color = "white") +
   scale_y_continuous(label = percent) +
   scale_x_date(breaks = "1 month", date_labels = "%B\n%Y") +
@@ -131,16 +139,16 @@ ggsave("graphics/real_wages_Trump.png", dpi = "retina", width = 12, height = 6.7
 cpi %>%
   filter(item_name %in% c("Other lodging away from home including hotels and motels", "Airline fares")) %>%
   group_by(item_name) %>%
-  mutate(Pchange4 = value/lag(value, 4) - 1) %>%
-  filter(year(date) >= 2018) %>%
-  ggplot(aes(date, value)) +
-  #ggplot(aes(date, Pchange1)) +
-  theme_lass +
-  geom_line(size = 1.2) +
+  mutate(Pchange4 = value/lag(value, 4) - 1,
+         indexN = 100*value/value[date == "2024-12-01"]) %>%
+  ungroup() %>%
+  filter(year(date) >= 2023) %>%
+  ggplot(aes(date, indexN)) +
+  theme_esp() +
+  scale_x_date(date_labels = "%b\n%Y", breaks = generate_dates(cpi$date, 6)) +
+  geom_line(size = 1.2, color="navy") +
   facet_wrap(~item_name, scales = "free") +
-  geom_hline(yintercept = 0) +
-  scale_y_continuous(labels = percent) +
-  labs(subtitle="1-month percent change.",
+  labs(subtitle="Price level, December 2024 = 100",
        title = "Hotels and Airfare Prices are Falling",
        x="",
        y="",
@@ -181,3 +189,21 @@ cpi %>% filter(item_name %in% goods_level$subcategory) %>%
        y = "",
        caption = "Mike Konczal") +
   theme(plot.title.position = "plot")
+
+
+
+unrate <- getFRED("unrate") %>% mutate(unrate = unrate/100)
+
+cpi %>% filter(item_name %in% c("All items less food and energy", "All items")) %>%
+  group_by(item_name) %>%
+  reframe(date = date,
+          YoY = value/lag(value, 12)-1,
+          YoY_12 = lag(YoY, 12),
+          YoY_24 = lag(YoY, 24),
+          YoY_36 = lag(YoY, 36)) %>%
+  ungroup() %>%
+  left_join(unrate, by = "date") %>%
+  mutate(changeYoY = YoY - YoY_36,
+         changeunrate = unrate - lag(unrate, 36),
+         sacrifice_ratio_12m = changeunrate/changeYoY) %>%
+  filter(date == max(date))

@@ -13,6 +13,8 @@ library(ggridges)
 library(scales)
 library(quantmod)
 
+
+
 create_cpi_changes <- function(cpi_data){
   cpi <- cpi_data %>%
     filter(period != "M13") %>%
@@ -113,11 +115,11 @@ three_six_graphic <- function(cpi_df, variable_name, start_date, end_pre_date, s
       x="", y="",
       title=title,
       subtitle = paste0(
-        "Core CPI inflation, monthly percentage change, annualized."
+        "Services less rent of shelter, monthly percentage change, annualized."
       ),
-      caption = "All items less food and energy, monthly percent change, BLS, Author's calculations. Mike Konczal."
+      caption = "Monthly percent change, BLS, Author's calculations. Mike Konczal."
     ) +
-    theme_lass +
+    theme_esp() +
     scale_color_manual(values=colors) +
     scale_y_continuous(labels = scales::percent) +
     scale_x_date(date_labels = "%b\n%Y", breaks=breaks_value) +
@@ -152,7 +154,7 @@ stacked_graphic <- function(cpi_data, item_array, start_date, title = NA, palett
     filter(date >= start_date) %>%
     mutate(num_label = round(100*Wchange1a, 1)) %>% mutate(num_label = ifelse(abs(num_label) < 0.16, NA, num_label)) %>%
     ggplot(aes(x = date, y = Wchange1a, fill = item_name, label = num_label)) +
-    geom_bar(stat = 'identity', size=0) + theme_lass +
+    geom_bar(stat = 'identity', size=0) + theme_esp() +
     labs(y = NULL,
          x = NULL,
          title = title,
@@ -169,6 +171,13 @@ stacked_graphic <- function(cpi_data, item_array, start_date, title = NA, palett
 
 
 onion_chart <- function(cpi_data, start_date, breaks_length = 12, title = NA){
+  
+  
+  esp_colors <- c(
+    "Core goods" = "#2c3254",             # Warm Navy
+    "Shelter" = "#ff8361",                # Warm Red
+    "Rest of core services" = "#70ad8f"   # Soft Green
+  )
   
   date_breaks <- generate_dates(cpi_data$date, breaks_length)
   
@@ -204,12 +213,12 @@ onion_chart <- function(cpi_data, start_date, breaks_length = 12, title = NA){
          title = title,
          subtitle = "Monthly contribution to inflation, annualized. Yellow line is 2018-19 geometric mean.",
          caption ="BLS, CPI, 2022 weights prior to 2023, seasonally adjusted. Author's calculation. Mike Konczal.") +
-    theme_lass +
-    scale_fill_brewer(palette="RdPu", name = "item_name") +
+    theme_esp() +
+    scale_fill_manual(values = esp_colors) +
     scale_y_continuous(labels = percent) +
     scale_x_date(date_labels = "%b\n%Y", breaks = date_breaks) +
     theme(axis.text.x = element_text(size=14), axis.text.y = element_text(size=19)) +
-    geom_line(aes(date,geometric_mean), color="#E2E47E", size=1.4)
+    geom_line(aes(date,geometric_mean), color="darkred", size=1.4)
   
 }
 
@@ -240,7 +249,7 @@ onion_chart2 <- function(cpi_data, start_date, title = NA){
          title = title,
          subtitle = "Monthly contribution to inflation, annualized.",
          caption ="BLS, CPI, 2022 weights prior to 2023, seasonally adjusted. Author's calculation. Mike Konczal") +
-    theme_lass +
+    theme_esp() +
     scale_fill_brewer(palette="RdPu", name = "item_name") +
     scale_y_continuous(labels = percent) +
     scale_x_date(date_labels = "%b\n%Y", breaks = MI_dates_three_categories) +
@@ -318,7 +327,7 @@ draw_ridgeline <- function(cpi, item_list, top_cut = 0.85, bottom_cut = 0.15, ti
       geom_density_ridges_gradient() +
       scale_fill_viridis(option = "H") +
       theme_ridges() +
-      theme_lass +
+      theme_esp() +
       theme(legend.position = "none") +
       scale_x_continuous(labels = percent) +
       labs(
@@ -346,7 +355,7 @@ unadjusted_analysis <- function(cpi_data, years_array, title = NA) {
     filter(year(date) %in% years_array) %>%
     ggplot(aes(month, pchange1, color = year)) +
     geom_line(size = 1.2) +
-    theme_lass +
+    theme_esp() +
     scale_x_continuous(breaks = 1:12, labels = month.abb) +
     scale_y_continuous(labels = percent) +
     geom_text_repel(aes(label = year),
@@ -361,34 +370,6 @@ unadjusted_analysis <- function(cpi_data, years_array, title = NA) {
 }
 
 ##### SET UP SOME THINGS #####
-
-theme_lass <- theme_modern_rc(ticks = TRUE) + theme(
-  legend.position = "none", legend.title = element_blank(),
-  panel.grid.major.y = element_line(size = 0.5),
-  panel.grid.minor.y = element_blank(),
-  plot.title.position = "plot",
-  axis.title.x = element_blank(),
-  axis.title.y = element_blank(),
-  plot.title = element_text(size = 25, face = "bold"),
-  plot.subtitle = element_text(size = 15, color = "white"),
-  plot.caption = element_text(size = 10, face = "italic"),
-  legend.text = element_text(size = 12),
-  axis.text.y = element_text(size = 12, face = "bold"),
-  axis.text.x = element_text(size = 12, face = "bold"),
-  strip.text = element_text(face = "bold", color = "white", hjust = 0.5, size = 10),
-  panel.grid.major.x = element_blank(),
-  panel.grid.minor.x = element_blank(),
-  strip.background = element_blank()
-) +
-  theme(
-    text = element_text(family = "Public Sans"),
-    plot.title = element_text(family = "Publico Banner"),
-    plot.subtitle = element_text(family = "Publico Banner"),
-    plot.caption = element_text(family = "Public Sans"),
-    strip.text = element_text(family = "Public Sans")
-  )
-
-
 
 
 cpi_versus_pce <- function(cpi_df, compare_length = 6, start_graphic = "2014-01-01", breaks_value = 6, title="",
@@ -446,7 +427,7 @@ cpi_versus_pce <- function(cpi_df, compare_length = 6, start_graphic = "2014-01-
       subtitle = "Core CPI inflation vs core PCE inflation, 6-month change, annualized. Bars measure difference between them.",
       caption = "CPI: BLS, All items less food and energy. PCE: BEA, PCE excluding food and energy, Author's calculations. Mike Konczal."
     ) +
-    theme_lass +
+    theme_esp() +
     scale_color_manual(values=colors) +
     scale_y_continuous(labels = scales::percent) +
     scale_x_date(date_labels = "%b\n%Y", breaks=breaks_value) +

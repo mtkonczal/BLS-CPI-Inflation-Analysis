@@ -17,12 +17,15 @@ cpi %>%
   filter(item_name %in% trump_targets) %>%
   filter(year(date) >= start_trump_year) %>%
   ggplot(aes(date, Pchange1)) +
-  geom_line() + geom_line() +
-  theme_classic() +
+  geom_line(color = "#2c3254") +
+  theme_esp() +
   facet_wrap(~item_name, scales = "free") +
-  labs(title="Likely targets for Trump tariffs, monthly change not-annualized.",
+  scale_y_continuous(label = percent) +
+  labs(title="Likely targets for Trump tariffs.",
+       subtitle = "Monthly change, seasonally adjusted, not-annualized.",
        caption="Seasonally adjusted, CPI. Mike Konczal.") +
-  geom_hline(yintercept = 0)
+  geom_hline(yintercept = 0) +
+  theme(plot.title.position = "plot")
 
 ggsave("graphics/trump_tariff_targets.png", dpi="retina", width = 12, height=6.75, units = "in")
 
@@ -53,3 +56,9 @@ three_six_graphic(cpi, "Transportation commodities less motor fuel", "2018-01-01
                   colors = c("3-Month Change" = "#9467BD", "6-Month Change" = "#C5B0D5")
 )
 ggsave("graphics/autos.png", dpi="retina", width = 12, height=6.75, units = "in")
+
+
+cpi %>%
+  filter(item_name == "New vehicles",
+         date >= "2024-01-01") %>%
+  ggplot(aes(date, value)) + geom_line()
