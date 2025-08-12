@@ -6,6 +6,7 @@
 # Last Updated: 10-16-2023
 library(tidyverse)
 library(lubridate)
+library(janitor)
 
 
 #### Do CPI First ####
@@ -100,5 +101,7 @@ pce_density_values <- NIPA_monthly_data %>%
   mutate(inflation_type = "PCE")
 
 write_csv(rbind(cpi_density_values,pce_density_values), file = "data/shiny_density_test.csv")
+write_csv(rbind(cpi_density_values %>% mutate(Pvalues = round(Pvalues, digits = 4)),
+                pce_density_values %>% mutate(Pvalues = round(Pvalues, digits = 4))), file = "data/shiny_density_test.csv")
 
 saveRDS(rbind(cpi_density_values,pce_density_values), "data/shiny_density_test.rds")

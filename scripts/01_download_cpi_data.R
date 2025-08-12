@@ -2,7 +2,7 @@
 # and merges them.
 
 # Libraries
-library(govMacroTools)
+library(tidyusmacro)
 
 cpi_data <- getBLSFiles("cpi", "rortybomb@gmail.com")
 

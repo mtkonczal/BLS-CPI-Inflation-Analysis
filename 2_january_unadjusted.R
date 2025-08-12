@@ -46,6 +46,9 @@ df %>%
     title = first_title,
     subtitle = "Seasonally unadjusted values for core CPI inflation, 1-month percent change, not annualized.",
     caption = "Inspired by Paul Romer's blog. Mike Konczal"
+  ) +
+  theme(
+    panel.grid.major.y = element_line(color = "grey80"),
   )
 ggsave("graphics/unadjusted_g1.png", dpi="retina", width = 12, height=6.75, units = "in")
 

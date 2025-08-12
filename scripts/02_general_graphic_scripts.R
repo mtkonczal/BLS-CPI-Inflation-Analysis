@@ -93,7 +93,7 @@ make_three_six_data <- function(cpi_df, variable_name, label_length) {
 
 three_six_graphic <- function(cpi_df, variable_name, start_date, end_pre_date, start_graphic, breaks_value = 6, title="",
                               legend.position.c = c(0.90,0.85), colors = c("3-Month Change" = "#2D779C", "6-Month Change" = "#A4CCCC"),
-                              add_above_labels = FALSE, label_length = 6, include_3_6 = TRUE,
+                              add_above_labels = FALSE, label_length = 6, include_3_6 = TRUE, subtitle = "",
                               column_alpha=1) {
   
   # Data manipulation
@@ -114,9 +114,7 @@ three_six_graphic <- function(cpi_df, variable_name, start_date, end_pre_date, s
     labs(
       x="", y="",
       title=title,
-      subtitle = paste0(
-        "Services less rent of shelter, monthly percentage change, annualized."
-      ),
+      subtitle = subtitle,
       caption = "Monthly percent change, BLS, Author's calculations. Mike Konczal."
     ) +
     theme_esp() +

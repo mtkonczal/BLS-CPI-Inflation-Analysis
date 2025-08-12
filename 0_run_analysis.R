@@ -7,7 +7,7 @@ library(ggrepel)
 library(viridis)
 library(ggridges)
 library(gt)
-library(govMacroTools)
+library(tidyusmacro)
 library(tidyverse)
 library(janitor)
 
@@ -17,6 +17,7 @@ source("scripts/01_download_cpi_data.R")
 source("scripts/02_general_graphic_scripts.R")
 source("scripts/03_specific_graphic_scripts.R")
 
+cpi_backup <- cpi_data
 cpi <- create_cpi_changes(cpi_data)
 
 #Get Core data results in a View Window
@@ -27,10 +28,15 @@ cpi <- create_cpi_changes(cpi_data)
 
 
 #Graphic 1: Overview
-core_3_6_title <- "Core Inflation Continues to Ease in June"
+core_3_6_title <- "Core Inflation Continues to Pick Back Up in July"
 g <- three_six_graphic(cpi, "All items less food and energy", "2018-01-01", "2020-01-01", "2022-01-01",
                   title = core_3_6_title, include_3_6 = TRUE, column_alpha = 0.2,
-                  colors = c("3-Month Change" = "#2c3254", "6-Month Change" = "#ff8361"))
+                  subtitle = "All items less food and energy, seasonally adjusted, boxes are one-month change annualized.",
+                  colors = c("3-Month Change" = "#2c3254", "6-Month Change" = "#ff8361")) +
+  scale_fill_brewer(palette = "Paired") +
+  theme(
+    panel.grid.major.y = element_line(color = "grey80"),
+  )
 ggsave("graphics/g1_core_inflation.png", dpi="retina", width = 12, height=6.75, units = "in")
 
 
@@ -38,13 +44,19 @@ ggsave("graphics/g1_core_inflation.png", dpi="retina", width = 12, height=6.75, 
 core_3_6_title <- "Services less Shelter Still Elevated in June"
 g <- three_six_graphic(cpi, "Services less rent of shelter", "2018-01-01", "2020-01-01", "2023-01-01",
                        title = core_3_6_title, include_3_6 = TRUE, column_alpha = 0.2,
-                       colors = c("3-Month Change" = "#2c3254", "6-Month Change" = "#ff8361"))
+                       colors = c("3-Month Change" = "#2c3254", "6-Month Change" = "#ff8361")) +
+  theme(
+    panel.grid.major.y = element_line(color = "grey80"),
+  )
 ggsave("graphics/supercore.png", dpi="retina", width = 12, height=6.75, units = "in")
 
 # Graphic 2: Onion Chart
-onion_title = "Lower Shelter Covering Up Higher Inflation in June"
+onion_title = "Core Inflation Picks Up in July"
 start_onion_date <- max(cpi$date) %m-% months(30)
-onion_chart(cpi, start_onion_date, title=onion_title)
+onion_chart(cpi, start_onion_date, title=onion_title) +
+  theme(
+    panel.grid.major.y = element_line(color = "grey80"),
+  )
 ggsave("graphics/g2_onion_chart.png", dpi="retina", width = 12, height=6.75, units = "in")
 
 # Graphic 3: Core Goods
@@ -53,7 +65,10 @@ goods_minus_used_autos <- subtract_cpi_items(cpi, "2018-01-01",
                                              "Transportation commodities less motor fuel", rest_name_variable = "Core goods ex autos")
 
 stacked_graphic(goods_minus_used_autos, unique(goods_minus_used_autos$item_name),start_date = "2020-01-01",
-                palette = "Greens", title = "Auto Prices Taking Off Since Trump Took Office", date_breaks_length = 12, legend.position = c(0.7,0.85))
+                palette = "Greens", title = "Auto Prices Taking Off Since Trump Took Office", date_breaks_length = 12, legend.position = c(0.7,0.85)) +
+  theme(
+    panel.grid.major.y = element_line(color = "grey80"),
+  )
 ggsave("graphics/g3_core_goods_breakdown.png", dpi="retina", width = 12, height=6.75, units = "in")
 
 # Graphic 4: Core Services
@@ -62,11 +77,17 @@ services_breakdown <- subtract_cpi_items(cpi, "2018-01-01", "Services less energ
                    subtract_array = subtract_array, add_on_array = "Food away from home")
 
 stacked_graphic(services_breakdown, unique(services_breakdown$item_name), start_date = "2022-01-01",
-                title = "Transportation Services Drive Decline", date_breaks_length = 12, add_labels = TRUE, palette= "RdPu", legend.position = c(0.85,0.9))
+                title = "Transportation Services Drive Increase in July", date_breaks_length = 12, add_labels = TRUE, palette= "RdPu", legend.position = c(0.85,0.9)) +
+  theme(
+    panel.grid.major.y = element_line(color = "grey80"),
+  )
 ggsave("graphics/g4_services_breakdown.png", dpi="retina", width = 12, height=6.75, units = "in")
 
 # Graphic 5: Food and Energy
-stacked_graphic(cpi, c("Energy","Food"),start_date = "2019-01-01",title = "Energy Starts to Fall", date_breaks_length = 12)
+stacked_graphic(cpi, c("Energy","Food"),start_date = "2019-01-01",title = "Energy Starts to Fall", date_breaks_length = 12) +
+  theme(
+    panel.grid.major.y = element_line(color = "grey80"),
+  )
 ggsave("graphics/energy_food.png", dpi="retina", width = 12, height=6.75, units = "in")
 
 # Graphic 6: Ridgeline Graphic
@@ -93,6 +114,9 @@ ggsave("graphics/cpi_versus_pce_housing.png", dpi="retina", width = 12, height=6
 
 source("2_january_unadjusted.R")
 source("3_trump_tariffs.R")
+source("5_percent_3p_growth.R")
+
+source("")
 
 
 
