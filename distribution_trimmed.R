@@ -4,8 +4,8 @@ item_list <- read_csv("weights/mediancpi_component_table.csv") %>%
   pull(item_name)
 
 
-top_cut = 0.98
-bottom_cut = 0.02
+top_cut = 0.99
+bottom_cut = 0.01
 title = NA
 
 median_data <- cpi %>%
@@ -23,14 +23,14 @@ median_data <- cpi %>%
   mutate(cumsum = cumsum(weight) / 100) %>%
   mutate(cumsumN = cumsum(weightN))
 
-quarters_backwards <- (month(max(cpi$date)) + c(0, 3, 6, 9) - 1) %% 12 + 1
+#quarters_backwards <- (month(max(cpi$date)) + c(0, 3, 6, 9) - 1) %% 12 + 1
 
 # THIS IS THE GRAPHIC - 30 percent-trimmed distribution
 median_data %>%
   mutate(dateF = as.factor(date)) %>%
   filter(cumsumN <= top_cut & cumsum >= bottom_cut) %>%
-  filter(date >= "2024-12-01") %>%
-  filter(month(date) %in% quarters_backwards) %>%
+  filter(date == "2026-02-01" | date == "2024-12-01") %>%
+  #filter(month(date) %in% quarters_backwards) %>%
   mutate(monthC = format(date, "%B, %Y")) %>%
   mutate(monthC = fct_reorder(monthC, date)) %>%
   mutate(monthCR = fct_rev(monthC)) %>%

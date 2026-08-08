@@ -24,7 +24,7 @@ df <- df %>%
   mutate(pchange1 = value / lag(value, 1) - 1) %>%
   ungroup()
 
-first_title <- "March 2026 Approaching 2022 Levels"
+first_title <- "2026 Inflation Levels More Like 2022 Than 2024"
 years_array <- c(2019, 2022, 2024, 2025, 2026)
 
 second_title <- first_title

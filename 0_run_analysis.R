@@ -110,9 +110,9 @@ ggsave(
 )
 
 # Graphic 2: Onion Chart
-onion_title = "Services Less Housing High in January"
+onion_title = "CPI Services High in April"
 start_onion_date <- "2024-01-01" #max(cpi$date) %m-% months(30)
-onion_chart(cpi, start_onion_date, title = onion_title) +
+onion_chart(cpi, start_onion_date, title = onion_title, breaks_length = 6) +
   theme(
     panel.grid.major.y = element_line(color = "grey80"),
   )
@@ -382,38 +382,61 @@ cpi_rate <- cpi %>%
   filter(series_id == "CUSR0000SA0") %>%
   select(date, cpi_rate = value)
 
-ahe <- getFRED("CES0500000003", rename_variables = "ahe") %>%
+ahe_all <- getFRED("CES0500000003", rename_variables = "ahe") %>%
+  mutate(series = "All Employees")
+
+ahe_prod <- getFRED("AHETPI", rename_variables = "ahe") %>%
+  mutate(series = "Production and Nonsupervisory Workers")
+
+ahe <- bind_rows(ahe_all, ahe_prod) %>%
   inner_join(cpi_rate, by = "date") %>%
+  group_by(series) %>%
+  arrange(date, .by_group = TRUE) %>%
   mutate(
     real_wages = ahe / cpi_rate,
     real_wages4m = real_wages / lag(real_wages, 4) - 1,
     real_wages1m = real_wages / lag(real_wages, 1) - 1,
     real_wages_Trump = real_wages / real_wages[date == "2025-01-01"] - 1
-  )
+  ) %>%
+  ungroup()
 
 
 ahe_plot <- ahe %>% filter(year(date) >= 2023)
-last_point <- ahe_plot %>% filter(date == max(date))
+last_point <- ahe_plot %>%
+  group_by(series) %>%
+  filter(date == max(date)) %>%
+  ungroup()
+
+wage_colors <- c(
+  "All Employees" = "#2c3254",
+  "Production and Nonsupervisory Workers" = "#ff8361"
+)
 
 ahe_plot %>%
-  ggplot(aes(date, real_wages_Trump)) +
-  geom_hline(
-    yintercept = last_point$real_wages_Trump,
-    linetype = "dotted",
-    color = "black",
-    size = 1
-  ) +
+  ggplot(aes(date, real_wages_Trump, color = series)) +
+  geom_hline(yintercept = 0, color = "black") +
   geom_line(size = 1.2) +
   geom_point(data = last_point, size = 3) +
+  geom_text(
+    data = last_point,
+    aes(label = percent(real_wages_Trump, accuracy = 0.1)),
+    hjust = -0.2,
+    vjust = 0.5,
+    size = 4.5,
+    show.legend = FALSE,
+    fontface = "bold"
+  ) +
   theme_esp() +
-  geom_hline(yintercept = 0, color = "black") +
   scale_y_continuous(label = percent) +
-  scale_x_date(breaks = "3 months", date_labels = "%B\n%Y") +
+  scale_x_date(date_labels = "%b\n%Y", breaks = generate_dates(cpi$date, 6)) +
+  scale_color_manual(values = wage_colors) +
   labs(
-    title = "Real Wages Are Not Up Since Last Summer",
+    title = "No Real Wage Gains For All Employees Under Trump",
     subtitle = "Change in Average Hourly Earnings Divided by Overall CPI, Since January 2025.",
-    caption = "Mike Konczal"
-  )
+    caption = "Mike Konczal",
+    color = NULL
+  ) +
+  theme(legend.position = "top")
 ggsave(
   "graphics/real_wages_Trump.png",
   dpi = "retina",
